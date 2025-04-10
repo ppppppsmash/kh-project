@@ -1,6 +1,6 @@
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
-import { ModeToggle } from "@/components/mode-toggle";
+import { ModeToggle } from "@/components/app-sidebar/mode-toggle";
 import { ThemeSelector } from "@/components/theme-selector";
 
 export const AppHeader = () => {

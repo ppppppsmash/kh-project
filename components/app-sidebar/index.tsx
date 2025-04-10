@@ -1,9 +1,9 @@
 "use client";
 
 import * as React from "react";
-import { NavMain } from "@/components/nav-main";
+import { NavMain } from "@/components/app-sidebar/nav-main";
+import { NavSecondary } from "@/components/app-sidebar/nav-secondary";
 // import { NavDocuments } from "@/components/nav-documents";
-// import { NavSecondary } from "@/components/nav-secondary";
 // import { NavUser } from "@/components/nav-user";
 import {
   Sidebar,
@@ -39,8 +39,8 @@ export const AppSidebar = ({
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={navConfig.navMain} />
-        {/* <NavDocuments items={data.documents} />
-        <NavSecondary items={data.navSecondary} className="mt-auto" /> */}
+        {/* <NavDocuments items={data.documents} /> */}
+        <NavSecondary items={navConfig.navSecondary} className="mt-auto" />
       </SidebarContent>
       <SidebarFooter>
         {/* <NavUser user={data.user} /> */}
