@@ -13,7 +13,6 @@ const { handlers } = NextAuth({
         clientSecret: process.env.GOOGLE_CLIENT_SECRET,
       } as ClientType)
     ],
-    secret: process.env.NEXTAUTH_SECRET,
     session: { strategy: "jwt" },
     callbacks: {
       signIn: async ({ account, profile }) => {
