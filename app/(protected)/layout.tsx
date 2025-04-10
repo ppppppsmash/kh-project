@@ -1,16 +1,20 @@
+"use client";
+
 import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppHeader } from "@/components/app-sidebar/app-header";
+import AuthProvider from "@/providers/auth-provider";
 
-export default function ProtectedLayout({
+export default async function ProtectedLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <SidebarProvider
-      style={
-        {
+    <AuthProvider>
+      <SidebarProvider
+        style={
+          {
           "--sidebar-width": "calc(var(--spacing) * 72)",
           "--header-height": "calc(var(--spacing) * 12)",
         } as React.CSSProperties
@@ -28,7 +32,8 @@ export default function ProtectedLayout({
             </div>
           </div>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+        </SidebarInset>
+      </SidebarProvider>
+    </AuthProvider>
   );
 }

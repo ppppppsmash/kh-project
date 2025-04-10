@@ -2,6 +2,7 @@
 
 import { Github, Mail } from "lucide-react";
 
+import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
@@ -19,7 +20,11 @@ export default function LoginPage() {
               <Github className="mr-2 h-4 w-4" />
               Github
             </Button>
-            <Button variant="outline" className="hover:bg-slate-100 transition-colors">
+            <Button
+              variant="outline"
+              className="hover:bg-slate-100 transition-colors"
+              onClick={() => signIn("google")}
+            >
               <Mail className="mr-2 h-4 w-4" />
               Google
             </Button>
