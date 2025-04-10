@@ -1,5 +1,7 @@
+
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
+import { createUser } from "@/actions/user";
 
 type ClientType = {
   clientId: string;
@@ -21,11 +23,24 @@ const { handlers } = NextAuth({
         }
         return true;
       },
-      jwt: async ({ token, user }) => {
+      jwt: async ({ token, user, account, profile }) => {
+        console.log(token);
         if (user) {
           token.user = user;
           const u = user as any;
           token.role = u.role;
+        }
+
+        if (account) {
+          token.accessToken = account.access_token;
+
+          if (account.provider === "google") {
+            await createUser({
+              name: token.name as string,
+              email: token.email as string,
+              image: token.picture as string,
+            });
+          }
         }
 
         return token;

@@ -6,7 +6,7 @@ import { signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 
-export default function LoginPage() {
+export default async function LoginPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-xl border-0">

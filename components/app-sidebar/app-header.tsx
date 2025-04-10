@@ -14,7 +14,7 @@ export const AppHeader = () => {
         />
         <h1 className="text-base font-medium">Test</h1>
         <div className="ml-auto flex items-center gap-2">
-          <ThemeSelector />
+          {/* <ThemeSelector /> */}
           <ModeToggle />
         </div>
       </div>
