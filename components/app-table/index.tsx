@@ -42,6 +42,7 @@ import { cn } from "@/lib/utils";
 import { getClubActivity, createClubActivity } from "@/actions/club-activity";
 import { ClubActivity, ClubStatus } from "@/types";
 import { statusConfig } from "@/config";
+import { deleteClubActivity } from "@/actions/club-activity";
 
 
 export const ClubTable = () => {
@@ -123,9 +124,11 @@ export const ClubTable = () => {
   };
 
   // 削除処理
-  const handleDelete = (id: string) => {
-    setClubs(clubs.filter((club) => club.id !== id));
+  const handleDelete = async (id: string) => {
     setIsDeleteDialogOpen(false);
+    setFilteredClubs(filteredClubs.filter((club) => club.id !== id));
+    await deleteClubActivity(id);
+    setClubs(clubs.filter((club) => club.id !== id));
   };
 
   // 編集処理
