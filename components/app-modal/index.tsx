@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -15,22 +15,31 @@ interface ClubModalFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: Omit<ClubActivity, "id" | "createdAt" | "updatedAt">) => Promise<void>;
+  defaultValues?: Partial<ClubActivity>;
 }
 
-export const ClubModalForm = ({ isOpen, onClose, onSubmit }: ClubModalFormProps) => {
+export const ClubModalForm = ({
+  isOpen,
+  onClose,
+  onSubmit,
+  defaultValues,
+}: ClubModalFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // TODO: 編集判定、useStateで管理予定かな？
+  const isEdit = defaultValues ? true : false;
+  const title = isEdit ? "部活動編集" : "新規部活動登録";
 
   const form = useForm<ClubFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: "",
-      description: "",
-      leader: "",
-      memberCount: 0,
-      activityType: "",
-      status: "active",
-      location: "",
-      detail: "",
+      name: defaultValues?.name || "",
+      description: defaultValues?.description || "",
+      leader: defaultValues?.leader || "",
+      memberCount: defaultValues?.memberCount || 0,
+      activityType: defaultValues?.activityType || "",
+      status: defaultValues?.status || "active",
+      location: defaultValues?.location || "",
+      detail: defaultValues?.detail || "",
     },
   });
 
@@ -47,11 +56,17 @@ export const ClubModalForm = ({ isOpen, onClose, onSubmit }: ClubModalFormProps)
     }
   };
 
+  useEffect(() => {
+    if (defaultValues) {
+      form.reset(defaultValues);
+    }
+  }, [defaultValues]);
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>新規部活動登録</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <div className="space-y-2">
@@ -156,7 +171,7 @@ export const ClubModalForm = ({ isOpen, onClose, onSubmit }: ClubModalFormProps)
               キャンセル
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "登録中..." : "登録"}
+              {isSubmitting ? "登録中..." : isEdit ? "更新" : "登録"}
             </Button>
           </div>
         </form>
