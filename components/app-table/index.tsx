@@ -42,7 +42,7 @@ import { cn } from "@/lib/utils";
 import { getClubActivity, createClubActivity } from "@/actions/club-activity";
 import { ClubActivity, ClubStatus } from "@/types";
 import { statusConfig } from "@/config";
-import { deleteClubActivity } from "@/actions/club-activity";
+import { updateClubActivity, deleteClubActivity } from "@/actions/club-activity";
 
 
 export const ClubTable = () => {
@@ -131,15 +131,15 @@ export const ClubTable = () => {
     setClubs(clubs.filter((club) => club.id !== id));
   };
 
-  // 編集処理
-  const handleEdit = (club: ClubActivity, e: React.MouseEvent) => {
+  // 編集メニュー処理
+  const handleEdit = async (club: ClubActivity, e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentClub(club);
     setIsEditModalOpen(true);
   };
 
   // 編集送信処理
-  const handleEditSubmit = (data: Omit<ClubActivity, "id" | "createdAt" | "updatedAt">) => {
+  const handleEditSubmit = async (data: Omit<ClubActivity, "id" | "createdAt" | "updatedAt">) => {
     if (currentClub) {
       setClubs(
         clubs.map((club) =>
@@ -151,6 +151,7 @@ export const ClubTable = () => {
             : club
           )
       );
+      await updateClubActivity(currentClub.id, data);
       setIsEditModalOpen(false);
       setCurrentClub(null);
     }
