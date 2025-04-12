@@ -17,6 +17,7 @@ import {
   IconUsers,
 } from "@tabler/icons-react";
 
+// ナビゲーションの設定
 export const navConfig = {
   user: {
     name: "test",
@@ -117,4 +118,11 @@ export const navConfig = {
       icon: IconFileWord,
     },
   ],
+};
+
+// 部活動のステータスの設定
+export const statusConfig = {
+  active: { label: "活動中", color: "bg-green-100 text-green-800" },
+  inactive: { label: "休止中", color: "bg-gray-100 text-gray-800" },
+  pending: { label: "承認待ち", color: "bg-yellow-100 text-yellow-800" },
 };

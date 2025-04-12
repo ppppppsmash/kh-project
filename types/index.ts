@@ -12,4 +12,4 @@ export type ClubActivity = {
   detail: string;
   createdAt: Date;
   updatedAt: Date;
-}; 
+};
