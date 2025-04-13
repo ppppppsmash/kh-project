@@ -2,10 +2,13 @@ import { getClubActivityById } from "@/actions/club-activity";
 import { formatDate } from "@/lib/utils";
 import { ShareButton } from "./_components/share-button";
 
-export default async function ClubActivitySlugPage({ params }: { params: { id: string } }) {
-  const { id } = params;
-  const club = await getClubActivityById(id);
+type Props = {
+  params: Promise<{ id: string }>;
+};
 
+export default async function ClubActivitySlugPage({ params }: Props) {
+  const { id } = await params;
+  const club = await getClubActivityById(id);
 
   if (!club) {
     return <div className="container mx-auto">データが見つかりませんでした</div>;

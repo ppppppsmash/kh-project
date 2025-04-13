@@ -2,10 +2,12 @@ import { getClubActivityById } from "@/actions/club-activity";
 import { notFound } from "next/navigation";
 import { formatDate } from "@/lib/utils";
 
-export default async function SharedClubActivityPage({
-  params
-}: { params: { id: string } }) {
-  const { id } = params;
+type Props = {
+  params: Promise<{ id: string }>;
+};
+
+export default async function SharedClubActivityPage({ params }: Props) {
+  const { id } = await params;
   const club = await getClubActivityById(id);
 
   if (!club) return notFound();
