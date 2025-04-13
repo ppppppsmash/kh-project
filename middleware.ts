@@ -1,39 +1,25 @@
 import { getToken } from "next-auth/jwt";
 import { type NextRequest, NextResponse } from "next/server";
 
-export async function middleware(request: NextRequest) {
-  // const token = await getToken({ 
-  //   req: request,
-  //   secret: process.env.NEXTAUTH_SECRET,
-  //   secureCookie: false,
-  // });
-  const cookieAuthed = request.cookies.has("authjs.session-token");
-  const isAuthenticated = !!cookieAuthed;
-
-  const isSharePage = request.nextUrl.pathname.startsWith("/share-page");
-  const isRoot = request.nextUrl.pathname === "/";
+export default async function middleware(request: NextRequest) {
+  const session = await getToken({ 
+    req: request,
+    secret: process.env.NEXTAUTH_SECRET 
+  });
   const isAuthPage = request.nextUrl.pathname.startsWith("/signin");
 
-  if (isSharePage) {
-    return NextResponse.next();
-  }
-
-  if (isRoot) {
-    return NextResponse.redirect(new URL("/signin", request.url));
-  }
-
   if (isAuthPage) {
-    if (isAuthenticated) {
+    if (session) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
-    return NextResponse.next();
+    return null;
   }
 
-  if (!isAuthenticated) {
+  if (!session) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
-  return NextResponse.next();
+  return null;
 }
 
 export const config = {
