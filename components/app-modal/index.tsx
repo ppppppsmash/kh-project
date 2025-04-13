@@ -35,7 +35,7 @@ export const ClubModalForm = ({
       name: defaultValues?.name || "",
       description: defaultValues?.description || "",
       leader: defaultValues?.leader || "",
-      memberCount: defaultValues?.memberCount || 0,
+      memberCount: defaultValues?.memberCount || undefined,
       activityType: defaultValues?.activityType || "",
       status: defaultValues?.status || "active",
       location: defaultValues?.location || "",
@@ -107,7 +107,10 @@ export const ClubModalForm = ({
             <Input
               id="memberCount"
               type="number"
-              {...form.register("memberCount", { valueAsNumber: true })}
+              {...form.register("memberCount", { 
+                valueAsNumber: true,
+                setValueAs: (v: string) => v === "" ? undefined : Number(v)
+              })}
               required
             />
             {form.formState.errors.memberCount && (

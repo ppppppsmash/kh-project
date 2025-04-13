@@ -43,6 +43,7 @@ import { getClubActivity, createClubActivity } from "@/actions/club-activity";
 import { ClubActivity, ClubStatus } from "@/types";
 import { statusConfig } from "@/config";
 import { updateClubActivity, deleteClubActivity } from "@/actions/club-activity";
+import { Skeleton } from "@/components/ui/skeleton";
 
 
 export const ClubTable = () => {
@@ -170,7 +171,40 @@ export const ClubTable = () => {
   );
 
   if (loading) {
-    return <div>読み込み中...</div>;
+    return (
+      <div className="space-y-4">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-10 w-[200px]" />
+        </div>
+        <div className="rounded-md border">
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>部活動名</TableHead>
+                <TableHead>部長</TableHead>
+                <TableHead className="hidden md:table-cell">活動内容</TableHead>
+                <TableHead className="hidden lg:table-cell">メンバー数</TableHead>
+                <TableHead className="hidden md:table-cell">ステータス</TableHead>
+                <TableHead className="text-right">操作</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell><Skeleton className="h-4 w-[100px]" /></TableCell>
+                  <TableCell><Skeleton className="h-4 w-[80px]" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-[200px]" /></TableCell>
+                  <TableCell className="hidden lg:table-cell"><Skeleton className="h-4 w-[50px]" /></TableCell>
+                  <TableCell className="hidden md:table-cell"><Skeleton className="h-4 w-[80px]" /></TableCell>
+                  <TableCell className="text-right"><Skeleton className="h-4 w-[40px] ml-auto" /></TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </div>
+    );
   }
 
   return (
