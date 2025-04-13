@@ -5,6 +5,7 @@ import { ThemeProvider } from "@/providers/theme-provider";
 import { ActiveThemeProvider } from "@/providers/active-theme";
 import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
+
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],

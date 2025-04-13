@@ -1,16 +1,14 @@
 "use client";
 
-import { Mail } from "lucide-react";
-
 import { signIn } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import { InteractiveHoverButton } from "@/components/ui/active-hover-button";
+import { InteractiveHoverButton } from "@/components/animation-ui/active-hover-button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Icons } from "@/components/ui/icons";
 
 export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4">
-      <Card className="w-full max-w-md shadow-xl border-0">
+      <Card className="w-full max-w-sm shadow-xl border-0">
         <CardHeader className="space-y-1">
           <CardTitle className="text-2xl font-bold text-center">KANGEN Holdings</CardTitle>
           <CardDescription className="text-center">マネジメントシステム</CardDescription>
@@ -19,9 +17,10 @@ export default function LoginPage() {
           <div className="flex flex-col items-center gap-4">
             <InteractiveHoverButton
               onClick={() => signIn("google")}
+              className="flex items-center justify-center"
             >
-              {/* <Mail className="mr-2 h-4 w-4" /> */}
-              Googleサインイン
+              <Icons.google className="h-4 w-4" />
+              サインイン
             </InteractiveHoverButton>
           </div>
         </CardContent>
