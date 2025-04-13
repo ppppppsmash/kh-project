@@ -7,7 +7,13 @@ export default async function middleware(request: NextRequest) {
     secret: process.env.NEXTAUTH_SECRET,
     secureCookie: true,
   });
+
   const isAuthPage = request.nextUrl.pathname.startsWith("/signin");
+  const isSharePage = request.nextUrl.pathname.startsWith("/share-page");
+
+  if (isSharePage) {
+    return NextResponse.next();
+  }
 
   if (isAuthPage) {
     if (session) {
