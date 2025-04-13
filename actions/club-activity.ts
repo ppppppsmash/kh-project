@@ -23,6 +23,16 @@ export const getClubActivity = async () => {
   }));
 };
 
+export const getClubActivityById = async (id: string) => {
+  const club = await db
+    .select()
+    .from(clubActivity)
+    .where(eq(clubActivity.id, id))
+    .then((rows) => rows[0]);
+
+  return club;
+};
+
 export const updateClubActivity = async (id: string, data: ClubFormValues) => {
   const club = await db.update(clubActivity).set(data).where(eq(clubActivity.id, id)).returning();
 

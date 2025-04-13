@@ -114,7 +114,7 @@ export const ClubModalForm = ({
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="activityType">活動タイプ</Label>
+            <Label htmlFor="activityType">活動種類</Label>
             <Input
               id="activityType"
               {...form.register("activityType")}
