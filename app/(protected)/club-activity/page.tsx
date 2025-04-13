@@ -7,7 +7,7 @@ import { ClubModalForm } from "@/components/app-modal";
 import { PlusCircle } from "lucide-react";
 import { ClubActivity } from "@/types";
 import { createClubActivity } from "@/actions/club-activity";
-
+import { CustomToast } from "@/components/ui/toast";
 export default function ClubActivityPage() {
   const [isNewModalOpen, setIsNewModalOpen] = useState(false);
 
@@ -15,8 +15,10 @@ export default function ClubActivityPage() {
     try {
       await createClubActivity(data);
       setIsNewModalOpen(false);
+      CustomToast.success("部活動を登録しました");
     } catch (error) {
       console.error("部活動の登録に失敗しました:", error);
+      CustomToast.error("部活動の登録に失敗しました");
     }
   };
 

@@ -20,7 +20,7 @@ export default function DashboardPage() {
           ...rest,
           status: status as ClubStatus,
         }));
-        setClubs(formattedData);
+        setClubs(formattedData as ClubActivity[]);
       } catch (error) {
         console.error("Error fetching clubs:", error);
       } finally {

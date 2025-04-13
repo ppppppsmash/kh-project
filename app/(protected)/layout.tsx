@@ -4,6 +4,7 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppHeader } from "@/components/app-sidebar/app-header";
 import AuthProvider from "@/providers/auth-provider";
+import { Toast } from "@/components/ui/toast";
 
 export default function ProtectedLayout({
   children,
@@ -34,6 +35,7 @@ export default function ProtectedLayout({
         </div>
         </SidebarInset>
       </SidebarProvider>
+      <Toast />
     </AuthProvider>
   );
 }
