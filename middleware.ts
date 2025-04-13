@@ -2,11 +2,13 @@ import { getToken } from "next-auth/jwt";
 import { type NextRequest, NextResponse } from "next/server";
 
 export async function middleware(request: NextRequest) {
-  const token = await getToken({ 
-    req: request,
-    secret: "test",
-  });
-  const isAuthenticated = !!token;
+  // const token = await getToken({ 
+  //   req: request,
+  //   secret: process.env.NEXTAUTH_SECRET,
+  //   secureCookie: false,
+  // });
+  const cookieAuthed = request.cookies.has("authjs.session-token");
+  const isAuthenticated = !!cookieAuthed;
 
   const isSharePage = request.nextUrl.pathname.startsWith("/share-page");
   const isRoot = request.nextUrl.pathname === "/";
