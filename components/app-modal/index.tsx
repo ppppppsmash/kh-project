@@ -37,7 +37,7 @@ export const ClubModalForm = ({
       leader: defaultValues?.leader || "",
       memberCount: defaultValues?.memberCount || undefined,
       activityType: defaultValues?.activityType || "",
-      status: defaultValues?.status || "active",
+      status: "active",
       location: defaultValues?.location || "",
       detail: defaultValues?.detail || "",
     },
@@ -70,7 +70,7 @@ export const ClubModalForm = ({
         </DialogHeader>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name">部活動名</Label>
+            <Label htmlFor="name">部活動名<span className="text-red-500">*</span></Label>
             <Input
               id="name"
               {...form.register("name")}
@@ -81,18 +81,14 @@ export const ClubModalForm = ({
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="description">説明</Label>
+            <Label htmlFor="description">活動内容</Label>
             <Input
               id="description"
               {...form.register("description")}
-              required
             />
-            {form.formState.errors.description && (
-              <p className="text-sm text-red-500">{form.formState.errors.description.message}</p>
-            )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="leader">部長</Label>
+            <Label htmlFor="leader">部長<span className="text-red-500">*</span></Label>
             <Input
               id="leader"
               {...form.register("leader")}
@@ -103,7 +99,7 @@ export const ClubModalForm = ({
             )}
           </div>
           <div className="space-y-2">
-            <Label htmlFor="memberCount">メンバー数</Label>
+            <Label htmlFor="memberCount">メンバー数<span className="text-red-500">*</span></Label>
             <Input
               id="memberCount"
               type="number"
@@ -122,11 +118,7 @@ export const ClubModalForm = ({
             <Input
               id="activityType"
               {...form.register("activityType")}
-              required
             />
-            {form.formState.errors.activityType && (
-              <p className="text-sm text-red-500">{form.formState.errors.activityType.message}</p>
-            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="status">ステータス</Label>
@@ -152,22 +144,14 @@ export const ClubModalForm = ({
             <Input
               id="location"
               {...form.register("location")}
-              required
             />
-            {form.formState.errors.location && (
-              <p className="text-sm text-red-500">{form.formState.errors.location.message}</p>
-            )}
           </div>
           <div className="space-y-2">
             <Label htmlFor="detail">詳細</Label>
             <Input
               id="detail"
               {...form.register("detail")}
-              required
             />
-            {form.formState.errors.detail && (
-              <p className="text-sm text-red-500">{form.formState.errors.detail.message}</p>
-            )}
           </div>
           <div className="flex justify-end space-x-2">
             <Button type="button" variant="outline" onClick={onClose}>

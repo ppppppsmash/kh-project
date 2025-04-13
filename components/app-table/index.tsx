@@ -39,12 +39,12 @@ import { ClubModalForm } from "@/components/app-modal";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { getClubActivity, createClubActivity } from "@/actions/club-activity";
-import { ClubActivity, ClubStatus } from "@/types";
+import { getClubActivity } from "@/actions/club-activity";
+import { ClubActivity } from "@/types";
 import { statusConfig } from "@/config";
 import { updateClubActivity, deleteClubActivity } from "@/actions/club-activity";
 import { Skeleton } from "@/components/ui/skeleton";
-
+import { CustomToast } from "@/components/ui/toast";
 
 export const ClubTable = () => {
   const router = useRouter();
@@ -68,8 +68,8 @@ export const ClubTable = () => {
     const fetchClubs = async () => {
       try {
         const data = await getClubActivity();
-        setClubs(data);
-        setFilteredClubs(data);
+        setClubs(data as ClubActivity[]);
+        setFilteredClubs(data as ClubActivity[]);
       } catch (error) {
         console.error("部活動データの取得に失敗しました:", error);
       } finally {
@@ -89,7 +89,10 @@ export const ClubTable = () => {
         (club) =>
           club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           club.leader.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          club.description.toLowerCase().includes(searchTerm.toLowerCase())
+          club.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          club.activityType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          club.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          club.detail?.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -101,10 +104,17 @@ export const ClubTable = () => {
     // ソート
     if (sortConfig) {
       result.sort((a, b) => {
-        if (a[sortConfig.key] < b[sortConfig.key]) {
+        const aValue = a[sortConfig.key];
+        const bValue = b[sortConfig.key];
+    
+        // undefined/null を考慮
+        if (aValue == null) return 1;
+        if (bValue == null) return -1;
+    
+        if (aValue < bValue) {
           return sortConfig.direction === "asc" ? -1 : 1;
         }
-        if (a[sortConfig.key] > b[sortConfig.key]) {
+        if (aValue > bValue) {
           return sortConfig.direction === "asc" ? 1 : -1;
         }
         return 0;
@@ -130,6 +140,7 @@ export const ClubTable = () => {
     setFilteredClubs(filteredClubs.filter((club) => club.id !== id));
     await deleteClubActivity(id);
     setClubs(clubs.filter((club) => club.id !== id));
+    CustomToast.success("部活動を削除しました");
   };
 
   // 編集メニュー処理
@@ -153,6 +164,7 @@ export const ClubTable = () => {
           )
       );
       await updateClubActivity(currentClub.id, data);
+      CustomToast.success("部活動を更新しました");
       setIsEditModalOpen(false);
       setCurrentClub(null);
     }
@@ -347,15 +359,15 @@ export const ClubTable = () => {
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger asChild>
-                          <span className="line-clamp-1">{club.description}</span>
+                          <span className="line-clamp-1">{club?.description}</span>
                         </TooltipTrigger>
                         <TooltipContent className="max-w-sm">
-                          <p>{club.description}</p>
+                          <p>{club?.description}</p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </TableCell>
-                  <TableCell className="hidden lg:table-cell">{club.memberCount}人</TableCell>
+                  <TableCell className="hidden lg:table-cell">{club.memberCount}名</TableCell>
                   <TableCell className="hidden md:table-cell">
                     <Badge
                       variant="outline"
