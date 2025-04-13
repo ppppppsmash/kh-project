@@ -4,7 +4,7 @@ import { signIn } from "next-auth/react";
 import { InteractiveHoverButton } from "@/components/animation-ui/active-hover-button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Icons } from "@/components/ui/icons";
-
+import { SigninBackground } from "./_components/signin-background";
 export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4">
@@ -30,6 +30,8 @@ export default function LoginPage() {
           </div>
         </CardFooter>
       </Card>
+
+      <SigninBackground />
     </div>
   );
 };

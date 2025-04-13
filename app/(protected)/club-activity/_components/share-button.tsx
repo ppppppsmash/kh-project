@@ -1,7 +1,7 @@
 "use client";
 
 import { Share2 } from "lucide-react";
-import { useShare } from "../hooks/use-share";
+import { useShare } from "../[id]/hooks/use-share";
 import { Button } from "@/components/ui/button";
 
 interface ShareButtonProps {

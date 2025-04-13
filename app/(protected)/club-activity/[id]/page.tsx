@@ -1,6 +1,6 @@
 import { getClubActivityById } from "@/actions/club-activity";
 import { formatDate } from "@/lib/utils";
-import { ShareButton } from "./_components/share-button";
+import { ShareButton } from "../_components/share-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Users, MapPin, Clock, User, Zap } from "lucide-react";
