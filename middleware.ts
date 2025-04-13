@@ -4,7 +4,8 @@ import { type NextRequest, NextResponse } from "next/server";
 export default async function middleware(request: NextRequest) {
   const session = await getToken({ 
     req: request,
-    secret: process.env.NEXTAUTH_SECRET 
+    secret: process.env.NEXTAUTH_SECRET,
+    secureCookie: true,
   });
   const isAuthPage = request.nextUrl.pathname.startsWith("/signin");
 
@@ -12,14 +13,14 @@ export default async function middleware(request: NextRequest) {
     if (session) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
-    return null;
+    return NextResponse.next();
   }
 
   if (!session) {
     return NextResponse.redirect(new URL("/signin", request.url));
   }
 
-  return null;
+  return NextResponse.next();
 }
 
 export const config = {
