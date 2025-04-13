@@ -1,29 +1,21 @@
 import {
   IconCamera,
+  //TODO: 今後使用するかも
   IconChartBar,
   IconDashboard,
   IconDatabase,
   IconFileAi,
   IconFileDescription,
   IconFileWord,
-  IconFolder,
   IconHelp,
-  IconInnerShadowTop,
-  IconListDetails,
   IconConfetti,
   IconReport,
   IconSearch,
   IconSettings,
-  IconUsers,
 } from "@tabler/icons-react";
 
 // ナビゲーションの設定
 export const navConfig = {
-  user: {
-    name: "test",
-    email: "test@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
   navMain: [
     {
       title: "ダッシュボード",
