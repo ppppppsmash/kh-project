@@ -26,12 +26,12 @@ export const navConfig = {
   },
   navMain: [
     {
-      title: "Dashboard",
+      title: "ダッシュボード",
       url: "/dashboard",
       icon: IconDashboard,
     },
     {
-      title: "Club Activity",
+      title: "部活動",
       url: "/club-activity",
       icon: IconConfetti,
     },

@@ -23,7 +23,7 @@ export default function ClubActivityPage() {
   return (
     <div className="container mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold">Club Activity</h1>
+        <h2 className="text-3xl font-bold">部活動</h2>
         <Button onClick={() => setIsNewModalOpen(true)}>
           <PlusCircle className="mr-2 h-4 w-4" />
           新規部活動登録
