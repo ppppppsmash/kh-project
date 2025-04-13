@@ -147,7 +147,7 @@ export const ClubModalForm = ({
             />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="detail">詳細</Label>
+            <Label htmlFor="detail">活動詳細</Label>
             <Input
               id="detail"
               {...form.register("detail")}

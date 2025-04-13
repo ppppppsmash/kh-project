@@ -1,6 +1,6 @@
 "use client";
 
-import { CopyIcon } from "lucide-react";
+import { Share2 } from "lucide-react";
 import { useShare } from "../hooks/use-share";
 import { Button } from "@/components/ui/button";
 
@@ -14,8 +14,8 @@ export const ShareButton = ({ id, dir }: ShareButtonProps) => {
 
   return (
     <Button onClick={handleCopy}>
-      <CopyIcon className="w-4 h-4" />
-      {copied ? "コピー済み" : "共有リンクをコピー"}
+      <Share2 className="w-4 h-4" />
+      {copied ? "コピー済み" : "共有リンク"}
     </Button>
   );
 };
