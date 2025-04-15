@@ -25,7 +25,6 @@ const { handlers } = NextAuth({
         return true;
       },
       jwt: async ({ token, user, account, profile }) => {
-        console.log(token);
         if (user) {
           token.user = user;
           const u = user as any;

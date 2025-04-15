@@ -23,6 +23,11 @@ export const navConfig = {
       icon: IconDashboard,
     },
     {
+      title: "チーム週報",
+      url: "/weekly-report",
+      icon: IconReport,
+    },
+    {
       title: "部活動",
       url: "/club-activity",
       icon: IconConfetti,
