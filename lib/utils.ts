@@ -1,10 +1,11 @@
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
-export function cn(...inputs: ClassValue[]) {
-  return twMerge(clsx(inputs))
-}
+export const cn = (...inputs: ClassValue[]) => {
+  return twMerge(clsx(inputs));
+};
 
-export function formatDate(date: Date) {
-  return date.toLocaleString();
-}
+export const formatDate = (date: string) => {
+  const formattedDate = new Date(date).toLocaleDateString("ja-JP", { year: "numeric", month: "short", day: "numeric" });
+  return formattedDate;
+};

@@ -36,9 +36,9 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="space-y-8">
-      <div className="flex items-center justify-between">
-        <h2 className="text-3xl font-bold">ダッシュボード</h2>
+    <>
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-2xl font-bold">ダッシュボード</h2>
         <div className="text-sm text-muted-foreground">
           ようこそ、{session?.user?.name}さん
         </div>
@@ -97,6 +97,6 @@ export default function DashboardPage() {
           </Card>
         </div>
       </div>
-    </div>
+    </>
   );
 }
