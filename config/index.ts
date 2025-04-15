@@ -12,6 +12,7 @@ import {
   IconReport,
   IconSearch,
   IconSettings,
+  IconUsers,
 } from "@tabler/icons-react";
 
 // ナビゲーションの設定
@@ -23,9 +24,19 @@ export const navConfig = {
       icon: IconDashboard,
     },
     {
-      title: "チーム週報",
-      url: "/weekly-report",
-      icon: IconReport,
+      title: "チーム",
+      url: "/team",
+      icon: IconUsers,
+      items: [
+        {
+          title: "一覧",
+          url: "/team/info",
+        },
+        {
+          title: "週報",
+          url: "/team/weekly-report",
+        },
+      ],
     },
     {
       title: "部活動",
