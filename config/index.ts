@@ -30,7 +30,7 @@ export const navConfig = {
       items: [
         {
           title: "一覧",
-          url: "/team/info",
+          url: "/team/list",
         },
         {
           title: "週報",
