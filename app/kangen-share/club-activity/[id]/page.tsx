@@ -25,7 +25,7 @@ export default async function SharedClubActivityPage({ params }: Props) {
           <h1 className="text-3xl font-bold tracking-tight">{club.name}</h1>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-4 w-4" />
-            <span>作成日: {formatDate(club.createdAt)}</span>
+            <span>作成日: {formatDate(club.createdAt.toISOString())}</span>
           </div>
         </div>
       </div>
