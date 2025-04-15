@@ -5,7 +5,7 @@ export default async function middleware(request: NextRequest) {
   const session = await getToken({ 
     req: request,
     secret: process.env.NEXTAUTH_SECRET,
-    secureCookie: false,
+    secureCookie: process.env.NODE_ENV === "production",
   });
 
   const isAuthPage = request.nextUrl.pathname.startsWith("/signin");
