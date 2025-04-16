@@ -16,7 +16,7 @@ interface ImageUploadProps {
 export const ImageUpload = ({
   onUploadComplete,
   maxSizeMB = 5,
-  acceptedFileTypes = ["image/jpeg", "image/png", "image/webp"],
+  acceptedFileTypes = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"],
 }: ImageUploadProps) => {
   const [selectedImage, setSelectedImage] = useState<File | null>(null)
   const [previewUrl, setPreviewUrl] = useState<string | null>(null)

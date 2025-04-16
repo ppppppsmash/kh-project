@@ -41,11 +41,11 @@ export const navConfig = {
       items: [
         {
           title: "一覧",
-          url: "/team/list",
+          url: "#",
         },
         {
           title: "週報",
-          url: "/team/weekly-report",
+          url: "#",
         },
       ],
     },
