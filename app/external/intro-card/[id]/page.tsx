@@ -20,7 +20,7 @@ export default async function IntroCardPage({ params }: Props) {
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
-            {member.name}さんの自己紹介カード
+            {member.name}さん 自己紹介
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -31,7 +31,7 @@ export default async function IntroCardPage({ params }: Props) {
                 alt={member.name}
                 width={200}
                 height={200}
-                className="rounded-full"
+                className="rounded-md"
               />
             ) : (
               <div className="w-48 h-48 rounded-full bg-gray-200 flex items-center justify-center">
