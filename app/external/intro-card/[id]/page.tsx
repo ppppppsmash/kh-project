@@ -45,10 +45,18 @@ export default async function IntroCardPage({ params }: Props) {
               <h3 className="font-semibold text-gray-500">事業部</h3>
               <p>{member.department}</p>
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-500">役職</h3>
-              <p>{member.position}</p>
-            </div>
+
+            {member.freeText && (
+              <div>
+                <h3 className="font-semibold text-gray-500">自由記載欄</h3>
+                <p className="whitespace-pre-line">{member.freeText}</p>
+              </div>
+            )}
+          </div>
+
+          <div>
+            <h3 className="font-semibold text-gray-500">役職</h3>
+            <p>{member.position}</p>
           </div>
 
           <div>
@@ -61,12 +69,7 @@ export default async function IntroCardPage({ params }: Props) {
             <p className="whitespace-pre-line">{member.skills}</p>
           </div>
 
-          {member.freeText && (
-            <div>
-              <h3 className="font-semibold text-gray-500">自由記載欄</h3>
-              <p className="whitespace-pre-line">{member.freeText}</p>
-            </div>
-          )}
+          
 
           <div className="text-sm text-gray-500">
             登録日: {formatDate(member.createdAt?.toISOString() ?? "")}

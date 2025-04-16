@@ -16,6 +16,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
+import { ImageUpload } from "@/components/image-uploader";
 
 export const IntroCardForm = () => {
   const [name, setName] = useState("");
@@ -55,10 +56,8 @@ export const IntroCardForm = () => {
     });
   };
 
-  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      setPhoto(e.target.files[0]);
-    }
+  const handlePhotoChange = (file: File) => {
+    setPhoto(file);
   };
 
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
@@ -79,12 +78,8 @@ export const IntroCardForm = () => {
           >
             <div className="space-y-2">
               <Label htmlFor="photo">プロフィール写真</Label>
-              <Input
-                id="photo"
-                type="file"
-                accept="image/*"
-                onChange={handlePhotoChange}
-                className="cursor-pointer"
+              <ImageUpload
+                onUploadComplete={handlePhotoChange}
               />
             </div>
 
