@@ -45,6 +45,7 @@ import { statusConfig } from "@/config";
 import { updateClubActivity, deleteClubActivity } from "@/actions/club-activity";
 import { Skeleton } from "@/components/ui/skeleton";
 import { CustomToast } from "@/components/ui/toast";
+import { getTotalPages, getPaginated } from "@/lib/utils";
 
 export const ClubTable = () => {
   const router = useRouter();
@@ -122,6 +123,9 @@ export const ClubTable = () => {
     }
 
     setFilteredClubs(result);
+    // if (result.length % 10 === 0) {
+    //   setCurrentPage(currentPage - 1);
+    // }
     setCurrentPage(1);
   }, [clubs, searchTerm, statusFilter, sortConfig]);
 
@@ -176,11 +180,8 @@ export const ClubTable = () => {
   };
 
   // ページネーション
-  const totalPages = Math.ceil(filteredClubs.length / itemsPerPage);
-  const paginatedClubs = filteredClubs.slice(
-    (currentPage - 1) * itemsPerPage,
-    currentPage * itemsPerPage
-  );
+  const totalPages = getTotalPages(filteredClubs, itemsPerPage);
+  const paginatedClubs = getPaginated(filteredClubs, currentPage, itemsPerPage);
 
   if (loading) {
     return (
@@ -485,12 +486,12 @@ export const ClubTable = () => {
       {currentClub && (
         <ClubModalForm
           isOpen={isEditModalOpen}
-          onClose={() => {
+          onSubmit={async (data) => {
+            await handleEditSubmit(data);
             setIsEditModalOpen(false);
             setCurrentClub(null);
           }}
-          onSubmit={async (data) => {
-            await handleEditSubmit(data);
+          onClose={() => {
             setIsEditModalOpen(false);
             setCurrentClub(null);
           }}
