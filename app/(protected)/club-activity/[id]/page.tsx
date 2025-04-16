@@ -3,7 +3,7 @@ import { formatDate } from "@/lib/utils";
 import { ShareButton } from "../_components/share-button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Calendar, Clock } from "lucide-react";
-import { ClubActivityShare } from "@/components/kangen-share/club-activity";
+import { ClubActivityShare } from "@/components/external/club-activity";
 
 type Props = {
   params: Promise<{ id: string }>;

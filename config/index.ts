@@ -1,7 +1,7 @@
 import {
   IconCamera,
   //TODO: 今後使用するかも
-  IconChartBar,
+  IconUsersGroup,
   IconDashboard,
   IconDatabase,
   IconFileAi,
@@ -12,7 +12,7 @@ import {
   IconReport,
   IconSearch,
   IconSettings,
-  IconUsers,
+  IconUser,
 } from "@tabler/icons-react";
 
 // ナビゲーションの設定
@@ -24,9 +24,20 @@ export const navConfig = {
       icon: IconDashboard,
     },
     {
+      title: "メンバー",
+      url: "/member",
+      icon: IconUser,
+      items: [
+        {
+          title: "自己紹介カード",
+          url: "/member/intro-card",
+        },
+      ],
+    },
+    {
       title: "チーム",
       url: "/team",
-      icon: IconUsers,
+      icon: IconUsersGroup,
       items: [
         {
           title: "一覧",

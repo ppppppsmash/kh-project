@@ -9,7 +9,7 @@ export default async function middleware(request: NextRequest) {
   });
 
   const isAuthPage = request.nextUrl.pathname.startsWith("/signin");
-  const isSharePage = request.nextUrl.pathname.startsWith("/kangen-share");
+  const isSharePage = request.nextUrl.pathname.startsWith("/external");
 
   if (isSharePage) {
     return NextResponse.next();
