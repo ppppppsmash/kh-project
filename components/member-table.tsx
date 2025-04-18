@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { getIntroCards } from "@/actions/intro-card";
 import { member } from "@/db/shecma/member";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { MemberIntroTableSkeleton } from "@/components/app-skeleton";
 import {
   Table,
   TableBody,
@@ -36,13 +37,15 @@ export const MemberTable = () => {
   }, []);
 
   if (loading) {
-    return <div>読み込み中...</div>;
+    return (
+      <MemberIntroTableSkeleton />
+    );
   }
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>自己紹介カード一覧</CardTitle>
+        <CardTitle>自己紹介一覧</CardTitle>
       </CardHeader>
       <CardContent>
         <Table>

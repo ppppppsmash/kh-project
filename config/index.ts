@@ -29,7 +29,7 @@ export const navConfig = {
       icon: IconUser,
       items: [
         {
-          title: "自己紹介カード",
+          title: "自己紹介一覧",
           url: "/member/intro-card",
         },
       ],
@@ -145,3 +145,30 @@ export const statusConfig = {
   inactive: { label: "休止中", color: "bg-gray-100 text-gray-800" },
   pending: { label: "承認待ち", color: "bg-yellow-100 text-yellow-800" },
 };
+
+export const clubActivityItems = [
+  {
+    title: "部活動名",
+    key: "name",
+  },
+  {
+    title: "部長",
+    key: "leader",
+  },
+  {
+    title: "活動内容",
+    key: "content",
+  },
+  {
+    title: "メンバー数",
+    key: "memberCount",
+  },
+  {
+    title: "ステータス",
+    key: "status",
+  },
+  {
+    title: "操作",
+    key: "action",
+  },
+];
