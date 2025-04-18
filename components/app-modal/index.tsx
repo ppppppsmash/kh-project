@@ -16,9 +16,11 @@ interface ClubModalFormProps {
   onClose: () => void;
   onSubmit: (data: Omit<ClubActivity, "id" | "createdAt" | "updatedAt">) => Promise<void>;
   defaultValues?: Partial<ClubActivity>;
+  title?: string;
 }
 
 export const ClubModalForm = ({
+  title,
   isOpen,
   onClose,
   onSubmit,
@@ -27,7 +29,6 @@ export const ClubModalForm = ({
   const [isSubmitting, setIsSubmitting] = useState(false);
   // TODO: 編集判定、useStateで管理予定かな？
   const isEdit = defaultValues ? true : false;
-  const title = isEdit ? "部活動編集" : "新規部活動登録";
 
   const form = useForm<ClubFormValues>({
     resolver: zodResolver(formSchema),

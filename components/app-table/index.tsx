@@ -3,23 +3,8 @@
 import type React from "react";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { usePathname, useRouter } from "next/navigation";
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-  DropdownMenuSeparator,
-} from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import {
-  MoreHorizontal,
-  Pencil,
-  Trash,
   ChevronDown,
   ChevronUp,
   Search,
@@ -27,86 +12,104 @@ import {
   Filter,
   X,
 } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import { ClubModalForm } from "@/components/app-modal";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { cn } from "@/lib/utils";
-import { getClubActivity } from "@/actions/club-activity";
-import { ClubActivity } from "@/types";
-import { statusConfig } from "@/config";
-import { updateClubActivity, deleteClubActivity } from "@/actions/club-activity";
-import { CustomToast } from "@/components/ui/toast";
 import { getTotalPages, getPaginated } from "@/lib/utils";
 import { ClubActivityTableSkeleton } from "@/components/app-skeleton";
+import { SortConfig } from "@/types";
 
-export const ClubTable = ({ items }: { items: { title: string; key: string }[] }) => {
+export interface TableColumn<T> {
+  key: Extract<keyof T, string> | "action";
+  title: string;
+  sortable?: boolean;
+  hide?: "xs" | "sm" | "md" | "lg";
+  align?: "left" | "right";
+  render?: (value: T[keyof T], row: T) => React.ReactNode;
+}
+
+interface TableCell<T> {
+  value: T[keyof T];
+  render?: (value: T[keyof T], item: T) => React.ReactNode;
+  row: T;
+}
+
+const TableCellItem = <T,>({ value, render, row }: TableCell<T>) => {
+  return (
+    <TableCell className="cursor-pointer hover:bg-muted/50">
+      {render ? render(value, row) : String(value)}
+    </TableCell>
+  )
+}
+
+interface TableProps<T extends { id: string }> {
+  columns: TableColumn<T>[];
+  data: T[];
+  loading?: boolean;
+  searchableKeys?: (keyof T)[];
+}
+
+export function AppTable<T extends { id: string }>({
+  columns,
+  data: initialData,
+  loading: initialLoading = false,
+  searchableKeys = [],
+}: TableProps<T>) {
   const router = useRouter();
-  const [clubs, setClubs] = useState<ClubActivity[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [filteredClubs, setFilteredClubs] = useState<ClubActivity[]>([]);
+  const pathname = usePathname();
+  const [reload, setReload] = useState(false);
+  const [filteredData, setFilteredData] = useState<T[]>(initialData);
+  const [loading, setLoading] = useState(initialLoading);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [currentClub, setCurrentClub] = useState<ClubActivity | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
-  const [sortConfig, setSortConfig] = useState<{
-    key: keyof ClubActivity;
-    direction: "asc" | "desc";
-  } | null>(null);
+  const [sortConfig, setSortConfig] = useState<SortConfig<T> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
 
   useEffect(() => {
-    const fetchClubs = async () => {
+    const fetchData = async () => {
       try {
-        const data = await getClubActivity();
-        setClubs(data as ClubActivity[]);
-        setFilteredClubs(data as ClubActivity[]);
+        setFilteredData(initialData);
+        setReload(true);
       } catch (error) {
-        console.error("部活動データの取得に失敗しました:", error);
+        console.error("データの取得に失敗しました:", error);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchClubs();
-  }, []);
+    fetchData();
+  }, [reload]);
 
   // 検索、フィルタリング、ソートを適用
   useEffect(() => {
-    let result = [...clubs];
+    let result = [...initialData];
     // 検索フィルタリング
-    if (searchTerm) {
-      result = result.filter(
-        (club) =>
-          club.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          club.leader.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          club.description?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          club.activityType?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          club.location?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          club.detail?.toLowerCase().includes(searchTerm.toLowerCase())
+    if (searchTerm && searchableKeys) {
+      result = result.filter((v) =>
+        searchableKeys.some((key) => {
+          const value = v[key];
+          return (
+            typeof value === "string" &&
+            value.toLowerCase().includes(searchTerm.toLowerCase())
+          );
+        })
       );
     }
 
     // ステータスフィルタリング
     if (statusFilter !== "all") {
-      result = result.filter((club) => club.status === statusFilter);
+      result = result.filter((data) => (data as any).status === statusFilter);
     }
 
     // ソート
     if (sortConfig) {
       result.sort((a, b) => {
-        const aValue = a[sortConfig.key];
-        const bValue = b[sortConfig.key];
+        const aValue = a[sortConfig.key as keyof T];
+        const bValue = b[sortConfig.key as keyof T];
     
         // undefined/null を考慮
         if (aValue == null) return 1;
@@ -122,15 +125,12 @@ export const ClubTable = ({ items }: { items: { title: string; key: string }[] }
       });
     }
 
-    setFilteredClubs(result);
-    // if (result.length % 10 === 0) {
-    //   setCurrentPage(currentPage - 1);
-    // }
+    setFilteredData(result);
     setCurrentPage(1);
-  }, [clubs, searchTerm, statusFilter, sortConfig]);
+  }, [initialData, searchTerm, statusFilter, sortConfig]);
 
   // ソート処理
-  const handleSort = (key: keyof ClubActivity) => {
+  const handleSort = (key: keyof T) => {
     let direction: "asc" | "desc" = "asc";
     if (sortConfig && sortConfig.key === key && sortConfig.direction === "asc") {
       direction = "desc";
@@ -138,50 +138,15 @@ export const ClubTable = ({ items }: { items: { title: string; key: string }[] }
     setSortConfig({ key, direction });
   };
 
-  // 削除処理
-  const handleDelete = async (id: string) => {
-    setIsDeleteDialogOpen(false);
-    setFilteredClubs(filteredClubs.filter((club) => club.id !== id));
-    await deleteClubActivity(id);
-    setClubs(clubs.filter((club) => club.id !== id));
-    CustomToast.success("部活動を削除しました");
-  };
-
-  // 編集メニュー処理
-  const handleEdit = async (club: ClubActivity, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setCurrentClub(club);
-    setIsEditModalOpen(true);
-  };
-
-  // 編集送信処理
-  const handleEditSubmit = async (data: Omit<ClubActivity, "id" | "createdAt" | "updatedAt">) => {
-    if (currentClub) {
-      setClubs(
-        clubs.map((club) =>
-          club.id === currentClub.id
-            ? {
-                ...club,
-                ...data,
-              }
-            : club
-          )
-      );
-      await updateClubActivity(currentClub.id, data);
-      CustomToast.success("部活動を更新しました");
-      setIsEditModalOpen(false);
-      setCurrentClub(null);
-    }
-  };
-
   // 行クリック処理
-  const handleRowClick = (clubId: string) => {
-    router.push(`/club-activity/${clubId}`);
+  const handleRowClick = (id: string) => {
+    // router.push(`/club-activity/${id}`);
+    router.push(`${pathname}/${id}`);
   };
 
   // ページネーション
-  const totalPages = getTotalPages(filteredClubs, itemsPerPage);
-  const paginatedClubs = getPaginated(filteredClubs, currentPage, itemsPerPage);
+  const totalPages = getTotalPages(filteredData, itemsPerPage);
+  const paginatedData = getPaginated(filteredData, currentPage, itemsPerPage);
 
   if (loading) {
     return (
@@ -220,6 +185,7 @@ export const ClubTable = ({ items }: { items: { title: string; key: string }[] }
               </div>
             </SelectTrigger>
             <SelectContent>
+              {/* TODO: リファクタ−予定 */}
               <SelectItem value="all">すべてのステータス</SelectItem>
               <SelectItem value="active">活動中</SelectItem>
               <SelectItem value="inactive">休止中</SelectItem>
@@ -243,148 +209,71 @@ export const ClubTable = ({ items }: { items: { title: string; key: string }[] }
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort("name")}>
-                <div className="flex items-center">
-                  部活動名
-                  {sortConfig?.key === "name" ? (
-                    sortConfig.direction === "asc" ? (
-                      <ChevronUp className="ml-1 h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    )
+              {columns.map((column) => {
+                const isSorted = sortConfig?.key === column.key;
+                const sortIcon = isSorted ? (
+                  sortConfig.direction === "asc" ? (
+                    <ChevronUp className="ml-1 h-4 w-4" />
                   ) : (
-                    <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />
-                  )}
-                </div>
-              </TableHead>
-              <TableHead className="cursor-pointer hover:bg-muted/50" onClick={() => handleSort("leader")}>
-                <div className="flex items-center">
-                  部長
-                  {sortConfig?.key === "leader" ? (
-                    sortConfig.direction === "asc" ? (
-                      <ChevronUp className="ml-1 h-4 w-4" />
+                    <ChevronDown className="ml-1 h-4 w-4" />
+                  )
+                ) : (
+                  column.sortable && <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />
+                );
+
+                const className = [
+                  "cursor-pointer hover:bg-muted/50",
+                  column.hide === "md" ? "hidden md:table-cell" : "",
+                  column.hide === "lg" ? "hidden lg:table-cell" : "",
+                  column.align === "right" ? "text-right" : "",
+                ]
+                  .filter(Boolean)
+                  .join(" ");
+
+                return (
+                  <TableHead
+                    key={column.key as string}
+                    className={className}
+                    onClick={column.sortable ? () => handleSort(column.key as keyof T) : undefined}
+                  >
+                    {sortIcon ? (
+                      <div className="flex items-center">
+                        {column.title}
+                        {sortIcon}
+                      </div>
                     ) : (
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    )
-                  ) : (
-                    <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />
-                  )}
-                </div>
-              </TableHead>
-              <TableHead className="hidden md:table-cell">活動内容</TableHead>
-              <TableHead
-                className="hidden lg:table-cell cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("memberCount")}
-              >
-                <div className="flex items-center">
-                  メンバー数
-                  {sortConfig?.key === "memberCount" ? (
-                    sortConfig.direction === "asc" ? (
-                      <ChevronUp className="ml-1 h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    )
-                  ) : (
-                    <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />
-                  )}
-                </div>
-              </TableHead>
-              <TableHead
-                className="hidden md:table-cell cursor-pointer hover:bg-muted/50"
-                onClick={() => handleSort("status")}
-              >
-                <div className="flex items-center">
-                  ステータス
-                  {sortConfig?.key === "status" ? (
-                    sortConfig.direction === "asc" ? (
-                      <ChevronUp className="ml-1 h-4 w-4" />
-                    ) : (
-                      <ChevronDown className="ml-1 h-4 w-4" />
-                    )
-                  ) : (
-                    <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />
-                  )}
-                </div>
-              </TableHead>
-              <TableHead className="text-right">操作</TableHead>
+                      <>
+                        {column.title}
+                      </>
+                    )}
+                  </TableHead>
+                );
+              })}
+
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedClubs.length === 0 ? (
+            {paginatedData.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={6} className="h-24 text-center">
-                  検索条件に一致する部活動がありません
+                  検索条件に一致するデータがありません
                 </TableCell>
               </TableRow>
             ) : (
-              paginatedClubs.map((club) => (
+              paginatedData.map((data) => (
                 <TableRow
-                  key={club.id}
+                  key={data.id}
                   className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => handleRowClick(club.id)}
+                  onClick={() => handleRowClick(data.id)}
                 >
-                  <TableCell className="font-medium">{club.name}</TableCell>
-                  <TableCell>{club.leader}</TableCell>
-                  <TableCell className="hidden md:table-cell max-w-xs truncate">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger asChild>
-                          <span className="line-clamp-1">{club?.description}</span>
-                        </TooltipTrigger>
-                        <TooltipContent className="max-w-sm">
-                          <p>{club?.description}</p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </TableCell>
-                  <TableCell className="hidden lg:table-cell">{club.memberCount}名</TableCell>
-                  <TableCell className="hidden md:table-cell">
-                    <Badge
-                      variant="outline"
-                      className={cn("font-normal", statusConfig[club.status as keyof typeof statusConfig].color)}
-                    >
-                      {statusConfig[club.status as keyof typeof statusConfig].label}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
-                    <div className="flex justify-end gap-2">
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipContent>
-                            <p>詳細を表示</p>
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="icon" className="h-8 w-8">
-                            <span className="sr-only">メニューを開く</span>
-                            <MoreHorizontal className="h-4 w-4" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>アクション</DropdownMenuLabel>
-                          <DropdownMenuItem onClick={(e) => handleEdit(club, e)}>
-                            <Pencil className="mr-2 h-4 w-4" />
-                            編集
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setDeleteId(club.id);
-                              setIsDeleteDialogOpen(true);
-                            }}
-                            className="text-red-600"
-                          >
-                            <Trash className="mr-2 h-4 w-4" />
-                            削除
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </TableCell>
+                  {columns.map((column) => (
+                  <TableCellItem
+                    key={column.key as string}
+                    value={data[column.key as keyof T]}
+                    render={column.render}
+                    row={data}
+                  />
+                ))}
                 </TableRow>
               ))
             )}
@@ -396,8 +285,8 @@ export const ClubTable = ({ items }: { items: { title: string; key: string }[] }
       {totalPages > 1 && (
         <div className="flex items-center justify-between">
           <div className="text-sm text-muted-foreground">
-            {filteredClubs.length}件中 {(currentPage - 1) * itemsPerPage + 1}-
-            {Math.min(currentPage * itemsPerPage, filteredClubs.length)}件を表示
+            {filteredData.length}件中 {(currentPage - 1) * itemsPerPage + 1}-
+            {Math.min(currentPage * itemsPerPage, filteredData.length)}件を表示
           </div>
           <div className="flex items-center space-x-2">
             <Button
@@ -431,41 +320,6 @@ export const ClubTable = ({ items }: { items: { title: string; key: string }[] }
             </Button>
           </div>
         </div>
-      )}
-
-      {/* 削除確認ダイアログ */}
-      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>部活動の削除</DialogTitle>
-            <DialogDescription>この部活動を削除してもよろしいですか？この操作は元に戻せません。</DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
-              キャンセル
-            </Button>
-            <Button variant="destructive" onClick={() => deleteId && handleDelete(deleteId)}>
-              削除する
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
-      {/* 編集モーダル */}
-      {currentClub && (
-        <ClubModalForm
-          isOpen={isEditModalOpen}
-          onSubmit={async (data) => {
-            await handleEditSubmit(data);
-            setIsEditModalOpen(false);
-            setCurrentClub(null);
-          }}
-          onClose={() => {
-            setIsEditModalOpen(false);
-            setCurrentClub(null);
-          }}
-          defaultValues={currentClub}
-        />
       )}
     </div>
   );

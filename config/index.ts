@@ -150,25 +150,35 @@ export const clubActivityItems = [
   {
     title: "部活動名",
     key: "name",
+    sortable: true,
   },
   {
     title: "部長",
     key: "leader",
+    sortable: true,
   },
   {
     title: "活動内容",
-    key: "content",
+    key: "description",
+    sortable: false,
+    hide: "md",
   },
   {
     title: "メンバー数",
     key: "memberCount",
+    sortable: true,
+    hide: "lg",
   },
   {
     title: "ステータス",
     key: "status",
+    sortable: true,
+    hide: "md",
   },
   {
     title: "操作",
     key: "action",
+    sortable: false,
+    align: "right",
   },
 ];

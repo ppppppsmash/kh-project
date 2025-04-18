@@ -4,8 +4,8 @@ import { AppSidebar } from "@/components/app-sidebar";
 import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
 import { AppHeader } from "@/components/app-sidebar/app-header";
 import AuthProvider from "@/providers/auth-provider";
+import { QueryProvider } from "@/providers/query-provider";
 import { Toast } from "@/components/ui/toast";
-
 export default function ProtectedLayout({
   children,
 }: {
@@ -13,9 +13,10 @@ export default function ProtectedLayout({
 }) {
   return (
     <AuthProvider>
-      <SidebarProvider
-        style={
-          {
+      <QueryProvider>
+        <SidebarProvider
+          style={
+            {
           "--sidebar-width": "calc(var(--spacing) * 72)",
           "--header-height": "calc(var(--spacing) * 12)",
         } as React.CSSProperties
@@ -36,8 +37,9 @@ export default function ProtectedLayout({
           </div>
         </div>
         </SidebarInset>
-      </SidebarProvider>
-      <Toast />
+        </SidebarProvider>
+        <Toast />
+      </QueryProvider>
     </AuthProvider>
   );
 }

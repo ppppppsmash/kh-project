@@ -4,22 +4,24 @@ import { db } from "@/db";
 import { clubActivity } from "@/db/shecma/club-activity";
 import { eq } from "drizzle-orm";
 import { ClubFormValues } from "@/lib/validations";
-import { ClubStatus } from "@/types";
-import { revalidatePath } from "next/cache";
+import { ClubStatus, ClubActivity } from "@/types";
 
 export const createClubActivity = async (data: ClubFormValues) => {
   const club = await db.insert(clubActivity).values(data).returning();
-  revalidatePath("/club-activity");
 
   return club;
 };
 
-export const getClubActivity = async () => {
+export const getClubActivity = async (): Promise<ClubActivity[]> => {
   const clubs = await db.select().from(clubActivity);
 
   return clubs.map((club) => ({
     ...club,
     status: club.status as ClubStatus,
+    description: club.description ?? undefined,
+    activityType: club.activityType ?? undefined,
+    location: club.location ?? undefined,
+    detail: club.detail ?? undefined,
   }));
 };
 

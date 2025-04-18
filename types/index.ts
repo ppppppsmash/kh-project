@@ -13,3 +13,8 @@ export type ClubActivity = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type SortConfig<T> = {
+  key: keyof T;
+  direction: "asc" | "desc";
+}
