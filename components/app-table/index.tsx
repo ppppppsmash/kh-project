@@ -44,6 +44,7 @@ const TableCellItem = <T,>({ value, render, row }: TableCell<T>) => {
 }
 
 interface TableProps<T extends { id: string }> {
+  toolTip?: boolean;
   columns: TableColumn<T>[];
   data: T[];
   loading?: boolean;
@@ -51,6 +52,7 @@ interface TableProps<T extends { id: string }> {
 }
 
 export function AppTable<T extends { id: string }>({
+  toolTip = false,
   columns,
   data: initialData,
   loading: initialLoading = false,
@@ -61,8 +63,6 @@ export function AppTable<T extends { id: string }>({
   const [reload, setReload] = useState(false);
   const [filteredData, setFilteredData] = useState<T[]>(initialData);
   const [loading, setLoading] = useState(initialLoading);
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortConfig, setSortConfig] = useState<SortConfig<T> | null>(null);
@@ -156,6 +156,7 @@ export function AppTable<T extends { id: string }>({
 
   return (
     <div className="space-y-4">
+      {toolTip && (
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="relative w-full md:w-64">
           <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -204,6 +205,7 @@ export function AppTable<T extends { id: string }>({
           )}
         </div>
       </div>
+      )}
 
       <div className="rounded-md border">
         <Table>

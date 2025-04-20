@@ -78,6 +78,7 @@ export default function ClubActivityPage() {
       </div>
 
       <AppTable
+        toolTip={true}
         columns={renderClubActivity({ onEdit: handleEdit, onDelete: handleDelete })}
         data={activities || []}
         loading={isLoading}
