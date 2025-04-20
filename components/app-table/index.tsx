@@ -44,7 +44,10 @@ const TableCellItem = <T,>({ value, render, row }: TableCell<T>) => {
 }
 
 interface TableProps<T extends { id: string }> {
-  toolTip?: boolean;
+  toolBar?: {
+    researchBarPlaceholder?: string;
+    researchStatusFilter?: string[];
+  };
   columns: TableColumn<T>[];
   data: T[];
   loading?: boolean;
@@ -52,7 +55,7 @@ interface TableProps<T extends { id: string }> {
 }
 
 export function AppTable<T extends { id: string }>({
-  toolTip = false,
+  toolBar,
   columns,
   data: initialData,
   loading: initialLoading = false,
@@ -156,55 +159,59 @@ export function AppTable<T extends { id: string }>({
 
   return (
     <div className="space-y-4">
-      {toolTip && (
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="relative w-full md:w-64">
-          <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="部活動や部長を検索..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
-          {searchTerm && (
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute right-0 top-0 h-9 w-9"
-              onClick={() => setSearchTerm("")}
-            >
-              <X className="h-4 w-4" />
-            </Button>
-          )}
-        </div>
-        <div className="flex items-center gap-2">
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[200px]">
-              <div className="flex items-center gap-2">
-                <Filter className="h-4 w-4" />
-                <SelectValue placeholder="ステータスでフィルター" />
+      {toolBar && (
+        <>
+          {toolBar.researchBarPlaceholder && (
+            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+              <div className="relative w-full md:w-64">
+                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder={toolBar.researchBarPlaceholder}
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-8"
+                />
+                {searchTerm && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute right-0 top-0 h-9 w-9"
+                    onClick={() => setSearchTerm("")}
+                  >
+                    <X className="h-4 w-4" />
+                    </Button>
+                )}
               </div>
-            </SelectTrigger>
-            <SelectContent>
-              {/* TODO: リファクタ−予定 */}
-              <SelectItem value="all">すべてのステータス</SelectItem>
-              <SelectItem value="active">活動中</SelectItem>
-              <SelectItem value="inactive">休止中</SelectItem>
-              <SelectItem value="pending">承認待ち</SelectItem>
-            </SelectContent>
-          </Select>
-          {(searchTerm || statusFilter !== "all" || sortConfig) && (
-            <Button variant="ghost" size="sm" onClick={() => {
-              setSearchTerm("");
-              setStatusFilter("all");
-              setSortConfig(null);
-            }}>
-              <X className="h-4 w-4" />
-              リセット
-            </Button>
+            </div>
           )}
-        </div>
-      </div>
+          {toolBar?.researchStatusFilter && (
+            <div className="flex items-center gap-2">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-[200px]">
+                <div className="flex items-center gap-2">
+                  <Filter className="h-4 w-4" />
+                  <SelectValue placeholder="ステータスでフィルター" />
+                </div>
+              </SelectTrigger>
+              <SelectContent>
+                {toolBar.researchStatusFilter?.map((status) => (
+                  <SelectItem key={status} value={status}>{status}</SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            {(searchTerm || statusFilter !== "all" || sortConfig) && (
+              <Button variant="ghost" size="sm" onClick={() => {
+                setSearchTerm("");
+                setStatusFilter("all");
+                setSortConfig(null);
+              }}>
+                  <X className="h-4 w-4" />
+                  リセット
+                </Button>
+              )}
+            </div>
+          )}
+        </>
       )}
 
       <div className="rounded-md border">

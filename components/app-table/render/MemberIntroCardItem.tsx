@@ -3,8 +3,6 @@ import { TableColumn } from "@/components/app-table";
 import { formatDate } from "@/lib/utils";
 import type { Member } from "@/types";
 
-
-
 export const renderMemberIntroCard = (): TableColumn<Member>[] => [
   {
     key: "photoUrl",
