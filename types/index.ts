@@ -18,3 +18,16 @@ export type SortConfig<T> = {
   key: keyof T;
   direction: "asc" | "desc";
 }
+
+export type Member = {
+  id: string;
+  name: string;
+  department: string;
+  position: string;
+  hobby: string;
+  skills: string;
+  freeText?: string;
+  photoUrl?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};

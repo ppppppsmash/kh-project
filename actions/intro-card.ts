@@ -5,7 +5,7 @@ import { member } from "@/db/shecma/member";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { uploadImage } from "@/lib/uploadImage";
-
+import type { Member } from "@/types";
 type IntroCardFormValues = {
   name: string;
   department: string;
@@ -37,9 +37,15 @@ export const createIntroCard = async (data: IntroCardFormValues) => {
   return newMember;
 };
 
-export const getIntroCards = async () => {
-  const members = await db.select().from(member).orderBy(member.createdAt);
-  return members;
+export const getIntroCards = async (): Promise<Member[]> => {
+  const members = await db.select().from(member);
+  return members.map((member) => ({
+    ...member,
+    photoUrl: member.photoUrl ?? undefined,
+    freeText: member.freeText ?? undefined,
+    createdAt: member.createdAt ?? new Date(),
+    updatedAt: member.updatedAt ?? new Date(),
+  }));
 };
 
 export const getIntroCardById = async (id: string) => {
