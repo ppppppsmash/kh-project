@@ -20,7 +20,7 @@ export default async function IntroCardPage({ params }: Props) {
       <Card>
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
-            {member.name}さん 自己紹介
+            {member.name} 自己紹介
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
