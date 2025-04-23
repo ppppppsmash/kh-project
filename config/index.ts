@@ -13,6 +13,7 @@ import {
   IconSearch,
   IconSettings,
   IconUser,
+  IconListCheck,
 } from "@tabler/icons-react";
 
 // ナビゲーションの設定
@@ -22,6 +23,11 @@ export const navConfig = {
       title: "ダッシュボード",
       url: "/dashboard",
       icon: IconDashboard,
+    },
+    {
+      title: "TODOリスト",
+      url: "/todo-list",
+      icon: IconListCheck,
     },
     {
       title: "メンバー",
@@ -34,21 +40,21 @@ export const navConfig = {
         },
       ],
     },
-    {
-      title: "チーム",
-      url: "/team",
-      icon: IconUsersGroup,
-      items: [
-        {
-          title: "一覧",
-          url: "#",
-        },
-        {
-          title: "週報",
-          url: "#",
-        },
-      ],
-    },
+    // {
+    //   title: "チーム",
+    //   url: "/team",
+    //   icon: IconUsersGroup,
+    //   items: [
+    //     {
+    //       title: "一覧",
+    //       url: "#",
+    //     },
+    //     {
+    //       title: "週報",
+    //       url: "#",
+    //     },
+    //   ],
+    // },
     {
       title: "部活動",
       url: "/club-activity",

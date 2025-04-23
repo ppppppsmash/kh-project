@@ -1,11 +1,14 @@
 "use client";
 
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, BarChart3, Calendar, Users } from "lucide-react";
 import { getClubActivity } from "@/actions/club-activity";
 import { useEffect, useState } from "react";
 import type { ClubActivity, ClubStatus } from "@/types";
+import { Sparkles } from "lucide-react";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
@@ -36,11 +39,28 @@ export default function DashboardPage() {
   };
 
   return (
-    <>
+    <div className="space-y-8">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">ダッシュボード</h2>
         <div className="text-sm text-muted-foreground">
           ようこそ、{session?.user?.name}さん
+        </div>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h3 className="text-lg font-bold">ガイドページ</h3>
+
+        <Button variant="outline" className="w-fit">
+          <Link target="_blank" href="/kangen-public/intro-card/">パブリックページへ</Link>
+        </Button>
+      </div>
+
+      <div className="flex flex-col gap-2">
+        <h3 className="text-lg font-bold">ユーザ履歴一覧</h3>
+
+        <div className="flex items-center gap-2 animate-pulse">
+          <Sparkles className="h-4 w-4 text-muted-foreground" />
+          <p className="text-muted-foreground">ユーザ操作履歴一覧 実装中...</p>
         </div>
       </div>
 
@@ -97,6 +117,6 @@ export default function DashboardPage() {
           </Card>
         </div>
       </div>
-    </>
+    </div>
   );
 }
