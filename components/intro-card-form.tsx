@@ -63,10 +63,10 @@ export const IntroCardForm = () => {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
   return (
-    <>
-      <Card className="max-w-2xl mx-auto p-6 min-h-[60svh]">
+    <div className="min-h-[90svh] flex items-center justify-center">
+      <Card className="max-w-2xl mx-auto p-6 h-[80svh] overflow-y-auto">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">自己紹介カード</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">自己紹介</CardTitle>
         </CardHeader>
         <CardContent>
           <form
@@ -178,6 +178,6 @@ export const IntroCardForm = () => {
           </div>
         </DialogContent>
       </Dialog>
-    </>
+    </div>
   );
 };
