@@ -5,7 +5,7 @@ import { ClubActivityTitle } from "./_components/club-activity-header";
 
 const ExternalClubActivityPage = () => {
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="mx-auto">
       <ClubActivityTitle />
       <ClubActivityList />
     </div>

@@ -8,8 +8,18 @@ export default async function middleware(request: NextRequest) {
     secureCookie: process.env.NODE_ENV === "production",
   });
 
+  const isRoot = request.nextUrl.pathname === "/";
+  const isPublicPage = request.nextUrl.pathname.startsWith("/kangen-public");
   const isAuthPage = request.nextUrl.pathname.startsWith("/signin");
   const isSharePage = request.nextUrl.pathname.startsWith("/external");
+
+  if (isRoot) {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
+  if (isPublicPage) {
+    return NextResponse.next();
+  }
 
   if (isSharePage) {
     return NextResponse.next();
