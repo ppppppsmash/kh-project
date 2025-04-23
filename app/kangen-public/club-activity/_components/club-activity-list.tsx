@@ -50,7 +50,7 @@ export const ClubActivityList = () => {
         <Card
           key={activity.id}
           className="overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-          onClick={() => router.push(`/external/club-activity/${activity.id}`)}
+          onClick={() => router.push(`/kangen-public/club-activity/${activity.id}`)}
         >
           <CardHeader>
             <CardTitle className="text-xl">{activity.name}</CardTitle>

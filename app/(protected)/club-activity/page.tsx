@@ -80,7 +80,7 @@ export default function ClubActivityPage() {
       <AppTable
         toolBar={{
           researchBarPlaceholder: "部活動や部長を検索...",
-          researchStatusFilter: ["すべてのステータス", "活動中", "休止中", "承認待ち"],
+        //  researchStatusFilter: ["すべてのステータス", "活動中", "休止中", "承認待ち"],
         }}
         columns={renderClubActivity({ onEdit: handleEdit, onDelete: handleDelete })}
         data={activities || []}
