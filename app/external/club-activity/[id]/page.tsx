@@ -69,7 +69,7 @@ export default function ClubActivityDetailPage({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="mx-auto p-8">
       <Button
         variant="outline"
         className="mb-6"

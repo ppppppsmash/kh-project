@@ -14,7 +14,7 @@ export default function MemberIntroCardPage() {
     <div className="space-y-8">
       <Button variant="outline">
         <FilePenLine className="h-4 w-4" />
-        <Link target="_blank" href="/external/intro-card/">登録フォームへ</Link>
+        <Link target="_blank" href="/external/intro-card/">パブリック登録フォーム</Link>
       </Button>
       <AppTable
         toolBar={{

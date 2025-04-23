@@ -71,7 +71,7 @@ export default function ClubActivityPage() {
   };
 
   return (
-    <div className="container mx-auto py-6">
+    <div className="mx-auto">
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold">部活動</h2>
         <AddButton text="新規部活動登録" onClick={handleAdd} />
