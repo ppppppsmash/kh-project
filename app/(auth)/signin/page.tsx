@@ -11,7 +11,7 @@ export default function LoginPage() {
     <div className="min-h-screen w-full flex items-center justify-center p-4">
       <Card className="w-full max-w-sm shadow-xl border-0">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">KANGEN Holdings</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">ADiXi</CardTitle>
           <CardDescription className="text-center">マネジメントシステム</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -27,7 +27,7 @@ export default function LoginPage() {
         </CardContent>
         <CardFooter className="flex flex-col space-y-4">
           <div className="text-center text-xs">
-            KANGEN Holdingsのメールアドレスでログインしてください.
+            社内のメールアドレスでログインしてください.
           </div>
         </CardFooter>
       </Card>

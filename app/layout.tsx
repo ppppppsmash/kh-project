@@ -17,8 +17,8 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "KANGEN Holdings management system",
-  description: "KANGEN Holdings management system created by kurosawa",
+  title: "ADiXi management system",
+  description: "ADiXi management system created by kurosawa",
 };
 
 export default async function RootLayout({

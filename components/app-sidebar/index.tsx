@@ -30,7 +30,7 @@ export const AppSidebar = ({
             >
               <a href="#">
                 <span className="text-base font-semibold">
-                  KANGEN Holdings MGR
+                  ADiXi MGR
                 </span>
               </a>
             </SidebarMenuButton>

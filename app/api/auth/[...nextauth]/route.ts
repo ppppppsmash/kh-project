@@ -1,4 +1,3 @@
-
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import { createUser } from "@/actions/user";
@@ -16,7 +15,10 @@ const { handlers } = NextAuth({
       } as ClientType)
     ],
     secret: process.env.NEXTAUTH_SECRET,
-    session: { strategy: "jwt" },
+    session: {
+      strategy: "jwt",
+      maxAge: 6 * 60 * 60, // 6時間
+    },
     callbacks: {
       signIn: async ({ account, profile }) => {
         if (account?.provider === "google") {
