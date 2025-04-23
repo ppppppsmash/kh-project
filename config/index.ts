@@ -182,3 +182,17 @@ export const clubActivityItems = [
     align: "right",
   },
 ];
+
+// 外部のナビゲーションの設定
+export const externalNavConfig = [
+  {
+    title: "自己紹介登録",
+    url: "/external/intro-card",
+    icon: IconUser,
+  },
+  {
+    title: "部活動一覧",
+    url: "/external/club-activity",
+    icon: IconConfetti,
+  },
+];

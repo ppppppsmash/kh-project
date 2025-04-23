@@ -80,13 +80,13 @@ export const ImageUpload = ({
           </div>
         ) : (
           <div
-            className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-12 text-center hover:border-muted-foreground/40 transition-colors cursor-pointer"
+            className="border-2 border-dashed border-muted-foreground/25 rounded-lg p-8 text-center hover:border-muted-foreground/40 transition-colors cursor-pointer"
             onClick={() => fileInputRef.current?.click()}
           >
-            <Upload className="h-12 w-12 mx-auto text-muted-foreground" />
+            <Upload className="h-8 w-8 mx-auto text-muted-foreground" />
             <h3 className="mt-4 text-lg font-medium">画像をアップロード</h3>
             <p className="mt-2 text-sm text-muted-foreground">
-              クリックのみ<br />ドラッグ＆ドロップはまだ実装していない
+              クリックのみ<br />ドラッグ＆ドロップは未完成
             </p>
             <p className="mt-1 text-xs text-muted-foreground">
               {acceptedFileTypes.join(", ")} • 最大 {maxSizeMB}MB
