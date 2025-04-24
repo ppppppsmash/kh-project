@@ -63,7 +63,7 @@ export const IntroCardForm = () => {
   const baseUrl = typeof window !== 'undefined' ? window.location.origin : '';
 
   return (
-    <div className="min-h-[90svh] flex items-center justify-center">
+    <div className="min-h-[90%] flex items-center justify-center">
       <Card className="max-w-2xl mx-auto p-6 h-[80svh] overflow-y-auto">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">自己紹介</CardTitle>

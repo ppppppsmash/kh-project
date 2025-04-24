@@ -9,7 +9,7 @@ export const Sidebar = () => {
   const pathname = usePathname();
 
   return (
-    <div className="space-y-4 py-4 flex flex-col h-full bg-white border-r">
+    <div className="space-y-4 py-4 flex flex-col h-full">
       <div className="px-3 py-2">
         <div className="space-y-1">
           {externalNavConfig.map((route) => (
@@ -17,8 +17,8 @@ export const Sidebar = () => {
               key={route.url}
               href={route.url}
               className={cn(
-                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:bg-gray-100 rounded-lg transition",
-                pathname === route.url ? "bg-gray-100" : "text-gray-600"
+                "text-sm group flex p-3 w-full justify-start font-medium cursor-pointer hover:bg-gray-100 rounded-lg transition dark:hover:bg-gray-800 dark:text-white",
+                pathname === route.url ? "bg-gray-100 dark:bg-foreground dark:text-black" : "text-gray-600 dark:text-white"
               )}
             >
               <div className="flex items-center flex-1">
