@@ -33,32 +33,32 @@ export const renderMemberIntroCard = (): TableColumn<Member>[] => [
   {
     key: "department",
     title: "事業部",
-    sortable: true,
+    sortable: false,
     render: (value: any) => <span>{value}</span>,
   },
   {
     key: "position",
     title: "役職",
-    sortable: true,
+    sortable: false,
     render: (value: any) => <span>{value}</span>,
   },
   {
     key: "hobby",
     title: "趣味・特技",
-    sortable: true,
+    sortable: false,
     render: (value: any) => <span>{value}</span>,
   },
   {
     key: "skills",
     title: "得意な技術・スキル",
-    sortable: true,
+    sortable: false,
     render: (value: any) => <span>{value}</span>,
   },
   {
     key: "freeText",
     title: "自由記載欄",
-    sortable: true,
-    render: (value: any) => <span>{value}</span>,
+    sortable: false,
+    render: (value: any) => <span className="truncate">{value}</span>,
   },
   {
     key: "createdAt",
