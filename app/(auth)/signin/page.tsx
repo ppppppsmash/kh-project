@@ -10,7 +10,7 @@ import { TextHoverEffect } from "@/components/animation-ui/text-hover-effect";
 export default function LoginPage() {
   return (
     <div className="min-h-screen w-full flex flex-col items-center justify-center p-4">
-      <div className="h-[20rem] flex items-center justify-center z-50">
+      <div className="h-[18rem] flex items-center justify-center z-50">
         <TextHoverEffect text="ADiXi" />
       </div>
       <div className="flex flex-col items-center gap-4">
