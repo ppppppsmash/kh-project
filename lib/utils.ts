@@ -1,15 +1,15 @@
-import { clsx, type ClassValue } from "clsx"
-import { twMerge } from "tailwind-merge"
-
+import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+import { format } from 'date-fns';
+import { ja } from 'date-fns/locale';
 // クラスマージ
 export const cn = (...inputs: ClassValue[]) => {
   return twMerge(clsx(inputs));
 };
 
 // 日本日付フォーマット
-export const formatDate = (date: string) => {
-  const formattedDate = new Date(date).toLocaleDateString("ja-JP", { year: "numeric", month: "short", day: "numeric" });
-  return formattedDate;
+export const formatDate = (date: Date) => {
+  return format(date, 'yyyy/MM/dd', { locale: ja });
 };
 
 // テーブルページ総数

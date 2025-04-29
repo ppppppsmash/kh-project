@@ -1,7 +1,7 @@
 import { pgTable, varchar, uuid, timestamp } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 
-export const member = pgTable("member", {
+export const members = pgTable("members", {
   id: uuid("id").primaryKey().$defaultFn(uuidv7),
   name: varchar("name", { length: 255 }).notNull(),
   department: varchar("department", { length: 255 }).notNull(),
