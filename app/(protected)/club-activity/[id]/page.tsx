@@ -43,7 +43,7 @@ export default async function ClubActivitySlugPage({ params }: Props) {
           <h1 className="text-3xl font-bold tracking-tight">{club.name}</h1>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="h-4 w-4" />
-            <span>作成日: {formatDate(club.createdAt.toISOString())}</span>
+            <span>作成日: {formatDate(club.createdAt)}</span>
           </div>
         </div>
         <ShareButton id={id} dir="club-activity" />
@@ -60,7 +60,7 @@ export default async function ClubActivitySlugPage({ params }: Props) {
         </CardHeader>
         <CardContent>
           <div className="space-y-2">
-            <p className="text-sm text-muted-foreground">最終更新日: {formatDate(club.updatedAt.toISOString())}</p>
+            <p className="text-sm text-muted-foreground">最終更新日: {formatDate(club.updatedAt ?? new Date())}</p>
           </div>
         </CardContent>
       </Card>

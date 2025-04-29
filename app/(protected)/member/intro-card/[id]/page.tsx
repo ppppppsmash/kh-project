@@ -73,7 +73,7 @@ export default async function IntroCardPage({ params }: Props) {
             )}
 
             <div className="text-sm text-gray-500">
-              登録日: {formatDate(member.createdAt?.toISOString() ?? "")}
+              登録日: {formatDate(member.createdAt ?? new Date())}
             </div>
           </CardContent>
         </Card>
