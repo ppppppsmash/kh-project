@@ -9,7 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ClubActivity, ClubStatus } from "@/types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { formSchema, ClubFormValues } from "@/lib/validations";
+import { clubFormSchema, ClubFormValues } from "@/lib/validations";
 
 interface ClubModalFormProps {
   isOpen: boolean;
@@ -31,7 +31,7 @@ export const ClubModalForm = ({
   const isEdit = defaultValues ? true : false;
 
   const form = useForm<ClubFormValues>({
-    resolver: zodResolver(formSchema),
+    resolver: zodResolver(clubFormSchema),
     defaultValues: {
       name: defaultValues?.name || "",
       description: defaultValues?.description || "",

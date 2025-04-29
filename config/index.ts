@@ -152,6 +152,13 @@ export const statusConfig = {
   pending: { label: "承認待ち", color: "bg-yellow-100 text-yellow-800" },
 };
 
+// タスクの進捗の設定
+export const progressConfig = {
+  pending: { label: "未着手", color: "bg-gray-100 text-gray-800" },
+  inProgress: { label: "進行中", color: "bg-blue-100 text-blue-800" },
+  completed: { label: "完了", color: "bg-green-100 text-green-800" },
+};
+
 export const clubActivityItems = [
   {
     title: "部活動名",

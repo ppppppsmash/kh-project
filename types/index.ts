@@ -1,5 +1,5 @@
 export type ClubStatus = "active" | "inactive" | "pending";
-export type TaskProgress = "未着手" | "進行中" | "完了";
+export type TaskProgress = "pending" | "inProgress" | "completed";
 
 export type ClubActivity = {
   id: string;

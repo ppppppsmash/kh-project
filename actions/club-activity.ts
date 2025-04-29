@@ -4,7 +4,7 @@ import { db } from "@/db";
 import { clubActivity } from "@/db/shecma/club-activity";
 import { eq } from "drizzle-orm";
 import { ClubFormValues } from "@/lib/validations";
-import { ClubStatus, ClubActivity } from "@/types";
+import type { ClubStatus, ClubActivity } from "@/types";
 
 export const createClubActivity = async (data: ClubFormValues) => {
   const club = await db.insert(clubActivity).values(data).returning();

@@ -3,7 +3,7 @@
 import { useModal } from "@/hooks/use-modal";
 import { useSubmit } from "@/lib/submitHandler";
 import { AppTable } from "@/components/app-table";
-import { ClubModalForm } from "@/components/app-modal";
+import { ClubModalForm } from "@/components/app-modal/club-modal-form";
 import { createClubActivity, updateClubActivity } from "@/actions/club-activity";
 import { AddButton } from "@/components/add-button";
 import { CustomToast } from "@/components/ui/toast";

@@ -1,17 +1,27 @@
-import * as z from "zod"
+import { z } from "zod"
 
-export const formSchema = z.object({
-  id: z.string().optional(),
+export const taskFormSchema = z.object({
+  title: z.string().min(1, "項目名は必須です"),
+  content: z.string().min(1, "内容は必須です"),
+  assignee: z.string().min(1, "担当者は必須です"),
+  dueDate: z.string().min(1, "期限は必須です"),
+  progress: z.enum(["pending", "inProgress", "completed"]),
+  progressDetails: z.string().optional(),
+  link: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
+  notes: z.string().optional(),
+});
+
+export type TaskFormValues = z.infer<typeof taskFormSchema>
+
+export const clubFormSchema = z.object({
   name: z.string().min(1, "部活動名は必須です"),
-  leader: z.string().min(1, "部長名は必須です"),
   description: z.string().optional(),
-  memberCount: z.number().min(1, "部員数は必須です"),
+  leader: z.string().min(1, "部長は必須です"),
+  memberCount: z.number().min(1, "メンバー数は必須です"),
   activityType: z.string().optional(),
   status: z.enum(["active", "inactive", "pending"]),
   location: z.string().optional(),
   detail: z.string().optional(),
-  createdAt: z.date().optional(),
-  updatedAt: z.date().optional(),
 });
 
-export type ClubFormValues = z.infer<typeof formSchema>
+export type ClubFormValues = z.infer<typeof clubFormSchema>
