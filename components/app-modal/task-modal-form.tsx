@@ -10,7 +10,6 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { formatDate } from "@/lib/utils";
 
 interface TaskModalFormProps {
   isOpen: boolean;
@@ -51,7 +50,6 @@ export const TaskModalForm = ({
         ...data,
         dueDate: new Date(data.dueDate),
         link: data.link || "",
-        progress: data.progress || "pending",
         progressDetails: data.progressDetails || "",
         notes: data.notes || "",
       };
@@ -69,11 +67,15 @@ export const TaskModalForm = ({
   useEffect(() => {
     if (isOpen) {
       if (defaultValues) {
+        const dueDate = defaultValues.dueDate
+          ? new Date(defaultValues.dueDate).toISOString().split('T')[0]
+          : "";
+        
         form.reset({
           title: defaultValues.title || "",
           content: defaultValues.content || "",
           assignee: defaultValues.assignee || "",
-          dueDate: defaultValues.dueDate ? formatDate(defaultValues.dueDate) : "",
+          dueDate,
           progress: defaultValues.progress || "pending",
           progressDetails: defaultValues.progressDetails || "",
           link: defaultValues.link || "",

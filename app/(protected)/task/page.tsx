@@ -35,7 +35,7 @@ export default function TaskPage() {
       closeModal();
       CustomToast.success(currentData ? "タスクを更新しました" : "タスクを登録しました");
       setCurrentData(null);
-      queryClient.invalidateQueries({ queryKey: ["task"] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
     onError: () => {
       CustomToast.error(currentData ? "タスクの更新に失敗しました" : "タスクの登録に失敗しました");
@@ -57,15 +57,15 @@ export default function TaskPage() {
     e.stopPropagation();
     setCurrentData(row);
     setIsDeleteDialogOpen(true);
-  }
+  };
 
   const handleDeleteConfirm = async () => {
     if (currentData) {
       await deleteTask(currentData.id);
-      CustomToast.success("部活動を削除しました");
+      CustomToast.success("タスクを削除しました");
       setIsDeleteDialogOpen(false);
       setCurrentData(null);
-      queryClient.invalidateQueries({ queryKey: ["task"] });
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
     }
   };
 
