@@ -1,4 +1,5 @@
 export type ClubStatus = "active" | "inactive" | "pending";
+export type TaskProgress = "未着手" | "進行中" | "完了";
 
 export type ClubActivity = {
   id: string;
@@ -28,6 +29,21 @@ export type Member = {
   skills: string;
   freeText?: string;
   photoUrl?: string;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+export type Task = {
+  id: string;
+  title: string;
+  content: string;
+  assignee: string;
+  dueDate: Date;
+  progress: TaskProgress;
+  progressDetails: string;
+  link: string;
+  notes: string;
+  completedAt?: Date;
   createdAt: Date;
   updatedAt: Date;
 };

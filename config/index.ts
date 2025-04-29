@@ -25,8 +25,8 @@ export const navConfig = {
       icon: IconDashboard,
     },
     {
-      title: "TODOリスト",
-      url: "/todo-list",
+      title: "タスク管理",
+      url: "/task",
       icon: IconListCheck,
     },
     {
