@@ -1,11 +1,12 @@
 "use server";
 
 import { db } from "@/db";
-import { member } from "@/db/shecma/member";
+import { members } from "@/db/shecma/members";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { uploadImage } from "@/lib/uploadImage";
 import type { Member } from "@/types";
+
 type IntroCardFormValues = {
   name: string;
   department: string;
@@ -23,7 +24,7 @@ export const createIntroCard = async (data: IntroCardFormValues) => {
     photoUrl = await uploadImage(data.photo);
   }
 
-  const [newMember] = await db.insert(member).values({
+  const [newMember] = await db.insert(members).values({
     name: data.name,
     department: data.department,
     position: data.position,
@@ -38,8 +39,8 @@ export const createIntroCard = async (data: IntroCardFormValues) => {
 };
 
 export const getIntroCards = async (): Promise<Member[]> => {
-  const members = await db.select().from(member);
-  return members.map((member) => ({
+  const membersData = await db.select().from(members);
+  return membersData.map((member) => ({
     ...member,
     photoUrl: member.photoUrl ?? undefined,
     freeText: member.freeText ?? undefined,
@@ -49,6 +50,6 @@ export const getIntroCards = async (): Promise<Member[]> => {
 };
 
 export const getIntroCardById = async (id: string) => {
-  const [memberData] = await db.select().from(member).where(eq(member.id, id));
+  const [memberData] = await db.select().from(members).where(eq(members.id, id));
   return memberData;
 };
