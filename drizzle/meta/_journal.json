@@ -36,6 +36,20 @@
       "when": 1744730526133,
       "tag": "0004_polite_rick_jones",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1745927352438,
+      "tag": "0005_whole_menace",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1745928055049,
+      "tag": "0006_worthless_brood",
+      "breakpoints": true
     }
   ]
 }
