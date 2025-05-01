@@ -23,7 +23,7 @@ export default async function ClubActivityDetailPage({ params }: Props) {
         <div className="space-y-5">
           <div className="flex items-center gap-2">
             <Button variant="outline" size="icon">
-              <Link href={`/kangen-public/club-activity`}>
+              <Link href={`/adixi-public/club-activity`}>
                 <ArrowLeft className="h-4 w-4" />
               </Link>
             </Button>

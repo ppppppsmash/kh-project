@@ -1,4 +1,4 @@
-import { Header } from "../kangen-public/_components/header";
+import { Header } from "../adixi-public/_components/header";
 
 export default function ExternalLayout({ children }: { children: React.ReactNode }) {
   return (

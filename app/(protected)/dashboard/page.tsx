@@ -51,7 +51,7 @@ export default function DashboardPage() {
         <h3 className="text-lg font-bold">ガイドページ</h3>
 
         <Button variant="outline" className="w-fit">
-          <Link target="_blank" href="/kangen-public/intro-card/">パブリックページへ</Link>
+          <Link target="_blank" href="/adixi-public/intro-card/">パブリックページへ</Link>
         </Button>
       </div>
 

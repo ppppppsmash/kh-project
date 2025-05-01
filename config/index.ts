@@ -200,12 +200,12 @@ export const clubActivityItems = [
 export const externalNavConfig = [
   {
     title: "自己紹介登録",
-    url: "/kangen-public/intro-card",
+    url: "/adixi-public/intro-card",
     icon: IconUser,
   },
   {
     title: "部活動一覧",
-    url: "/kangen-public/club-activity",
+    url: "/adixi-public/club-activity",
     icon: IconConfetti,
   },
 ];
