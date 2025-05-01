@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import { formatDate } from "@/lib/utils";
+
 type Props = {
   params: Promise<{ id: string }>;
 };
@@ -69,13 +70,11 @@ export default async function IntroCardPage({ params }: Props) {
             <p className="whitespace-pre-line">{member.skills}</p>
           </div>
 
-          
-
           <div className="text-sm text-gray-500">
-            登録日: {formatDate(member.createdAt ?? new Date())}
+            登録日: {formatDate(member.createdAt ?? new Date(), "yyyy/MM/dd HH:mm")}
           </div>
         </CardContent>
       </Card>
     </div>
   );
-} 
+}

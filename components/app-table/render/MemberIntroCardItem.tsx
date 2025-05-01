@@ -66,7 +66,7 @@ export const renderMemberIntroCard = (): TableColumn<Member>[] => [
     sortable: true,
     render: (value: any) => (
       <span>
-        {value ? formatDate(value) : "-"}
+        {value ? formatDate(value, "yyyy/MM/dd HH:mm") : "-"}
       </span>
     ),
   },
