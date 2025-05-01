@@ -44,14 +44,6 @@ export default function TaskPage() {
     },
   });
 
-  const handleAdd = () => {
-    // Sheetを開く前にselectedTaskとcurrentDataをリセット
-    setSelectedTask(null);
-    // 新規登録の場合はcurrentDataをnullにする
-    setCurrentData(null);
-    openModal();
-  };
-
   const handleEdit = (row: Task, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedTask(row);
@@ -61,8 +53,9 @@ export default function TaskPage() {
 
   const handleDelete = (row: Task, e: React.MouseEvent) => {
     e.stopPropagation();
+    setCurrentData(row);
     setSelectedTask(row);
-    // TODO: 削除確認ダイアログの表示
+    setIsDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
@@ -73,6 +66,14 @@ export default function TaskPage() {
       setCurrentData(null);
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     }
+  };
+
+  const handleAdd = () => {
+    // Sheetを開く前にselectedTaskとcurrentDataをリセット
+    setSelectedTask(null);
+    // 新規登録の場合はcurrentDataをnullにする
+    setCurrentData(null);
+    openModal();
   };
 
   return (
@@ -91,7 +92,7 @@ export default function TaskPage() {
         loading={isLoading}
         searchableKeys={["title", "assignee", "dueDate", "progress"]}
         onRowClick={(row: Task) => {
-          setSelectedTask(row as Task);
+          setSelectedTask(row);
           setIsDetailOpen(true);
         }}
       />
@@ -102,12 +103,14 @@ export default function TaskPage() {
         onClose={() => setIsDetailOpen(false)}
         onEdit={(task) => {
           setSelectedTask(task);
+          setCurrentData(task);
           setIsDetailOpen(false);
           openModal();
         }}
-        onDelete={(taskId) => {
-          // TODO: 削除APIの呼び出し
-          console.log('タスク削除:', taskId);
+        onDelete={(task) => {
+          setSelectedTask(task);
+          setCurrentData(task);
+          setIsDeleteDialogOpen(true);
           setIsDetailOpen(false);
         }}
       />

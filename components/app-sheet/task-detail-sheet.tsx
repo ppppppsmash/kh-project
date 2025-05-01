@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Trash2 } from "lucide-react";
+import { Pencil, Trash2, ListTodo, Clock, Check } from "lucide-react";
 import { Task } from "@/types";
 import {
   Sheet,
@@ -9,16 +9,29 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Badge } from "@/components/ui/badge";
-import { formatDate } from "@/lib/utils";
+import { formatDate, getProgressColor, getProgressLabel } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+
 
 interface TaskDetailSheetProps {
   task: Task | null;
   isOpen: boolean;
   onClose: () => void;
   onEdit: (task: Task) => void;
-  onDelete: (taskId: string) => void;
+  onDelete: (task: Task) => void;
 }
+
+// タスク進捗アイコン
+export const getProgressIcon = (progress: Task["progress"]) => {
+  switch (progress) {
+    case "pending":
+      return <ListTodo className="h-3.5 w-3.5" />;
+    case "inProgress":
+      return <Clock className="h-3.5 w-3.5" />;
+    case "completed":
+      return <Check className="h-3.5 w-3.5" />;
+  }
+};
 
 export const TaskDetailSheet = ({
   task,
@@ -29,28 +42,6 @@ export const TaskDetailSheet = ({
 }: TaskDetailSheetProps) => {
   if (!task) return null;
 
-  const getProgressColor = (progress: Task["progress"]) => {
-    switch (progress) {
-      case "pending":
-        return "bg-gray-500";
-      case "inProgress":
-        return "bg-blue-500";
-      case "completed":
-        return "bg-green-500";
-    }
-  };
-
-  const getProgressLabel = (progress: Task["progress"]) => {
-    switch (progress) {
-      case "pending":
-        return "未着手";
-      case "inProgress":
-        return "進行中";
-      case "completed":
-        return "完了";
-    }
-  };
-
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="w-full sm:max-w-4xl">
@@ -58,6 +49,7 @@ export const TaskDetailSheet = ({
           <SheetTitle className="text-2xl">{task.title}</SheetTitle>
           <div className="flex items-center gap-2">
             <Badge className={`${getProgressColor(task.progress)} text-white`}>
+              {getProgressIcon(task.progress)}
               {getProgressLabel(task.progress)}
             </Badge>
             <span className="text-sm text-gray-500">
@@ -125,7 +117,7 @@ export const TaskDetailSheet = ({
             <Button
               variant="destructive"
               size="sm"
-              onClick={() => onDelete(task.id)}
+              onClick={() => onDelete(task)}
             >
               <Trash2 className="h-4 w-4" />
               削除
