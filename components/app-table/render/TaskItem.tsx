@@ -6,7 +6,8 @@ import type { Task } from "@/types";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { progressConfig } from "@/config";
+import { getProgressIcon } from "@/components/app-sheet/task-detail-sheet";
+import { getProgressLabel, getProgressColor } from "@/lib/utils";
 
 type TaskColumnOptions = {
   onEdit?: (row: Task, e: React.MouseEvent) => void;
@@ -33,30 +34,23 @@ export const renderTask = ({
     key: "createdAt",
     title: "起票日",
     sortable: false,
-    render: (value: any) => <span>{value ? formatDate(value) : "-"}</span>,
+    render: (value: any) => <span>{value ? formatDate(value, "yyyy/MM/dd HH:mm") : "-"}</span>,
   },
   {
     key: "dueDate",
     title: "期限",
     sortable: false,
-    render: (value: any) => <span>{value ? formatDate(value) : "-"}</span>,
+    render: (value: any) => <span>{value ? formatDate(value, "yyyy/MM/dd") : "-"}</span>,
   },
   {
     key: "progress",
     title: "進捗",
     sortable: false,
-    // render: (_, row: any) => {
-    //   const config = progressConfig[row.progress as keyof typeof progressConfig];
-    //   return (
-    //     <Badge variant="outline" className={cn("font-normal", config.color)}>
-    //       {row.progress}
-    //     </Badge>
-    //   );
-    // },
     render: (value: any) => {
       return (
-        <Badge variant="outline" className={cn("font-normal")}>
-          {value}
+        <Badge variant="outline" className={cn("font-normal text-white", getProgressColor(value))}>
+          {getProgressIcon(value)}
+          {getProgressLabel(value)}
         </Badge>
       );
     },
@@ -79,7 +73,7 @@ export const renderTask = ({
     sortable: true,
     render: (value: any) => (
       <span>
-        {value ? formatDate(value) : "-"}
+        {value ? formatDate(value, "yyyy/MM/dd") : "-"}
       </span>
     ),
   },
