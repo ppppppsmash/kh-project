@@ -1,4 +1,4 @@
-import { pgTable, varchar, uuid, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, varchar, uuid, timestamp, boolean } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 
 export const tasks = pgTable("tasks", {
@@ -12,6 +12,7 @@ export const tasks = pgTable("tasks", {
   link: varchar("link", { length: 255 }).notNull(),
   notes: varchar("notes", { length: 255 }).notNull(),
   completedAt: timestamp("completed_at"),
+  isPublic: boolean("is_public").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()),
 });

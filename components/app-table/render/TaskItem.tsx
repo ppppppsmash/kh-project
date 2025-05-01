@@ -1,11 +1,11 @@
+import type { Task } from "@/types";
+import { MoreHorizontal, Pencil, Trash, Eye, EyeOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Switch } from "@/components/ui/switch";
 import { TableColumn } from "@/components/app-table";
-import { formatDate } from "@/lib/utils";
-import type { Task } from "@/types";
+import { cn, formatDate } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal, Pencil, Trash } from "lucide-react";
-import { cn } from "@/lib/utils";
 import { getProgressIcon } from "@/components/app-sheet/task-detail-sheet";
 import { getProgressLabel, getProgressColor } from "@/lib/utils";
 
@@ -55,19 +55,19 @@ export const renderTask = ({
       );
     },
   },
-  {
-    key: "progressDetails",
-    title: "詳細",
-    sortable: false,
-    render: (value: any) => <span>{value}</span>,
-  },
-  {
-    key: "link",
-    title: "リンク",
-    sortable: false,
-    hide: "sm",
-    render: (value: any) => <span className="truncate">{value}</span>,
-  },
+  // {
+  //   key: "progressDetails",
+  //   title: "対応内容",
+  //   sortable: false,
+  //   render: (value: any) => <span>{value}</span>,
+  // },
+  // {
+  //   key: "link",
+  //   title: "リンク",
+  //   sortable: false,
+  //   hide: "sm",
+  //   render: (value: any) => <span className="truncate">{value}</span>,
+  // },
   {
     key: "completedAt",
     title: "完了日",
@@ -76,6 +76,14 @@ export const renderTask = ({
       <span>
         {value ? formatDate(value, "yyyy/MM/dd") : "-"}
       </span>
+    ),
+  },
+  {
+    key: "isPublic",
+    title: "公開",
+    sortable: false,
+    render: (value: any) => (
+      <span>{value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}</span>
     ),
   },
   ...createTaskColumns({ onEdit, onDelete }),

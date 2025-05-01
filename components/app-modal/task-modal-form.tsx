@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
+import { Switch } from "@/components/ui/switch";
 
 interface TaskModalFormProps {
   isOpen: boolean;
@@ -40,6 +41,8 @@ export const TaskModalForm = ({
       progressDetails: "",
       link: "",
       notes: "",
+      completedAt: "",
+      isPublic: false,
     },
   });
 
@@ -52,6 +55,8 @@ export const TaskModalForm = ({
         link: data.link || "",
         progressDetails: data.progressDetails || "",
         notes: data.notes || "",
+        isPublic: data.isPublic || false,
+        completedAt: data.completedAt ? new Date(data.completedAt) : undefined,
       };
       await onSubmit(taskData);
       form.reset();
@@ -91,6 +96,8 @@ export const TaskModalForm = ({
           progressDetails: "",
           link: "",
           notes: "",
+          completedAt: "",
+          isPublic: false,
         });
       }
     }
@@ -141,34 +148,55 @@ export const TaskModalForm = ({
         )}
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="dueDate">期限<span className="text-red-500">*</span></Label>
-        <Input
-          id="dueDate"
-          type="date"
-          {...form.register("dueDate")}
-          required
-        />
-        {form.formState.errors.dueDate && (
-          <p className="text-sm text-red-500">{form.formState.errors.dueDate.message}</p>
-        )}
+      <div className="flex gap-x-10 items-start">
+        <div className="space-y-2 w-full">
+          <Label htmlFor="dueDate">期限<span className="text-red-500">*</span></Label>
+          <Input
+            id="dueDate"
+            type="date"
+            {...form.register("dueDate")}
+            required
+          />
+          {form.formState.errors.dueDate && (
+            <p className="text-sm text-red-500">{form.formState.errors.dueDate.message}</p>
+          )}
+        </div>
+        <div className="space-y-2 w-full">
+            <Label htmlFor="completedAt">完了日</Label>
+            <Input
+              id="completedAt"
+              type="date"
+            {...form.register("completedAt")}
+          />
+        </div>
       </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="progress">進捗状況</Label>
-        <Select
-          value={form.watch("progress")}
-          onValueChange={(value: TaskProgress) => form.setValue("progress", value)}
-        >
-          <SelectTrigger>
-            <SelectValue placeholder="進捗状況を選択" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="pending">未着手</SelectItem>
-            <SelectItem value="inProgress">進行中</SelectItem>
-            <SelectItem value="completed">完了</SelectItem>
-          </SelectContent>
-        </Select>
+      <div className="flex gap-x-16 items-start">
+        <div className="space-y-2">
+          <Label htmlFor="progress">進捗状況</Label>
+          <Select
+            value={form.watch("progress")}
+            onValueChange={(value: TaskProgress) => form.setValue("progress", value)}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="進捗状況を選択" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="pending">未着手</SelectItem>
+              <SelectItem value="inProgress">進行中</SelectItem>
+              <SelectItem value="completed">完了</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="isPublic">公開</Label>
+          <Switch
+            id="isPublic"
+            className="mt-2"
+            checked={form.watch("isPublic")}
+              onCheckedChange={(value: boolean) => form.setValue("isPublic", value)}
+            />
+        </div>
       </div>
 
       <div className="space-y-2">

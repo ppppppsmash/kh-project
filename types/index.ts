@@ -44,6 +44,7 @@ export type Task = {
   link: string;
   notes: string;
   completedAt?: Date;
+  isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
