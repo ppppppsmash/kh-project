@@ -8,8 +8,8 @@ export const cn = (...inputs: ClassValue[]) => {
 };
 
 // 日本日付フォーマット
-export const formatDate = (date: Date) => {
-  return format(date, 'yyyy/MM/dd', { locale: ja });
+export const formatDate = (date: Date, formatString: string) => {
+  return format(date, formatString, { locale: ja });
 };
 
 // テーブルページ総数

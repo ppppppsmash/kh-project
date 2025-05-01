@@ -19,6 +19,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getTotalPages, getPaginated } from "@/lib/utils";
 import { ClubActivityTableSkeleton } from "@/components/app-skeleton";
 import { SortConfig } from "@/types";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export interface TableColumn<T> {
   key: Extract<keyof T, string> | "action";
@@ -37,13 +39,13 @@ interface TableCell<T> {
 
 const TableCellItem = <T,>({ value, render, row }: TableCell<T>) => {
   return (
-    <TableCell className="cursor-pointer hover:bg-muted/50">
+    <TableCell>
       {render ? render(value, row) : String(value)}
     </TableCell>
   )
 }
 
-interface TableProps<T extends { id: string }> {
+interface TableProps<T> {
   toolBar?: {
     researchBarPlaceholder?: string;
     researchStatusFilter?: string[];
@@ -52,21 +54,22 @@ interface TableProps<T extends { id: string }> {
   data: T[];
   loading?: boolean;
   searchableKeys?: (keyof T)[];
+  onRowClick?: (row: T) => void;
 }
 
-export function AppTable<T extends { id: string }>({
+export function AppTable<T>({
   toolBar,
   columns,
-  data: initialData,
-  loading: initialLoading = false,
+  data,
+  loading = false,
   searchableKeys = [],
+  onRowClick,
 }: TableProps<T>) {
   const router = useRouter();
   const pathname = usePathname();
   const [reload, setReload] = useState(false);
-  const [filteredData, setFilteredData] = useState<T[]>(initialData);
-  const [loading, setLoading] = useState(initialLoading);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [filteredData, setFilteredData] = useState<T[]>(data);
+  const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortConfig, setSortConfig] = useState<SortConfig<T> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
@@ -75,29 +78,27 @@ export function AppTable<T extends { id: string }>({
   useEffect(() => {
     const fetchData = async () => {
       try {
-        setFilteredData(initialData);
+        setFilteredData(data);
         setReload(true);
       } catch (error) {
         console.error("データの取得に失敗しました:", error);
-      } finally {
-        setLoading(false);
       }
     };
 
     fetchData();
-  }, [reload]);
+  }, [data]);
 
   // 検索、フィルタリング、ソートを適用
   useEffect(() => {
-    let result = [...initialData];
+    let result = [...data];
     // 検索フィルタリング
-    if (searchTerm && searchableKeys) {
+    if (searchQuery && searchableKeys) {
       result = result.filter((v) =>
         searchableKeys.some((key) => {
           const value = v[key];
           return (
             typeof value === "string" &&
-            value.toLowerCase().includes(searchTerm.toLowerCase())
+            value.toLowerCase().includes(searchQuery.toLowerCase())
           );
         })
       );
@@ -130,7 +131,7 @@ export function AppTable<T extends { id: string }>({
 
     setFilteredData(result);
     setCurrentPage(1);
-  }, [initialData, searchTerm, statusFilter, sortConfig]);
+  }, [data, searchQuery, statusFilter, sortConfig]);
 
   // ソート処理
   const handleSort = (key: keyof T) => {
@@ -139,12 +140,6 @@ export function AppTable<T extends { id: string }>({
       direction = "desc";
     }
     setSortConfig({ key, direction });
-  };
-
-  // 行クリック処理
-  const handleRowClick = (id: string) => {
-    // router.push(`/club-activity/${id}`);
-    router.push(`${pathname}/${id}`);
   };
 
   // ページネーション
@@ -167,19 +162,19 @@ export function AppTable<T extends { id: string }>({
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder={toolBar.researchBarPlaceholder}
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                   className="pl-8"
                 />
-                {searchTerm && (
+                {searchQuery && (
                   <Button
                     variant="ghost"
                     size="icon"
                     className="absolute right-0 top-0 h-9 w-9"
-                    onClick={() => setSearchTerm("")}
+                    onClick={() => setSearchQuery("")}
                   >
                     <X className="h-4 w-4" />
-                    </Button>
+                  </Button>
                 )}
               </div>
             </div>
@@ -187,24 +182,24 @@ export function AppTable<T extends { id: string }>({
           {toolBar?.researchStatusFilter && (
             <div className="flex items-center gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[200px]">
-                <div className="flex items-center gap-2">
-                  <Filter className="h-4 w-4" />
-                  <SelectValue placeholder="ステータスでフィルター" />
-                </div>
-              </SelectTrigger>
-              <SelectContent>
-                {toolBar.researchStatusFilter?.map((status) => (
-                  <SelectItem key={status} value={status}>{status}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            {(searchTerm || statusFilter !== "all" || sortConfig) && (
-              <Button variant="ghost" size="sm" onClick={() => {
-                setSearchTerm("");
-                setStatusFilter("all");
-                setSortConfig(null);
-              }}>
+                <SelectTrigger className="w-[200px]">
+                  <div className="flex items-center gap-2">
+                    <Filter className="h-4 w-4" />
+                    <SelectValue placeholder="ステータスでフィルター" />
+                  </div>
+                </SelectTrigger>
+                <SelectContent>
+                  {toolBar.researchStatusFilter?.map((status) => (
+                    <SelectItem key={status} value={status}>{status}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              {(searchQuery || statusFilter !== "all" || sortConfig) && (
+                <Button variant="ghost" size="sm" onClick={() => {
+                  setSearchQuery("");
+                  setStatusFilter("all");
+                  setSortConfig(null);
+                }}>
                   <X className="h-4 w-4" />
                   リセット
                 </Button>
@@ -258,31 +253,40 @@ export function AppTable<T extends { id: string }>({
                   </TableHead>
                 );
               })}
-
             </TableRow>
           </TableHeader>
           <TableBody>
-            {paginatedData.length === 0 ? (
+            {loading ? (
+              Array.from({ length: 5 }).map((_, index) => (
+                <TableRow key={index}>
+                  {columns.map((column) => (
+                    <TableCell key={String(column.key)}>
+                      <Skeleton className="h-4 w-[100px]" />
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : paginatedData.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-24 text-center">
                   検索条件に一致するデータがありません
                 </TableCell>
               </TableRow>
             ) : (
-              paginatedData.map((data) => (
+              paginatedData.map((row, index) => (
                 <TableRow
-                  key={data.id}
-                  className="cursor-pointer hover:bg-muted/50"
-                  onClick={() => handleRowClick(data.id)}
+                  key={index}
+                  className={onRowClick ? "cursor-pointer hover:bg-muted/50" : ""}
+                  onClick={() => onRowClick?.(row)}
                 >
                   {columns.map((column) => (
-                  <TableCellItem
-                    key={column.key as string}
-                    value={data[column.key as keyof T]}
-                    render={column.render}
-                    row={data}
-                  />
-                ))}
+                    <TableCellItem
+                      key={column.key as string}
+                      value={row[column.key as keyof T]}
+                      render={column.render}
+                      row={row}
+                    />
+                  ))}
                 </TableRow>
               ))
             )}

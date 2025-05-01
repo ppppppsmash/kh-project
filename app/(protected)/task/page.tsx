@@ -8,6 +8,7 @@ import { AddButton } from "@/components/add-button";
 import { AppTable } from "@/components/app-table";
 import { renderTask } from "@/components/app-table/render/TaskItem";
 import { useGetTasks } from "@/components/app-table/hooks/use-table-data";
+import { TaskDetailSheet } from "@/components/app-sheet/task-detail-sheet";
 import { TaskModalForm } from "@/components/app-modal/task-modal-form";
 import { CustomToast } from "@/components/ui/toast";
 import { useSubmit } from "@/lib/submitHandler";
@@ -18,7 +19,8 @@ import { Button } from "@/components/ui/button";
 export default function TaskPage() {
   const queryClient = useQueryClient();
   const { data: tasks, isLoading } = useGetTasks();
-
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
   const [currentData, setCurrentData] = useState<Task | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -43,20 +45,24 @@ export default function TaskPage() {
   });
 
   const handleAdd = () => {
+    // Sheetを開く前にselectedTaskとcurrentDataをリセット
+    setSelectedTask(null);
+    // 新規登録の場合はcurrentDataをnullにする
     setCurrentData(null);
     openModal();
   };
 
   const handleEdit = (row: Task, e: React.MouseEvent) => {
     e.stopPropagation();
+    setSelectedTask(row);
     setCurrentData(row);
     openModal();
   };
 
   const handleDelete = (row: Task, e: React.MouseEvent) => {
     e.stopPropagation();
-    setCurrentData(row);
-    setIsDeleteDialogOpen(true);
+    setSelectedTask(row);
+    // TODO: 削除確認ダイアログの表示
   };
 
   const handleDeleteConfirm = async () => {
@@ -81,20 +87,41 @@ export default function TaskPage() {
           onEdit: handleEdit,
           onDelete: handleDelete,
         })}
-        data={tasks || []}
+        data={tasks ?? []}
         loading={isLoading}
         searchableKeys={["title", "assignee", "dueDate", "progress"]}
+        onRowClick={(row: Task) => {
+          setSelectedTask(row as Task);
+          setIsDetailOpen(true);
+        }}
+      />
+
+      <TaskDetailSheet
+        task={selectedTask}
+        isOpen={isDetailOpen}
+        onClose={() => setIsDetailOpen(false)}
+        onEdit={(task) => {
+          setSelectedTask(task);
+          setIsDetailOpen(false);
+          openModal();
+        }}
+        onDelete={(taskId) => {
+          // TODO: 削除APIの呼び出し
+          console.log('タスク削除:', taskId);
+          setIsDetailOpen(false);
+        }}
       />
 
       <TaskModalForm
         isOpen={isOpen}
         onClose={() => {
           closeModal();
+          setSelectedTask(null);
           setCurrentData(null);
         }}
         onSubmit={handleSubmit}
-        defaultValues={currentData || undefined}
-        title={currentData ? "タスクの編集" : "新規タスク登録"}
+        defaultValues={selectedTask ?? undefined}
+        title={selectedTask ? "タスク編集" : "新規タスク登録"}
       />
 
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
