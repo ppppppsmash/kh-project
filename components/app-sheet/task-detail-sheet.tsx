@@ -44,7 +44,7 @@ export const TaskDetailSheet = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-full sm:max-w-4xl">
+      <SheetContent className="w-full sm:max-w-2xl">
         <SheetHeader className="mb-6">
           <SheetTitle className="text-2xl">{task.title}</SheetTitle>
           <div className="flex items-center gap-2">

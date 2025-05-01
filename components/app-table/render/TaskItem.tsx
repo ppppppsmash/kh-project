@@ -65,6 +65,7 @@ export const renderTask = ({
     key: "link",
     title: "リンク",
     sortable: false,
+    hide: "sm",
     render: (value: any) => <span className="truncate">{value}</span>,
   },
   {
