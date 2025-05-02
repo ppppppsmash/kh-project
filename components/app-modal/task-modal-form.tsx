@@ -76,16 +76,25 @@ export const TaskModalForm = ({
         const dueDate = defaultValues.dueDate
           ? new Date(defaultValues.dueDate).toISOString().split('T')[0]
           : "";
+        const startedAt = defaultValues.startedAt
+          ? new Date(defaultValues.startedAt).toISOString().split('T')[0]
+          : "";
+        const completedAt = defaultValues.completedAt
+          ? new Date(defaultValues.completedAt).toISOString().split('T')[0]
+          : "";
         
         form.reset({
           title: defaultValues.title || "",
           content: defaultValues.content || "",
           assignee: defaultValues.assignee || "",
           dueDate,
+          startedAt,
+          completedAt,
           progress: defaultValues.progress || "pending",
           progressDetails: defaultValues.progressDetails || "",
           link: defaultValues.link || "",
           notes: defaultValues.notes || "",
+          isPublic: defaultValues.isPublic || false,
         });
       } else {
         form.reset({
@@ -163,7 +172,7 @@ export const TaskModalForm = ({
           )}
         </div>
         <div className="space-y-2 w-full">
-          <Label htmlFor="dueDate">期限<span className="text-red-500">*</span></Label>
+          <Label htmlFor="dueDate">期限日<span className="text-red-500">*</span></Label>
           <Input
             id="dueDate"
             type="date"

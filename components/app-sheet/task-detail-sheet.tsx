@@ -60,14 +60,15 @@ export const TaskDetailSheet = ({
 
         <div className="space-y-6 p-6">
           <div>
-            <h3 className="text-sm font-medium text-gray-500 mb-1">内容</h3>
-            <p className="text-gray-900 whitespace-pre-wrap">{task.content}</p>
+            <h3 className="text-sm font-medium text-gray-500 mb-1">担当者</h3>
+            <p className="text-gray-900">{task.assignee}</p>
           </div>
-
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <h3 className="text-sm font-medium text-gray-500 mb-1">担当者</h3>
-              <p className="text-gray-900">{task.assignee}</p>
+              <h3 className="text-sm font-medium text-gray-500 mb-1">起票日</h3>
+              <p className="text-gray-900">
+                {formatDate(task.startedAt, "yyyy/MM/dd")}
+              </p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-1">期限</h3>
@@ -75,6 +76,11 @@ export const TaskDetailSheet = ({
                 {formatDate(task.dueDate, "yyyy/MM/dd")}
               </p>
             </div>
+          </div>
+
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 mb-1">内容</h3>
+            <p className="text-gray-900 whitespace-pre-wrap">{task.content}</p>
           </div>
 
           {task.progressDetails && (
