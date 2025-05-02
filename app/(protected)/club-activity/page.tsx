@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useModal } from "@/hooks/use-modal";
 import { useSubmit } from "@/lib/submitHandler";
 import { AppTable } from "@/components/app-table";
@@ -19,7 +20,7 @@ import { useGetClubActivities } from "@/components/app-table/hooks/use-table-dat
 export default function ClubActivityPage() {
   const queryClient = useQueryClient();
   const { data: activities, isLoading } = useGetClubActivities();
-
+  const router = useRouter();
   const { isOpen, openModal, closeModal } = useModal();
   const [currentData, setCurrentData] = useState<ClubActivity | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -86,6 +87,9 @@ export default function ClubActivityPage() {
         data={activities || []}
         loading={isLoading}
         searchableKeys={["name", "leader", "description", "memberCount", "status"]}
+        onRowClick={(row: ClubActivity) => {
+          router.push(`/club-activity/${row.id}`);
+        }}
       />
 
       <ClubModalForm

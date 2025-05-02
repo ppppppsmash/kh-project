@@ -19,7 +19,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getTotalPages, getPaginated } from "@/lib/utils";
 import { ClubActivityTableSkeleton } from "@/components/app-skeleton";
 import { SortConfig } from "@/types";
-import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export interface TableColumn<T> {
