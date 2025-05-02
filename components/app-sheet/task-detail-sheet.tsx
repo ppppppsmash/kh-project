@@ -44,7 +44,7 @@ export const TaskDetailSheet = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
-      <SheetContent className="w-full sm:max-w-2xl">
+      <SheetContent className="w-full sm:max-w-2xl overflow-y-auto">
         <SheetHeader>
           <SheetTitle className="text-2xl">{task.title}</SheetTitle>
           <div className="flex items-center gap-2">
@@ -85,7 +85,7 @@ export const TaskDetailSheet = ({
 
           {task.progressDetails && (
             <div>
-              <h3 className="text-sm font-medium text-gray-500 mb-1">対応内容</h3>
+              <h3 className="text-sm font-medium text-gray-500 mb-1">進捗状況・対応内容</h3>
               <p className="text-gray-900 whitespace-pre-wrap">{task.progressDetails}</p>
             </div>
           )}
