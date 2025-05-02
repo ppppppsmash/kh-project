@@ -19,7 +19,7 @@ export default async function middleware(request: NextRequest) {
 
   if (isAuthPage) {
     if (session) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
+      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
     return NextResponse.next();
   }
@@ -29,13 +29,6 @@ export default async function middleware(request: NextRequest) {
   }
 
   if (isSharePage) {
-    return NextResponse.next();
-  }
-
-  if (isAuthPage) {
-    if (session) {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
     return NextResponse.next();
   }
 

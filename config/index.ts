@@ -21,22 +21,22 @@ export const navConfig = {
   navMain: [
     {
       title: "ダッシュボード",
-      url: "/dashboard",
+      url: "/admin/dashboard",
       icon: IconDashboard,
     },
     {
       title: "タスク管理",
-      url: "/task",
+      url: "/admin/task",
       icon: IconListCheck,
     },
     {
       title: "メンバー",
-      url: "/member",
+      url: "/admin/member",
       icon: IconUser,
       items: [
         {
           title: "自己紹介一覧",
-          url: "/member/intro-card",
+          url: "/admin/member/intro-card",
         },
       ],
     },
@@ -57,7 +57,7 @@ export const navConfig = {
     // },
     {
       title: "部活動",
-      url: "/club-activity",
+      url: "/admin/club-activity",
       icon: IconConfetti,
     },
   ],
@@ -198,6 +198,11 @@ export const clubActivityItems = [
 
 // 外部のナビゲーションの設定
 export const externalNavConfig = [
+  {
+    title: "QA一覧",
+    url: "/adixi-public/qa",
+    icon: IconHelp,
+  },
   {
     title: "自己紹介登録",
     url: "/adixi-public/intro-card",

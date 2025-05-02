@@ -7,6 +7,8 @@ type ClientType = {
   clientSecret: string;
 };
 
+const GOOGLE_ADMIN_EMAIL_DOMAIN = process.env.GOOGLE_ADMIN_EMAIL_DOMAIN as string;
+
 const { handlers } = NextAuth({
     providers: [
       GoogleProvider({
@@ -21,10 +23,15 @@ const { handlers } = NextAuth({
     },
     callbacks: {
       signIn: async ({ account, profile }) => {
-        if (account?.provider === "google") {
+        if (
+          account?.provider === "google" &&
+          profile?.email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)
+        ) {
           return true;
         }
-        return true;
+
+        // それ以外は拒否
+        return false;
       },
       jwt: async ({ token, user, account, profile }) => {
         if (user) {
@@ -59,7 +66,7 @@ const { handlers } = NextAuth({
       redirect: async ({ url, baseUrl }) => {
         if (url.startsWith("/")) return `${baseUrl}${url}`;
         if (url === `${baseUrl}/api/auth/signout`) return `${baseUrl}/signin`;
-        if (url === `${baseUrl}/api/auth/signin`) return `${baseUrl}/dashboard`;
+        if (url === `${baseUrl}/api/auth/signin`) return `${baseUrl}/admin/dashboard`;
 
         return url;
       },
