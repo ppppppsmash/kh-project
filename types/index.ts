@@ -43,6 +43,7 @@ export type Task = {
   progressDetails: string;
   link: string;
   notes: string;
+  startedAt: Date;
   completedAt?: Date;
   isPublic: boolean;
   createdAt: Date;

@@ -9,6 +9,7 @@ export const taskFormSchema = z.object({
   progressDetails: z.string().optional(),
   link: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
   notes: z.string().optional(),
+  startedAt: z.string(),
   completedAt: z.string().optional(),
   isPublic: z.boolean().optional(),
 });

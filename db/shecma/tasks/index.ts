@@ -11,6 +11,7 @@ export const tasks = pgTable("tasks", {
   progressDetails: varchar("progress_details", { length: 255 }).notNull(),
   link: varchar("link", { length: 255 }).notNull(),
   notes: varchar("notes", { length: 255 }).notNull(),
+  startedAt: timestamp("started_at").notNull(),
   completedAt: timestamp("completed_at"),
   isPublic: boolean("is_public").notNull().default(false),
   createdAt: timestamp("created_at").defaultNow(),

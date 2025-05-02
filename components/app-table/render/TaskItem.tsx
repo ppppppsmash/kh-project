@@ -2,7 +2,6 @@ import type { Task } from "@/types";
 import { MoreHorizontal, Pencil, Trash, Eye, EyeOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Switch } from "@/components/ui/switch";
 import { TableColumn } from "@/components/app-table";
 import { cn, formatDate } from "@/lib/utils";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -21,7 +20,7 @@ export const renderTask = ({
   {
     key: "title",
     title: "項目",
-    sortable: true,
+    sortable: false,
     render: (value: any) => <span className="font-medium">{value}</span>,
   },
   {
@@ -31,15 +30,15 @@ export const renderTask = ({
     render: (value: any) => <span>{value}</span>,
   },
   {
-    key: "createdAt",
+    key: "startedAt",
     title: "起票日",
-    sortable: false,
-    render: (value: any) => <span>{value ? formatDate(value, "yyyy/MM/dd HH:mm") : "-"}</span>,
+    sortable: true,
+    render: (value: any) => <span>{value ? formatDate(value, "yyyy/MM/dd") : "-"}</span>,
   },
   {
     key: "dueDate",
-    title: "期限",
-    sortable: false,
+    title: "期限日",
+    sortable: true,
     render: (value: any) => <span>{value ? formatDate(value, "yyyy/MM/dd") : "-"}</span>,
   },
   {

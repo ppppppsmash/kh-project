@@ -55,8 +55,9 @@ export const TaskModalForm = ({
         link: data.link || "",
         progressDetails: data.progressDetails || "",
         notes: data.notes || "",
-        isPublic: data.isPublic || false,
+        startedAt: new Date(data.startedAt),
         completedAt: data.completedAt ? new Date(data.completedAt) : undefined,
+        isPublic: data.isPublic || false,
       };
       await onSubmit(taskData);
       form.reset();
@@ -150,6 +151,18 @@ export const TaskModalForm = ({
 
       <div className="flex gap-x-10 items-start">
         <div className="space-y-2 w-full">
+          <Label htmlFor="startedAt">起票日<span className="text-red-500">*</span></Label>
+          <Input
+            id="startedAt"
+            type="date"
+            {...form.register("startedAt")}
+            required
+          />
+          {form.formState.errors.dueDate && (
+            <p className="text-sm text-red-500">{form.formState.errors.dueDate.message}</p>
+          )}
+        </div>
+        <div className="space-y-2 w-full">
           <Label htmlFor="dueDate">期限<span className="text-red-500">*</span></Label>
           <Input
             id="dueDate"
@@ -200,7 +213,7 @@ export const TaskModalForm = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="progressDetails">対応内容</Label>
+        <Label htmlFor="progressDetails">進捗状況・対応内容</Label>
         <Textarea
           id="progressDetails"
           {...form.register("progressDetails")}
