@@ -13,6 +13,46 @@ type TaskColumnOptions = {
   onDelete?: (row: Task, e: React.MouseEvent) => void;
 };
 
+// タスクのフィルター処理
+export const filterTask = (data: Task[], searchQuery: string, statusFilter: string) => {
+  let result = [...data];
+
+  // 検索フィルタリング
+  if (searchQuery) {
+    result = result.filter((task) => {
+      const searchableFields = [
+        task.title,
+        task.assignee,
+        formatDate(task.dueDate, "yyyy/MM/dd"),
+        getProgressLabel(task.progress)
+      ];
+      return searchableFields.some(field => 
+        field?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    });
+  }
+
+  // ステータスフィルタリング
+  if (statusFilter !== "すべて") {
+    result = result.filter((task) => {
+      switch (task.progress) {
+        case "pending":
+          return statusFilter === "未着手";
+        case "inProgress":
+          return statusFilter === "進行中";
+        case "completed":
+          return statusFilter === "完了";
+        default:
+          return false;
+      }
+    });
+  }
+
+  return result;
+};
+
+export const getTaskStatusFilters = () => ["すべて", "未着手", "進行中", "完了"];
+
 export const renderTask = ({
   onEdit,
   onDelete,
@@ -20,7 +60,7 @@ export const renderTask = ({
   {
     key: "title",
     title: "項目",
-    sortable: false,
+    sortable: true,
     render: (value: any) => <span className="font-medium">{value}</span>,
   },
   {
@@ -44,7 +84,7 @@ export const renderTask = ({
   {
     key: "progress",
     title: "進捗",
-    sortable: false,
+    sortable: true,
     render: (value: any) => {
       return (
         <Badge variant="outline" className={cn("font-normal text-white", getProgressColor(value))}>
@@ -54,19 +94,6 @@ export const renderTask = ({
       );
     },
   },
-  // {
-  //   key: "progressDetails",
-  //   title: "対応内容",
-  //   sortable: false,
-  //   render: (value: any) => <span>{value}</span>,
-  // },
-  // {
-  //   key: "link",
-  //   title: "リンク",
-  //   sortable: false,
-  //   hide: "sm",
-  //   render: (value: any) => <span className="truncate">{value}</span>,
-  // },
   {
     key: "completedAt",
     title: "完了日",

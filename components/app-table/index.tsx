@@ -54,6 +54,7 @@ interface TableProps<T> {
   loading?: boolean;
   searchableKeys?: (keyof T)[];
   onRowClick?: (row: T) => void;
+  onFilter?: (data: T[], searchQuery: string, statusFilter: string) => T[];
 }
 
 export function AppTable<T>({
@@ -63,13 +64,14 @@ export function AppTable<T>({
   loading = false,
   searchableKeys = [],
   onRowClick,
+  onFilter,
 }: TableProps<T>) {
   const router = useRouter();
   const pathname = usePathname();
   const [reload, setReload] = useState(false);
   const [filteredData, setFilteredData] = useState<T[]>(data);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
+  const [statusFilter, setStatusFilter] = useState<string>("すべて");
   const [sortConfig, setSortConfig] = useState<SortConfig<T> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 10;
@@ -90,22 +92,23 @@ export function AppTable<T>({
   // 検索、フィルタリング、ソートを適用
   useEffect(() => {
     let result = [...data];
-    // 検索フィルタリング
-    if (searchQuery && searchableKeys) {
-      result = result.filter((v) =>
-        searchableKeys.some((key) => {
-          const value = v[key];
-          return (
-            typeof value === "string" &&
-            value.toLowerCase().includes(searchQuery.toLowerCase())
-          );
-        })
-      );
-    }
 
-    // ステータスフィルタリング
-    if (statusFilter !== "all") {
-      result = result.filter((data) => (data as any).status === statusFilter);
+    // カスタムフィルター処理
+    if (onFilter) {
+      result = onFilter(result, searchQuery, statusFilter);
+    } else {
+      // デフォルトの検索フィルタリング
+      if (searchQuery && searchableKeys) {
+        result = result.filter((v) =>
+          searchableKeys.some((key) => {
+            const value = v[key];
+            return (
+              typeof value === "string" &&
+              value.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+          })
+        );
+      }
     }
 
     // ソート
@@ -130,7 +133,7 @@ export function AppTable<T>({
 
     setFilteredData(result);
     setCurrentPage(1);
-  }, [data, searchQuery, statusFilter, sortConfig]);
+  }, [data, searchQuery, statusFilter, sortConfig, onFilter]);
 
   // ソート処理
   const handleSort = (key: keyof T) => {
@@ -155,7 +158,7 @@ export function AppTable<T>({
     <div className="space-y-4">
       {toolBar && (
         <>
-          {toolBar.researchBarPlaceholder && (
+          {toolBar?.researchBarPlaceholder && (
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               <div className="relative w-full md:w-64">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -181,7 +184,7 @@ export function AppTable<T>({
           {toolBar?.researchStatusFilter && (
             <div className="flex items-center gap-2">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[200px]">
+                <SelectTrigger className="w-[180px]">
                   <div className="flex items-center gap-2">
                     <Filter className="h-4 w-4" />
                     <SelectValue placeholder="ステータスでフィルター" />
@@ -193,13 +196,13 @@ export function AppTable<T>({
                   ))}
                 </SelectContent>
               </Select>
-              {(searchQuery || statusFilter !== "all" || sortConfig) && (
+              {(searchQuery || statusFilter !== "すべて" || sortConfig) && (
                 <Button variant="ghost" size="sm" onClick={() => {
                   setSearchQuery("");
-                  setStatusFilter("all");
+                  setStatusFilter("すべて");
                   setSortConfig(null);
                 }}>
-                  <X className="h-4 w-4" />
+                  <X className="h-3.5 w-3.5" />
                   リセット
                 </Button>
               )}
@@ -208,90 +211,88 @@ export function AppTable<T>({
         </>
       )}
 
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              {columns.map((column) => {
-                const isSorted = sortConfig?.key === column.key;
-                const sortIcon = isSorted ? (
-                  sortConfig.direction === "asc" ? (
-                    <ChevronUp className="ml-1 h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="ml-1 h-4 w-4" />
-                  )
+      <Table>
+        <TableHeader>
+          <TableRow>
+            {columns.map((column) => {
+              const isSorted = sortConfig?.key === column.key;
+              const sortIcon = isSorted ? (
+                sortConfig.direction === "asc" ? (
+                  <ChevronUp className="ml-1 h-4 w-4" />
                 ) : (
-                  column.sortable && <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />
-                );
+                  <ChevronDown className="ml-1 h-4 w-4" />
+                )
+              ) : (
+                column.sortable && <ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />
+              );
 
-                const className = [
-                  "cursor-pointer hover:bg-muted/50",
-                  column.hide === "md" ? "hidden md:table-cell" : "",
-                  column.hide === "lg" ? "hidden lg:table-cell" : "",
-                  column.align === "right" ? "text-right" : "",
-                ]
-                  .filter(Boolean)
-                  .join(" ");
+              const className = [
+                "cursor-pointer hover:bg-muted/50",
+                column.hide === "md" ? "hidden md:table-cell" : "",
+                column.hide === "lg" ? "hidden lg:table-cell" : "",
+                column.align === "right" ? "text-right" : "",
+              ]
+                .filter(Boolean)
+                .join(" ");
 
-                return (
-                  <TableHead
-                    key={column.key as string}
-                    className={className}
-                    onClick={column.sortable ? () => handleSort(column.key as keyof T) : undefined}
-                  >
-                    {sortIcon ? (
-                      <div className="flex items-center">
-                        {column.title}
-                        {sortIcon}
-                      </div>
-                    ) : (
-                      <>
-                        {column.title}
-                      </>
-                    )}
-                  </TableHead>
-                );
-              })}
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {loading ? (
-              Array.from({ length: 5 }).map((_, index) => (
-                <TableRow key={index}>
-                  {columns.map((column) => (
-                    <TableCell key={String(column.key)}>
-                      <Skeleton className="h-4 w-[100px]" />
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : paginatedData.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
-                  検索条件に一致するデータがありません
-                </TableCell>
-              </TableRow>
-            ) : (
-              paginatedData.map((row, index) => (
-                <TableRow
-                  key={index}
-                  className={onRowClick ? "cursor-pointer hover:bg-muted/50" : ""}
-                  onClick={() => onRowClick?.(row)}
+              return (
+                <TableHead
+                  key={column.key as string}
+                  className={className}
+                  onClick={column.sortable ? () => handleSort(column.key as keyof T) : undefined}
                 >
-                  {columns.map((column) => (
-                    <TableCellItem
-                      key={column.key as string}
-                      value={row[column.key as keyof T]}
-                      render={column.render}
-                      row={row}
-                    />
-                  ))}
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                  {sortIcon ? (
+                    <div className="flex items-center">
+                      {column.title}
+                      {sortIcon}
+                    </div>
+                  ) : (
+                    <>
+                      {column.title}
+                    </>
+                  )}
+                </TableHead>
+              );
+            })}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {loading ? (
+            Array.from({ length: 5 }).map((_, index) => (
+              <TableRow key={index}>
+                {columns.map((column) => (
+                  <TableCell key={String(column.key)}>
+                    <Skeleton className="h-4 w-[100px]" />
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))
+          ) : paginatedData.length === 0 ? (
+            <TableRow>
+              <TableCell colSpan={columns.length} className="h-24 text-center">
+                検索条件に一致するデータがありません
+              </TableCell>
+            </TableRow>
+          ) : (
+            paginatedData.map((row, index) => (
+              <TableRow
+                key={index}
+                className={onRowClick ? "cursor-pointer hover:bg-muted/50" : ""}
+                onClick={() => onRowClick?.(row)}
+              >
+                {columns.map((column) => (
+                  <TableCellItem
+                    key={column.key as string}
+                    value={row[column.key as keyof T]}
+                    render={column.render}
+                    row={row}
+                  />
+                ))}
+              </TableRow>
+            ))
+          )}
+        </TableBody>
+      </Table>
 
       {/* ページネーション */}
       {totalPages > 1 && (

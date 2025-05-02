@@ -61,18 +61,18 @@ export const TaskDetailSheet = ({
         <div className="space-y-6 p-6">
           <div>
             <h3 className="text-sm font-medium text-gray-500 mb-1">担当者</h3>
-            <p className="text-gray-900">{task.assignee}</p>
+            <p className="text-gray-900 dark:text-gray-100">{task.assignee}</p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-1">起票日</h3>
-              <p className="text-gray-900">
+              <p className="text-gray-900 dark:text-gray-100">
                 {formatDate(task.startedAt, "yyyy/MM/dd")}
               </p>
             </div>
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-1">期限</h3>
-              <p className="text-gray-900">
+              <p className="text-gray-900 dark:text-gray-100">
                 {formatDate(task.dueDate, "yyyy/MM/dd")}
               </p>
             </div>
@@ -80,13 +80,13 @@ export const TaskDetailSheet = ({
 
           <div>
             <h3 className="text-sm font-medium text-gray-500 mb-1">内容</h3>
-            <p className="text-gray-900 whitespace-pre-wrap">{task.content}</p>
+            <p className="text-gray-900 dark:text-gray-100 whitespace-pre-wrap">{task.content}</p>
           </div>
 
           {task.progressDetails && (
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-1">進捗状況・対応内容</h3>
-              <p className="text-gray-900 whitespace-pre-wrap">{task.progressDetails}</p>
+              <p className="text-gray-900 dark:text-gray-100 whitespace-pre-wrap">{task.progressDetails}</p>
             </div>
           )}
 
@@ -97,7 +97,7 @@ export const TaskDetailSheet = ({
                 href={task.link}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:underline"
+                className="text-blue-600 dark:text-blue-400 hover:underline"
               >
                 {task.link}
               </a>
@@ -107,7 +107,7 @@ export const TaskDetailSheet = ({
           {task.notes && (
             <div>
               <h3 className="text-sm font-medium text-gray-500 mb-1">備考</h3>
-              <p className="text-gray-900 whitespace-pre-wrap">{task.notes}</p>
+              <p className="text-gray-900 dark:text-gray-100 whitespace-pre-wrap">{task.notes}</p>
             </div>
           )}
 

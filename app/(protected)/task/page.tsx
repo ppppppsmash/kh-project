@@ -6,7 +6,7 @@ import { useModal } from "@/hooks/use-modal";
 import { Task } from '@/types';
 import { AddButton } from "@/components/add-button";
 import { AppTable } from "@/components/app-table";
-import { renderTask } from "@/components/app-table/render/TaskItem";
+import { renderTask, filterTask, getTaskStatusFilters } from "@/components/app-table/render/TaskItem";
 import { useGetTasks } from "@/components/app-table/hooks/use-table-data";
 import { TaskDetailSheet } from "@/components/app-sheet/task-detail-sheet";
 import { TaskModalForm } from "@/components/app-modal/task-modal-form";
@@ -90,7 +90,12 @@ export default function TaskPage() {
         })}
         data={tasks ?? []}
         loading={isLoading}
-        searchableKeys={["title", "assignee", "dueDate", "progress"]}
+        searchableKeys={["title", "assignee", "dueDate"]}
+        toolBar={{
+          researchBarPlaceholder: "タスク名で検索",
+          researchStatusFilter: getTaskStatusFilters(),
+        }}
+        onFilter={filterTask}
         onRowClick={(row: Task) => {
           setSelectedTask(row);
           setIsDetailOpen(true);
