@@ -45,7 +45,7 @@ export const TaskDetailSheet = ({
   return (
     <Sheet open={isOpen} onOpenChange={onClose}>
       <SheetContent className="w-full sm:max-w-2xl">
-        <SheetHeader className="mb-6">
+        <SheetHeader>
           <SheetTitle className="text-2xl">{task.title}</SheetTitle>
           <div className="flex items-center gap-2">
             <Badge className={`${getProgressColor(task.progress)} text-white`}>
