@@ -20,32 +20,41 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { AddButton } from "@/components/add-button";
+import { QaModalForm } from "@/components/app-modal/qa-modal-form";
+import { getQA, createQA, updateQA, deleteQA } from "@/actions/qa";
+import { useSubmit } from "@/lib/submitHandler";
+import { CustomToast } from "@/components/ui/toast";
+import { useModal } from "@/hooks/use-modal";
+import type { Qa } from "@/types";
+import { useQueryClient } from "@tanstack/react-query";
+import { useGetQa } from "@/components/app-table/hooks/use-table-data";
 
 const categories = ["IT", "人事", "経理", "総務", "その他"];
 
 export default function AdminQAPage() {
+  const queryClient = useQueryClient();
   const [searchTerm, setSearchTerm] = useState("");
+  const { isOpen, openModal, closeModal } = useModal();
   const [categoryFilter, setCategoryFilter] = useState("全て");
   const [currentPage, setCurrentPage] = useState(1);
-  const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [editingQA, setEditingQA] = useState<any>(null);
+  const [currentData, setCurrentData] = useState<Qa | null>(null);
   const itemsPerPage = 5;
 
-  const { qaItems, updateQA, deleteQA } = useQAStore();
+  const { data: qaItems, isLoading } = useGetQa();
 
   // フィルタリングとページネーション
-  const filteredQA = qaItems.filter((item) => {
-    const matchesSearch =
-      item.question.includes(searchTerm) ||
-      (item.answer && item.answer.includes(searchTerm)) ||
-      item.id.includes(searchTerm);
-    const matchesCategory = categoryFilter === "全て" || item.category === categoryFilter;
+  // const filteredQA = qaItems.filter((item) => {
+  //   const matchesSearch =
+  //     item.question.includes(searchTerm) ||
+  //     (item.answer && item.answer.includes(searchTerm)) ||
+  //     item.id.includes(searchTerm);
+  //   const matchesCategory = categoryFilter === "全て" || item.category === categoryFilter;
 
-    return matchesSearch && matchesCategory;
-  });
+  //   return matchesSearch && matchesCategory;
+  // });
 
-  const totalPages = Math.ceil(filteredQA.length / itemsPerPage);
-  const currentItems = filteredQA.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  // const totalPages = Math.ceil(filteredQA.length / itemsPerPage);
+  // const currentItems = filteredQA.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   // カテゴリに応じたバッジの色を返す関数
   const getCategoryBadgeVariant = (category: string) => {
@@ -63,9 +72,9 @@ export default function AdminQAPage() {
     }
   };
 
-  const handleEdit = (qa: any) => {
-    setEditingQA(qa);
-    setIsEditDialogOpen(true);
+  const handleEdit = (qa: Qa) => {
+    setCurrentData(qa);
+    openModal();
   };
 
   const handleDelete = (id: string) => {
@@ -74,71 +83,47 @@ export default function AdminQAPage() {
     }
   };
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (editingQA) {
-      updateQA(editingQA.id, editingQA);
-      setIsEditDialogOpen(false);
-    }
+  const { handleSubmit } = useSubmit<Qa>({
+    action: async (data) => {
+      if (currentData) {
+        await updateQA(currentData.id, data);
+      } else {
+        await createQA(data);
+      }
+    },
+    onSuccess: () => {
+      closeModal();
+      CustomToast.success(currentData ? "QAを更新しました" : "QAを登録しました");
+      setCurrentData(null);
+      queryClient.invalidateQueries({ queryKey: ["qa"] });
+    },
+    onError: () => {
+      CustomToast.error("QAの保存に失敗しました");
+    },
+  });
+
+  const handleAdd = () => {
+    setCurrentData(null);
+    openModal();
   };
 
   return (
     <div className="container mx-auto">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold">QA管理</h1>
-        <AddButton text="新規QA登録" />
+        <AddButton text="新規QA登録" onClick={handleAdd} />
       </div>
-      <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{editingQA ? "QAを編集" : "新規QA登録"}</DialogTitle>
-            </DialogHeader>
-            <form onSubmit={handleSave} className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="question">質問</Label>
-                <Textarea
-                  id="question"
-                  value={editingQA?.question || ""}
-                  onChange={(e) => setEditingQA({ ...editingQA, question: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="answer">回答</Label>
-                <Textarea
-                  id="answer"
-                  value={editingQA?.answer || ""}
-                  onChange={(e) => setEditingQA({ ...editingQA, answer: e.target.value })}
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="category">カテゴリ</Label>
-                <Select
-                  value={editingQA?.category || ""}
-                  onValueChange={(value) => setEditingQA({ ...editingQA, category: value })}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="カテゴリを選択" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {categories.map((category) => (
-                      <SelectItem key={category} value={category}>
-                        {category}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={() => setIsEditDialogOpen(false)}>
-                  キャンセル
-                </Button>
-                <Button type="submit">保存</Button>
-          </div>
-        </form>
-      </DialogContent>
-    </Dialog>
+
+      <QaModalForm
+        isOpen={isOpen}
+        onClose={() => {
+          closeModal();
+          setCurrentData(null);
+        }}
+        onSubmit={handleSubmit}
+        defaultValues={currentData || undefined}
+        title={currentData ? "QAを編集" : "新規QA登録"}
+      />
 
       <div className="mb-6 flex flex-col gap-4 md:flex-row">
         <div className="relative flex-1">
@@ -169,7 +154,7 @@ export default function AdminQAPage() {
         </div>
       </div>
 
-      <div className="space-y-4">
+      {/* <div className="space-y-4">
         {currentItems.length > 0 ? (
           <Accordion type="single" collapsible className="w-full">
             {currentItems.map((item) => (
@@ -256,7 +241,7 @@ export default function AdminQAPage() {
             </PaginationItem>
           </PaginationContent>
         </Pagination>
-      )}
+      )} */}
     </div>
   );
 }

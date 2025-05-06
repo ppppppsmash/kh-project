@@ -49,3 +49,12 @@ export type Task = {
   createdAt: Date;
   updatedAt: Date;
 };
+
+export type Qa = {
+  id: string;
+  question: string;
+  answer: string;
+  category: string;
+  createdAt: Date;
+  updatedAt: Date;
+};

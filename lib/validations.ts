@@ -28,3 +28,11 @@ export const clubFormSchema = z.object({
 });
 
 export type ClubFormValues = z.infer<typeof clubFormSchema>
+
+export const qaFormSchema = z.object({
+  question: z.string().min(1, "質問は必須です"),
+  answer: z.string().min(1, "回答は必須です"),
+  category: z.string().min(1, "カテゴリは必須です"),
+});
+
+export type QaFormValues = z.infer<typeof qaFormSchema>

@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { getClubActivity } from "@/actions/club-activity";
 import { getIntroCards } from "@/actions/intro-card";
+import { getQA } from "@/actions/qa";
 import { getTasks } from "@/actions/task";
-import type { ClubActivity, Member, Task } from "@/types";
+import type { ClubActivity, Member, Task, Qa } from "@/types";
 
 export const useGetMembers = () => {
   return useQuery<Member[]>({
@@ -22,5 +23,12 @@ export const useGetTasks = () => {
   return useQuery<Task[]>({
     queryKey: ["tasks"],
     queryFn: getTasks,
+  });
+};
+
+export const useGetQa = () => {
+  return useQuery<Qa[]>({
+    queryKey: ["qa"],
+    queryFn: getQA,
   });
 };
