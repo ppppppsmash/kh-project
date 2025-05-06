@@ -30,6 +30,11 @@ export const navConfig = {
       icon: IconListCheck,
     },
     {
+      title: "QA管理",
+      url: "/admin/qa",
+      icon: IconHelp,
+    },
+    {
       title: "メンバー",
       url: "/admin/member",
       icon: IconUser,

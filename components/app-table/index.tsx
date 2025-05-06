@@ -157,10 +157,10 @@ export function AppTable<T>({
   return (
     <div className="space-y-4">
       {toolBar && (
-        <>
+        <div className="flex items-center gap-x-4">
           {toolBar?.researchBarPlaceholder && (
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="relative w-full md:w-64">
+              <div className="relative flex-1">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder={toolBar.researchBarPlaceholder}
@@ -208,7 +208,7 @@ export function AppTable<T>({
               )}
             </div>
           )}
-        </>
+        </div>
       )}
 
       <Table>
