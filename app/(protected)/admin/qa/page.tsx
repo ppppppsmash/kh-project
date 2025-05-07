@@ -1,36 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import { Badge } from "@/components/ui/badge";
-import { Search, Filter, Pencil, Trash2 } from "lucide-react";
-import { useQAStore } from "@/lib/store";
-import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { AddButton } from "@/components/add-button";
 import { QaModalForm } from "@/components/app-modal/qa-modal-form";
 import { getQA, createQA, updateQA, deleteQA } from "@/actions/qa";
 import { useSubmit } from "@/lib/submitHandler";
 import { CustomToast } from "@/components/ui/toast";
 import { useModal } from "@/hooks/use-modal";
-import type { QAItem } from "@/lib/store";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetQa } from "@/components/app-table/hooks/use-table-data";
 import { AccordionTable, AccordionTableColumn } from "@/components/app-accordion-table";
 import { renderQa } from "@/components/app-accordion-table/render/QAItem";
 import type { QaFormValues } from "@/lib/validations";
+import { Qa } from "@/types";
 
 const categories = ["IT", "人事", "経理", "総務", "その他"];
 
@@ -40,7 +22,7 @@ export default function AdminQAPage() {
   const { isOpen, openModal, closeModal } = useModal();
   const [categoryFilter, setCategoryFilter] = useState("全て");
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentData, setCurrentData] = useState<QAItem | null>(null);
+  const [currentData, setCurrentData] = useState<Qa | null>(null);
   const itemsPerPage = 5;
 
   const { data: qaItems, isLoading } = useGetQa();
@@ -61,37 +43,37 @@ export default function AdminQAPage() {
     }
   };
 
-  const handleEdit = (item: QAItem) => {
+  const handleEdit = (item: Qa) => {
     setCurrentData(item);
     openModal();
   };
 
-  const handleDelete = (item: QAItem) => {
+  const handleDelete = (item: Qa) => {
     if (window.confirm("このQAを削除してもよろしいですか？")) {
       deleteQA(item.id);
       queryClient.invalidateQueries({ queryKey: ["qa"] });
     }
   };
 
-  const { handleSubmit } = useSubmit<QAItem, QaFormValues>({
+  const { handleSubmit } = useSubmit<Qa, QaFormValues>({
     action: async (data) => {
       if (currentData) {
         await updateQA(currentData.id, {
+          questionCode: data.questionCode,
           question: data.question,
           answer: data.answer || '',
           category: data.category,
-          date: data.date,
-          status: data.status,
-          askedBy: data.askedBy,
+          questionBy: data.questionBy,
+          answeredBy: data.answeredBy,
         });
       } else {
         await createQA({
+          questionCode: data.questionCode,
           question: data.question,
           answer: data.answer || '',
           category: data.category,
-          date: new Date().toISOString().split('T')[0],
-          status: "pending",
-          askedBy: "管理者",
+          questionBy: data.questionBy,
+          answeredBy: data.answeredBy,
         });
       }
     },
@@ -111,27 +93,6 @@ export default function AdminQAPage() {
     openModal();
   };
 
-  const columns: AccordionTableColumn<QAItem>[] = [
-    { key: "id", label: "ID" },
-    { key: "question", label: "質問" },
-    {
-      key: "category",
-      label: "カテゴリー",
-      render: (item) => (
-        <Badge variant={getCategoryBadgeVariant(item.category)}>
-          {item.category}
-        </Badge>
-      ),
-    },
-    {
-      key: "date",
-      label: "日付",
-      render: (item) => (
-        <span className="text-xs text-muted-foreground">{item.date}</span>
-      ),
-    },
-  ];
-
   return (
     <div className="container mx-auto">
       <div className="mb-8 flex items-center justify-between">
@@ -147,7 +108,7 @@ export default function AdminQAPage() {
       />
 
       <AccordionTable
-        data={qaItems || []}
+        data={qaItems ?? []}
         columns={renderQa({
           onEdit: handleEdit,
           onDelete: handleDelete,

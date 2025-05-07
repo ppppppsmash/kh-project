@@ -1,17 +1,17 @@
-import type { QAItem } from "@/lib/store";
+import type { Qa } from "@/types";
 import { AccordionTableColumn } from "@/components/app-accordion-table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 
 type QaColumnOptions = {
-  onEdit?: (row: QAItem) => void;
-  onDelete?: (row: QAItem) => void;
+  onEdit?: (row: Qa) => void;
+  onDelete?: (row: Qa) => void;
 };
 
 export const renderQa = ({
   onEdit,
   onDelete,
-}: QaColumnOptions): AccordionTableColumn<QAItem>[] => [
+}: QaColumnOptions): AccordionTableColumn<Qa>[] => [
   {
     key: "id",
     label: "ID",
@@ -29,7 +29,7 @@ export const renderQa = ({
   {
     key: "date",
     label: "日付",
-    render: (item) => <span className="text-xs text-muted-foreground">{item.date}</span>,
+    render: (item) => <span className="text-xs text-muted-foreground">{item.createdAt.toLocaleDateString()}</span>,
   },
   {
     key: "actions",

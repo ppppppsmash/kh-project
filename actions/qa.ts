@@ -12,17 +12,25 @@ export const getQA = async (): Promise<Qa[]> => {
     ...q,
     createdAt: q.createdAt ?? new Date(),
     updatedAt: q.updatedAt ?? new Date(),
+    questionBy: q.questionBy ?? undefined,
+    answeredBy: q.answeredBy ?? undefined,
   }));
 };
 
 export const createQA = async (data: QaFormValues) => {
-  const newQA = await db.insert(qa).values(data).returning();
+  const newQA = await db.insert(qa).values({
+    ...data,
+    answer: data.answer ?? "",
+  }).returning();
 
   return newQA;
 };
 
 export const updateQA = async (id: string, data: QaFormValues) => {
-  const updatedQA = await db.update(qa).set(data).where(eq(qa.id, id)).returning();
+  const updatedQA = await db.update(qa).set({
+    ...data,
+    answer: data.answer ?? "",
+  }).where(eq(qa.id, id)).returning();
 
   return updatedQA;
 };

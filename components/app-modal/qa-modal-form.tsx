@@ -10,26 +10,26 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import type { QAItem } from "@/lib/store";
+import type { Qa } from "@/types";
 import { qaFormSchema, type QaFormValues } from "@/lib/validations";
 
 interface QaModalFormProps {
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: QaFormValues) => void;
-  initialData?: QAItem | null;
+  initialData?: Qa | null;
 }
 
 export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalFormProps) {
   const form = useForm<QaFormValues>({
     resolver: zodResolver(qaFormSchema),
     defaultValues: {
+      questionCode: "",
       question: "",
       answer: "",
       category: "",
-      date: new Date().toISOString().split('T')[0],
-      status: "pending",
-      askedBy: "管理者",
+      questionBy: "",
+      answeredBy: "",
     },
   });
 
@@ -38,21 +38,21 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
   useEffect(() => {
     if (isOpen && initialData) {
       form.reset({
+        questionCode: initialData.questionCode,
         question: initialData.question,
         answer: initialData.answer || "",
         category: initialData.category,
-        date: initialData.date,
-        status: initialData.status,
-        askedBy: initialData.askedBy,
+        questionBy: initialData.questionBy,
+        answeredBy: initialData.answeredBy,
       });
     } else {
       form.reset({
+        questionCode: "",
         question: "",
         answer: "",
         category: "",
-        date: new Date().toISOString().split('T')[0],
-        status: "pending",
-        askedBy: "管理者",
+        questionBy: "",
+        answeredBy: "",
       });
     }
   }, [isOpen, initialData, form]);
