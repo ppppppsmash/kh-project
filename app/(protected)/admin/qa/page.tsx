@@ -13,6 +13,8 @@ import { AccordionTable } from "@/components/app-accordion-table";
 import { renderQa } from "@/components/app-accordion-table/render/QAItem";
 import type { QaFormValues } from "@/lib/validations";
 import { Qa } from "@/types";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 // 固定のカテゴリーリスト
 const defaultCategories = ["IT", "人事", "経理", "総務", "その他"];
@@ -21,6 +23,7 @@ export default function AdminQAPage() {
   const queryClient = useQueryClient();
   const { isOpen, openModal, closeModal } = useModal();
   const [currentData, setCurrentData] = useState<Qa | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const itemsPerPage = 5;
 
   const { data: qaItems, isLoading } = useGetQa();
@@ -37,8 +40,16 @@ export default function AdminQAPage() {
   };
 
   const handleDelete = (item: Qa) => {
-    if (window.confirm("このQAを削除してもよろしいですか？")) {
-      deleteQA(item.id);
+    setCurrentData(item);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (currentData) {
+      await deleteQA(currentData.id);
+      CustomToast.success("QAを削除しました");
+      setIsDeleteDialogOpen(false);
+      setCurrentData(null);
       queryClient.invalidateQueries({ queryKey: ["qa"] });
     }
   };
@@ -112,6 +123,25 @@ export default function AdminQAPage() {
         )}
         itemsPerPage={10}
       />
+
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>QAの削除</DialogTitle>
+            <DialogDescription>
+              このQAを削除してもよろしいですか？この操作は元に戻せません。
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsDeleteDialogOpen(false)}>
+              キャンセル
+            </Button>
+            <Button variant="destructive" onClick={handleDeleteConfirm}>
+              削除する
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
