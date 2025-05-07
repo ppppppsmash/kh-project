@@ -29,6 +29,7 @@ interface QaModalFormProps {
 export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: QaModalFormProps) {
   const [newCategory, setNewCategory] = useState("");
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+  const [tempCategories, setTempCategories] = useState<string[]>([]);
 
   const { data: qaItems = [] } = useQuery({
     queryKey: ["qa"],
@@ -37,7 +38,7 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
 
   // データベースから取得したカテゴリーと固定のカテゴリーを組み合わせる
   const dbCategories = Array.from(new Set(qaItems.map(item => item.category))).filter(Boolean);
-  const categories = Array.from(new Set([...defaultCategories, ...dbCategories]));
+  const categories = Array.from(new Set([...defaultCategories, ...dbCategories, ...tempCategories]));
 
   const form = useForm<QaFormValues>({
     resolver: zodResolver(qaFormSchema),
@@ -51,6 +52,15 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
   });
 
   const isEdit = !!initialData;
+
+  // モーダルが閉じられた時に一時的なカテゴリーをリセット
+  useEffect(() => {
+    if (!isOpen) {
+      setTempCategories([]);
+      setShowNewCategoryInput(false);
+      setNewCategory("");
+    }
+  }, [isOpen]);
 
   useEffect(() => {
     if (isOpen && initialData) {
@@ -78,7 +88,7 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
 
   const handleAddCategory = () => {
     if (newCategory && !categories.includes(newCategory)) {
-      categories.push(newCategory);
+      setTempCategories(prev => [...prev, newCategory]);
       form.setValue("category", newCategory);
       setNewCategory("");
       setShowNewCategoryInput(false);
@@ -93,6 +103,21 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+            {type === "public" && (
+              <FormField
+                control={form.control}
+                name="questionBy"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>質問者<span className="text-red-500">*</span></FormLabel>
+                    <FormControl>
+                      <Input placeholder="お名前を入力してください" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="question"

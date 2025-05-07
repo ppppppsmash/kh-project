@@ -73,7 +73,7 @@ export const renderQa = ({
   {
     key: "answeredBy",
     label: "回答者",
-    render: (item) => <span className="text-xs text-muted-foreground">{item.answeredBy && "未回答"}</span>,
+    render: (item) => <span className="text-xs text-muted-foreground">{item.answer ? "回答済み" : "未回答"}</span>,
   },
   {
     key: "actions",

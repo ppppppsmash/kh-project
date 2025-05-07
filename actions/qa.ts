@@ -47,8 +47,8 @@ export const createQA = async (data: QaFormValues) => {
     question: data.question,
     answer: data.answer ?? "",
     category: data.category,
-    questionBy: currentUser ?? null,
-    answeredBy: currentUser ?? null,
+    questionBy: data.questionBy ? data.questionBy : currentUser ?? null,
+    answeredBy: data.answer ? currentUser : null,
   };
 
   const inserted = await db.insert(qa).values(insertData).returning();
