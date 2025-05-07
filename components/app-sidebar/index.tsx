@@ -28,7 +28,7 @@ export const AppSidebar = ({
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              <a href="#">
+              <a href="/admin/dashboard">
                 <span className="text-base font-semibold">
                   ADiXi MGR
                 </span>

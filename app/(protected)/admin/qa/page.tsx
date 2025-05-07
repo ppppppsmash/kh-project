@@ -17,7 +17,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from "@/components/ui/button";
 
 // 固定のカテゴリーリスト
-const defaultCategories = ["IT", "人事", "経理", "総務", "その他"];
+const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 export default function AdminQAPage() {
   const queryClient = useQueryClient();

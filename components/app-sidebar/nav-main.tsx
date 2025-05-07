@@ -62,7 +62,7 @@ export const NavMain = ({
                             <SidebarMenuSubItem key={sub.title}>
                               <SidebarMenuSubButton
                                 asChild
-                                className={cn(pathname === sub.url && "bg-sidebar-primary text-sidebar-primary-foreground")}
+                                className={cn(pathname === sub.url && "bg-primary text-sidebar-primary-foreground")}
                               >
                                 <Link href={sub.url}>
                                   <span>{sub.title}</span>
@@ -83,7 +83,7 @@ export const NavMain = ({
                 <Link href={item.url}>
                   <SidebarMenuButton
                     tooltip={item.title}
-                    className={cn(isActive && "bg-sidebar-primary text-sidebar-primary-foreground")}
+                    className={cn(isActive && "bg-primary text-primary-foreground")}
                   >
                     {Icon && <Icon />}
                     <span>{item.title}</span>
