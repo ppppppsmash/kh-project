@@ -3,7 +3,6 @@
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import * as z from "zod";
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -24,7 +23,6 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
   const form = useForm<QaFormValues>({
     resolver: zodResolver(qaFormSchema),
     defaultValues: {
-      questionCode: "",
       question: "",
       answer: "",
       category: "",
@@ -38,7 +36,6 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
   useEffect(() => {
     if (isOpen && initialData) {
       form.reset({
-        questionCode: initialData.questionCode,
         question: initialData.question,
         answer: initialData.answer || "",
         category: initialData.category,
@@ -47,7 +44,6 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
       });
     } else {
       form.reset({
-        questionCode: "",
         question: "",
         answer: "",
         category: "",

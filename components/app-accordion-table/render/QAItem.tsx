@@ -30,8 +30,8 @@ export const renderQa = ({
   onDelete,
 }: QaColumnOptions): AccordionTableColumn<Qa>[] => [
   {
-    key: "id",
-    label: "ID",
+    key: "questionCode",
+    label: "質問コード",
   },
   {
     key: "question",

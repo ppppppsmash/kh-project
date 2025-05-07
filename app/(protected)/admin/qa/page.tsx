@@ -18,10 +18,7 @@ const categories = ["IT", "人事", "経理", "総務", "その他"];
 
 export default function AdminQAPage() {
   const queryClient = useQueryClient();
-  const [searchTerm, setSearchTerm] = useState("");
   const { isOpen, openModal, closeModal } = useModal();
-  const [categoryFilter, setCategoryFilter] = useState("全て");
-  const [currentPage, setCurrentPage] = useState(1);
   const [currentData, setCurrentData] = useState<Qa | null>(null);
   const itemsPerPage = 5;
 
@@ -43,7 +40,6 @@ export default function AdminQAPage() {
     action: async (data) => {
       if (currentData) {
         await updateQA(currentData.id, {
-          questionCode: data.questionCode,
           question: data.question,
           answer: data.answer || '',
           category: data.category,
@@ -52,7 +48,6 @@ export default function AdminQAPage() {
         });
       } else {
         await createQA({
-          questionCode: data.questionCode,
           question: data.question,
           answer: data.answer || '',
           category: data.category,
@@ -104,6 +99,7 @@ export default function AdminQAPage() {
         renderContent={(item) => (
           <div className="rounded-md bg-muted/50 p-4">{item.answer}</div>
         )}
+        itemsPerPage={10}
       />
     </div>
   );
