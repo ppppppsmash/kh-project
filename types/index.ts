@@ -52,9 +52,12 @@ export type Task = {
 
 export type Qa = {
   id: string;
+  questionCode: string;
   question: string;
   answer: string;
   category: string;
+  questionBy?: string;
+  answeredBy?: string;
   createdAt: Date;
   updatedAt: Date;
 };

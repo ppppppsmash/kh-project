@@ -25,9 +25,12 @@ import { getQA, createQA, updateQA, deleteQA } from "@/actions/qa";
 import { useSubmit } from "@/lib/submitHandler";
 import { CustomToast } from "@/components/ui/toast";
 import { useModal } from "@/hooks/use-modal";
-import type { Qa } from "@/types";
+import type { QAItem } from "@/lib/store";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetQa } from "@/components/app-table/hooks/use-table-data";
+import { AccordionTable, AccordionTableColumn } from "@/components/app-accordion-table";
+import { renderQa } from "@/components/app-accordion-table/render/QAItem";
+import type { QaFormValues } from "@/lib/validations";
 
 const categories = ["IT", "人事", "経理", "総務", "その他"];
 
@@ -37,24 +40,10 @@ export default function AdminQAPage() {
   const { isOpen, openModal, closeModal } = useModal();
   const [categoryFilter, setCategoryFilter] = useState("全て");
   const [currentPage, setCurrentPage] = useState(1);
-  const [currentData, setCurrentData] = useState<Qa | null>(null);
+  const [currentData, setCurrentData] = useState<QAItem | null>(null);
   const itemsPerPage = 5;
 
   const { data: qaItems, isLoading } = useGetQa();
-
-  // フィルタリングとページネーション
-  // const filteredQA = qaItems.filter((item) => {
-  //   const matchesSearch =
-  //     item.question.includes(searchTerm) ||
-  //     (item.answer && item.answer.includes(searchTerm)) ||
-  //     item.id.includes(searchTerm);
-  //   const matchesCategory = categoryFilter === "全て" || item.category === categoryFilter;
-
-  //   return matchesSearch && matchesCategory;
-  // });
-
-  // const totalPages = Math.ceil(filteredQA.length / itemsPerPage);
-  // const currentItems = filteredQA.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   // カテゴリに応じたバッジの色を返す関数
   const getCategoryBadgeVariant = (category: string) => {
@@ -72,23 +61,38 @@ export default function AdminQAPage() {
     }
   };
 
-  const handleEdit = (qa: Qa) => {
-    setCurrentData(qa);
+  const handleEdit = (item: QAItem) => {
+    setCurrentData(item);
     openModal();
   };
 
-  const handleDelete = (id: string) => {
+  const handleDelete = (item: QAItem) => {
     if (window.confirm("このQAを削除してもよろしいですか？")) {
-      deleteQA(id);
+      deleteQA(item.id);
+      queryClient.invalidateQueries({ queryKey: ["qa"] });
     }
   };
 
-  const { handleSubmit } = useSubmit<Qa>({
+  const { handleSubmit } = useSubmit<QAItem, QaFormValues>({
     action: async (data) => {
       if (currentData) {
-        await updateQA(currentData.id, data);
+        await updateQA(currentData.id, {
+          question: data.question,
+          answer: data.answer || '',
+          category: data.category,
+          date: data.date,
+          status: data.status,
+          askedBy: data.askedBy,
+        });
       } else {
-        await createQA(data);
+        await createQA({
+          question: data.question,
+          answer: data.answer || '',
+          category: data.category,
+          date: new Date().toISOString().split('T')[0],
+          status: "pending",
+          askedBy: "管理者",
+        });
       }
     },
     onSuccess: () => {
@@ -107,6 +111,27 @@ export default function AdminQAPage() {
     openModal();
   };
 
+  const columns: AccordionTableColumn<QAItem>[] = [
+    { key: "id", label: "ID" },
+    { key: "question", label: "質問" },
+    {
+      key: "category",
+      label: "カテゴリー",
+      render: (item) => (
+        <Badge variant={getCategoryBadgeVariant(item.category)}>
+          {item.category}
+        </Badge>
+      ),
+    },
+    {
+      key: "date",
+      label: "日付",
+      render: (item) => (
+        <span className="text-xs text-muted-foreground">{item.date}</span>
+      ),
+    },
+  ];
+
   return (
     <div className="container mx-auto">
       <div className="mb-8 flex items-center justify-between">
@@ -116,16 +141,27 @@ export default function AdminQAPage() {
 
       <QaModalForm
         isOpen={isOpen}
-        onClose={() => {
-          closeModal();
-          setCurrentData(null);
-        }}
+        onClose={closeModal}
         onSubmit={handleSubmit}
-        defaultValues={currentData || undefined}
-        title={currentData ? "QAを編集" : "新規QA登録"}
+        initialData={currentData}
       />
 
-      <div className="mb-6 flex flex-col gap-4 md:flex-row">
+      <AccordionTable
+        data={qaItems || []}
+        columns={renderQa({
+          onEdit: handleEdit,
+          onDelete: handleDelete,
+        })}
+        idField="id"
+        searchFields={["question", "answer"]}
+        categoryField="category"
+        categories={categories}
+        renderContent={(item) => (
+          <div className="rounded-md bg-muted/50 p-4">{item.answer}</div>
+        )}
+      />
+
+      {/* <div className="mb-6 flex flex-col gap-4 md:flex-row">
         <div className="relative flex-1">
           <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
           <Input
@@ -152,7 +188,7 @@ export default function AdminQAPage() {
             </SelectContent>
           </Select>
         </div>
-      </div>
+      </div> */}
 
       {/* <div className="space-y-4">
         {currentItems.length > 0 ? (
@@ -181,7 +217,7 @@ export default function AdminQAPage() {
                         size="icon"
                         onClick={(e) => {
                           e.stopPropagation();
-                          handleDelete(item.id);
+                          handleDelete(item);
                         }}
                       >
                         <Trash2 className="h-4 w-4" />

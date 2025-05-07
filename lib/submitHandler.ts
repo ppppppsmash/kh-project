@@ -1,14 +1,14 @@
 type FormData<T> = Omit<T, "id" | "createdAt" | "updatedAt">;
-type UseSubmitProps<T> = {
+type UseSubmitProps<T, D = FormData<T>> = {
   // server action
-  action: (data: FormData<T>) => Promise<void>;
+  action: (data: D) => Promise<void>;
   // client action
   onSuccess?: () => void;
   onError?: () => void;
 };
 
-export const useSubmit = <T>({ action, onSuccess, onError }: UseSubmitProps<T>) => {
-  const handleSubmit = async (data: FormData<T>) => {
+export const useSubmit = <T, D = FormData<T>>({ action, onSuccess, onError }: UseSubmitProps<T, D>) => {
+  const handleSubmit = async (data: D) => {
     try {
       await action(data);
       onSuccess?.();
