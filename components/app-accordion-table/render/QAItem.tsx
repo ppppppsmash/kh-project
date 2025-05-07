@@ -2,10 +2,27 @@ import type { Qa } from "@/types";
 import { AccordionTableColumn } from "@/components/app-accordion-table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 type QaColumnOptions = {
   onEdit?: (row: Qa) => void;
   onDelete?: (row: Qa) => void;
+};
+
+ // カテゴリに応じたバッジの色を返す関数
+const getCategoryBadgeVariant = (category: string) => {
+  switch (category) {
+    case "IT":
+      return "default";
+    case "人事":
+      return "secondary";
+    case "経理":
+      return "destructive";
+    case "総務":
+      return "outline";
+    default:
+      return "secondary";
+  }
 };
 
 export const renderQa = ({
@@ -24,7 +41,7 @@ export const renderQa = ({
   {
     key: "category",
     label: "カテゴリ",
-    render: (item) => <span className="font-medium">{item.category}</span>,
+    render: (item) => <Badge variant={getCategoryBadgeVariant(item.category)}>{item.category}</Badge>,
   },
   {
     key: "date",
@@ -35,7 +52,7 @@ export const renderQa = ({
     key: "actions",
     label: "操作",
     render: (item) => (
-      <div className="flex items-center gap-2">
+      <div className="flex justify-end items-center gap-2">
         {onEdit && (
           <Button
             variant="ghost"

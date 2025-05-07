@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { AddButton } from "@/components/add-button";
 import { QaModalForm } from "@/components/app-modal/qa-modal-form";
-import { getQA, createQA, updateQA, deleteQA } from "@/actions/qa";
+import { createQA, updateQA, deleteQA } from "@/actions/qa";
 import { useSubmit } from "@/lib/submitHandler";
 import { CustomToast } from "@/components/ui/toast";
 import { useModal } from "@/hooks/use-modal";
@@ -26,22 +26,6 @@ export default function AdminQAPage() {
   const itemsPerPage = 5;
 
   const { data: qaItems, isLoading } = useGetQa();
-
-  // カテゴリに応じたバッジの色を返す関数
-  const getCategoryBadgeVariant = (category: string) => {
-    switch (category) {
-      case "IT":
-        return "default";
-      case "人事":
-        return "secondary";
-      case "経理":
-        return "destructive";
-      case "総務":
-        return "outline";
-      default:
-        return "secondary";
-    }
-  };
 
   const handleEdit = (item: Qa) => {
     setCurrentData(item);
@@ -121,124 +105,6 @@ export default function AdminQAPage() {
           <div className="rounded-md bg-muted/50 p-4">{item.answer}</div>
         )}
       />
-
-      {/* <div className="mb-6 flex flex-col gap-4 md:flex-row">
-        <div className="relative flex-1">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            placeholder="検索..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-8"
-          />
-        </div>
-
-        <div className="flex gap-2">
-          <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-            <SelectTrigger className="w-[180px]">
-              <Filter className="mr-2 h-4 w-4" />
-              <SelectValue placeholder="カテゴリ" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="全て">全て</SelectItem>
-              {categories.map((category) => (
-                <SelectItem key={category} value={category}>
-                  {category}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      </div> */}
-
-      {/* <div className="space-y-4">
-        {currentItems.length > 0 ? (
-          <Accordion type="single" collapsible className="w-full">
-            {currentItems.map((item) => (
-              <AccordionItem key={item.id} value={item.id}>
-                <AccordionTrigger className="hover:no-underline">
-                  <div className="flex w-full flex-col items-start gap-1 text-left sm:flex-row sm:items-center">
-                    <span className="mr-2 font-medium">{item.id}</span>
-                    <span className="flex-1">{item.question}</span>
-                    <div className="flex items-center gap-2">
-                      <Badge variant={getCategoryBadgeVariant(item.category)}>{item.category}</Badge>
-                      <span className="text-xs text-muted-foreground">{item.date}</span>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEdit(item);
-                        }}
-                      >
-                        <Pencil className="h-4 w-4" />
-                      </Button>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleDelete(item);
-                        }}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </AccordionTrigger>
-                <AccordionContent>
-                  <div className="rounded-md bg-muted/50 p-4">{item.answer}</div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        ) : (
-          <div className="rounded-md border p-8 text-center">該当するQAがありません</div>
-        )}
-      </div>
-
-      {totalPages > 1 && (
-        <Pagination className="mt-4">
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage > 1) setCurrentPage(currentPage - 1);
-                }}
-                className={currentPage === 1 ? "pointer-events-none opacity-50" : ""}
-              />
-            </PaginationItem>
-
-            {Array.from({ length: totalPages }).map((_, i) => (
-              <PaginationItem key={i}>
-                <PaginationLink
-                  href="#"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setCurrentPage(i + 1);
-                  }}
-                  isActive={currentPage === i + 1}
-                >
-                  {i + 1}
-                </PaginationLink>
-              </PaginationItem>
-            ))}
-
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault();
-                  if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-                }}
-                className={currentPage === totalPages ? "pointer-events-none opacity-50" : ""}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      )} */}
     </div>
   );
 }
