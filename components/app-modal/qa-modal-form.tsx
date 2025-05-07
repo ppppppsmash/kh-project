@@ -12,21 +12,31 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Plus, X } from "lucide-react";
 import type { Qa } from "@/types";
 import { qaFormSchema, type QaFormValues } from "@/lib/validations";
+import { useQuery } from "@tanstack/react-query";
+import { getQA } from "@/actions/qa";
 
 // 初期のカテゴリーリスト
 const initialCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 interface QaModalFormProps {
+  type: "admin" | "public";
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: QaFormValues) => void;
   initialData?: Qa | null;
 }
 
-export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalFormProps) {
-  const [categories, setCategories] = useState<string[]>(initialCategories);
+export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: QaModalFormProps) {
   const [newCategory, setNewCategory] = useState("");
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+
+  const { data: qaItems = [] } = useQuery({
+    queryKey: ["qa"],
+    queryFn: getQA,
+  });
+
+  // データベースから取得したカテゴリーの一覧を作成
+  const categories = Array.from(new Set(qaItems.map(item => item.category))).filter(Boolean);
 
   const form = useForm<QaFormValues>({
     resolver: zodResolver(qaFormSchema),
@@ -67,7 +77,7 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
 
   const handleAddCategory = () => {
     if (newCategory && !categories.includes(newCategory)) {
-      setCategories([...categories, newCategory]);
+      categories.push(newCategory);
       form.setValue("category", newCategory);
       setNewCategory("");
       setShowNewCategoryInput(false);
@@ -95,6 +105,7 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
                 </FormItem>
               )}
             />
+            {type === "admin" && (
             <FormField
               control={form.control}
               name="answer"
@@ -106,8 +117,9 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
                   </FormControl>
                   <FormMessage />
                 </FormItem>
-              )}
-            />
+                )}
+              />
+            )}
             <FormField
               control={form.control}
               name="category"

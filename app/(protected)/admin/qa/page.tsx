@@ -80,6 +80,7 @@ export default function AdminQAPage() {
       </div>
 
       <QaModalForm
+        type="admin"
         isOpen={isOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}

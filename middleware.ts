@@ -14,7 +14,7 @@ export default async function middleware(request: NextRequest) {
   const isSharePage = request.nextUrl.pathname.startsWith("/external");
 
   if (isRoot) {
-    return NextResponse.redirect(new URL("/adixi-public/intro-card/", request.url));
+    return NextResponse.redirect(new URL("/adixi-public/qa/", request.url));
   }
 
   if (isAuthPage) {

@@ -12,7 +12,7 @@ type QaColumnOptions = {
 };
 
  // カテゴリに応じたバッジの色を返す関数
-const getCategoryBadgeVariant = (category: string) => {
+export const getCategoryBadgeVariant = (category: string) => {
   switch (category) {
     case "現場":
       return "default";

@@ -6,6 +6,7 @@ import { AppHeader } from "@/components/app-sidebar/app-header";
 import AuthProvider from "@/providers/auth-provider";
 import { QueryProvider } from "@/providers/query-provider";
 import { Toast } from "@/components/ui/toast";
+
 export default function ProtectedLayout({
   children,
 }: {

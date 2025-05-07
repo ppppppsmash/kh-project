@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { useModal } from "@/hooks/use-modal";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -18,14 +20,24 @@ import { AddButton } from "@/components/add-button";
 import { useQuery } from "@tanstack/react-query";
 import { getQA } from "@/actions/qa";
 import { format } from "date-fns";
+import { QaModalForm } from "@/components/app-modal/qa-modal-form";
+import { getCategoryBadgeVariant } from "@/components/app-accordion-table/render/QAItem";
+import { useSubmit } from "@/lib/submitHandler";
+import { Qa } from "@/types";
+import { CustomToast } from "@/components/ui/toast";
+import type { QaFormValues } from "@/lib/validations";
+import { createQA } from "@/actions/qa";
 
-const categories = ["全て", "IT", "人事", "経理", "総務", "その他"]
+const categories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 export default function QAPage() {
+  const queryClient = useQueryClient();
+  const { isOpen, openModal, closeModal } = useModal();
+  const [currentData, setCurrentData] = useState<Qa | null>(null);
   const [searchTerm, setSearchTerm] = useState("")
   const [categoryFilter, setCategoryFilter] = useState("全て")
   const [currentPage, setCurrentPage] = useState(1)
-  const itemsPerPage = 5
+  const itemsPerPage = 10
 
   const { data: qaItems = [] } = useQuery({
     queryKey: ["qa"],
@@ -49,28 +61,46 @@ export default function QAPage() {
   const totalPages = Math.ceil(filteredQA.length / itemsPerPage)
   const currentItems = filteredQA.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
 
-  // カテゴリに応じたバッジの色を返す関数
-  const getCategoryBadgeVariant = (category: string) => {
-    switch (category) {
-      case "IT":
-        return "default"
-      case "人事":
-        return "secondary"
-      case "経理":
-        return "destructive"
-      case "総務":
-        return "outline"
-      default:
-        return "secondary"
-    }
-  }
+  const handleAdd = () => {
+    setCurrentData(null);
+    openModal();
+  };
+
+  const { handleSubmit } = useSubmit<Qa, QaFormValues>({
+    action: async (data) => {
+      await createQA({
+        question: data.question,
+        answer: data.answer || '',
+        category: data.category,
+        questionBy: data.questionBy,
+        answeredBy: data.answeredBy,
+      });
+    },
+    onSuccess: () => {
+      closeModal();
+      CustomToast.success("質問を投稿しました");
+      setCurrentData(null);
+      queryClient.invalidateQueries({ queryKey: ["qa"] });
+    },
+    onError: () => {
+      CustomToast.error("QAの保存に失敗しました");
+    },
+  });
 
   return (
     <div className="container mx-auto">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold">QA一覧</h1>
-        <AddButton text="質問を投稿" onClick={() => {}} />
+        <AddButton text="質問を投稿" onClick={handleAdd} />
       </div>
+
+      <QaModalForm
+        type="public"
+        isOpen={isOpen}
+        onClose={closeModal}
+        onSubmit={handleSubmit}
+        initialData={currentData}
+      />
 
       <div className="mb-6 flex flex-col gap-4 md:flex-row">
         <div className="relative flex-1">
