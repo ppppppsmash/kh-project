@@ -15,8 +15,8 @@ import { qaFormSchema, type QaFormValues } from "@/lib/validations";
 import { useQuery } from "@tanstack/react-query";
 import { getQA } from "@/actions/qa";
 
-// 初期のカテゴリーリスト
-const initialCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
+// 固定のカテゴリーリスト
+const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 interface QaModalFormProps {
   type: "admin" | "public";
@@ -35,8 +35,9 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
     queryFn: getQA,
   });
 
-  // データベースから取得したカテゴリーの一覧を作成
-  const categories = Array.from(new Set(qaItems.map(item => item.category))).filter(Boolean);
+  // データベースから取得したカテゴリーと固定のカテゴリーを組み合わせる
+  const dbCategories = Array.from(new Set(qaItems.map(item => item.category))).filter(Boolean);
+  const categories = Array.from(new Set([...defaultCategories, ...dbCategories]));
 
   const form = useForm<QaFormValues>({
     resolver: zodResolver(qaFormSchema),
