@@ -70,7 +70,7 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
               name="question"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>質問</FormLabel>
+                  <FormLabel>質問<span className="text-red-500">*</span></FormLabel>
                   <FormControl>
                     <Input placeholder="質問を入力してください" {...field} />
                   </FormControl>
@@ -96,7 +96,7 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
               name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>カテゴリー</FormLabel>
+                  <FormLabel>カテゴリー<span className="text-red-500">*</span></FormLabel>
                   <Select onValueChange={field.onChange} defaultValue={field.value}>
                     <FormControl>
                       <SelectTrigger>
