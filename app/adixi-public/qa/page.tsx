@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useModal } from "@/hooks/use-modal";
 import { Input } from "@/components/ui/input";
@@ -29,7 +29,8 @@ import { CustomToast } from "@/components/ui/toast";
 import type { QaFormValues } from "@/lib/validations";
 import { createQA } from "@/actions/qa";
 
-const categories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
+// 固定のカテゴリーリスト
+const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 export default function QAPage() {
   const queryClient = useQueryClient();
@@ -44,7 +45,14 @@ export default function QAPage() {
   const { data: qaItems = [] } = useQuery({
     queryKey: ["qa"],
     queryFn: getQA,
+    staleTime: 1000 * 60 * 5, // 5分間はキャッシュを使用
   });
+
+  // カテゴリーリストを計算
+  const categories = useMemo(() => {
+    const dbCategories = Array.from(new Set(qaItems.map(item => item.category))).filter(Boolean);
+    return ["全て", ...defaultCategories, ...dbCategories];
+  }, [qaItems]);
 
   // 回答済みの質問のみをフィルタリング
   const answeredQAItems = qaItems.filter((item) => item.answer)

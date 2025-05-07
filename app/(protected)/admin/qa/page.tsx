@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { AddButton } from "@/components/add-button";
 import { QaModalForm } from "@/components/app-modal/qa-modal-form";
 import { createQA, updateQA, deleteQA } from "@/actions/qa";
@@ -14,7 +14,8 @@ import { renderQa } from "@/components/app-accordion-table/render/QAItem";
 import type { QaFormValues } from "@/lib/validations";
 import { Qa } from "@/types";
 
-const categories = ["IT", "人事", "経理", "総務", "その他"];
+// 固定のカテゴリーリスト
+const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 export default function AdminQAPage() {
   const queryClient = useQueryClient();
@@ -23,6 +24,12 @@ export default function AdminQAPage() {
   const itemsPerPage = 5;
 
   const { data: qaItems, isLoading } = useGetQa();
+
+  // カテゴリーリストを計算
+  const categories = useMemo(() => {
+    const dbCategories = Array.from(new Set(qaItems?.map(item => item.category) ?? [])).filter(Boolean);
+    return [...defaultCategories, ...dbCategories];
+  }, [qaItems]);
 
   const handleEdit = (item: Qa) => {
     setCurrentData(item);
