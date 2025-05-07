@@ -7,6 +7,7 @@ import {
   Pencil,
   Trash2,
 } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
@@ -100,7 +101,7 @@ export const AccordionTable = <T extends Record<string, any>>({
             {currentItems.map((item) => (
               <AccordionItem key={String(item[idField])} value={String(item[idField])}>
                 <AccordionTrigger className="hover:no-underline">
-                  <div className="flex w-full flex-col items-start gap-1 text-left sm:flex-row sm:items-center">
+                  <div className="flex w-full flex-col items-start gap-x-4 text-left sm:flex-row sm:items-center">
                     {columns.map((column) => (
                       <div key={String(column.key)} className="flex-1">
                         {column.render ? column.render(item) : String(item[column.key])}
@@ -141,7 +142,19 @@ export const AccordionTable = <T extends Record<string, any>>({
             ))}
           </Accordion>
         ) : (
-          <div className="rounded-md border p-8 text-center">データがありません</div>
+          <div className="flex flex-col gap-4 p-8 text-center">
+            <Skeleton className="h-10 w-full" />
+            <hr className="w-full" />
+            <Skeleton className="h-10 w-full" />
+            <hr className="w-full" />
+            <Skeleton className="h-10 w-full" />
+            <hr className="w-full" />
+            <Skeleton className="h-10 w-full" />
+            <hr className="w-full" />
+            <Skeleton className="h-10 w-full" />
+            <hr className="w-full" />
+            <Skeleton className="h-10 w-full" />
+          </div>
         )}
       </div>
 

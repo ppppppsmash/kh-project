@@ -3,6 +3,7 @@ import { AccordionTableColumn } from "@/components/app-accordion-table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type QaColumnOptions = {
   onEdit?: (row: Qa) => void;
@@ -40,7 +41,18 @@ export const renderQa = ({
   {
     key: "question",
     label: "質問",
-    render: (item) => <span className="font-medium">{item.question}</span>,
+    render: (item) => (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <p className="font-medium truncate max-w-[300px]">{item.question}</p>
+          </TooltipTrigger>
+          <TooltipContent>
+            <p>{item.question}</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    ),
   },
   {
     key: "category",
@@ -52,6 +64,16 @@ export const renderQa = ({
     label: "日付",
     render: (item) => <span className="text-xs text-muted-foreground">{item.createdAt.toLocaleDateString()}</span>,
   },
+  {
+    key: "questionBy",
+    label: "質問者",
+    render: (item) => <span className="text-xs text-muted-foreground">{item.questionBy ? `質問者: ${item.questionBy}` : "未回答"}</span>,
+  },
+  // {
+  //   key: "answeredBy",
+  //   label: "回答者",
+  //   render: (item) => <span className="text-xs text-muted-foreground">{item.answeredBy ? `回答者: ${item.answeredBy}` : "未回答"}</span>,
+  // },
   {
     key: "actions",
     label: "操作",

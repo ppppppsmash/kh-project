@@ -48,7 +48,7 @@ export const createQA = async (data: QaFormValues) => {
     answer: data.answer ?? "",
     category: data.category,
     questionBy: currentUser ?? null,
-    answeredBy: data.answeredBy ?? null,
+    answeredBy: currentUser ?? null,
   };
 
   const inserted = await db.insert(qa).values(insertData).returning();
@@ -56,9 +56,13 @@ export const createQA = async (data: QaFormValues) => {
 };
 
 export const updateQA = async (id: string, data: QaFormValues) => {
+  const session = await auth();
+  const currentUser = session?.user?.name;
+
   const updatedQA = await db.update(qa).set({
     ...data,
     answer: data.answer ?? "",
+    answeredBy: currentUser ?? null,
   }).where(eq(qa.id, id)).returning();
 
   return updatedQA;

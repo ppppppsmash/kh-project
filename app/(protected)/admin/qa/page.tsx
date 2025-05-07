@@ -97,7 +97,10 @@ export default function AdminQAPage() {
         categoryField="category"
         categories={categories}
         renderContent={(item) => (
-          <div className="rounded-md bg-muted/50 p-4">{item.answer}</div>
+          <div className="rounded-md bg-muted/50 p-4">
+            <p>回答者: {item.answeredBy}</p>
+            {item.answer}
+          </div>
         )}
         itemsPerPage={10}
       />
