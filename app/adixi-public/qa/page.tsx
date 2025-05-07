@@ -28,6 +28,7 @@ import { Qa } from "@/types";
 import { CustomToast } from "@/components/ui/toast";
 import type { QaFormValues } from "@/lib/validations";
 import { createQA } from "@/actions/qa";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 // 固定のカテゴリーリスト
 const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
@@ -150,7 +151,16 @@ export default function QAPage() {
                   <AccordionTrigger className="hover:no-underline">
                     <div className="flex w-full flex-col items-start gap-1 text-left sm:flex-row sm:items-center">
                       <span className="mr-2 font-medium">{item.questionCode || item.id}</span>
-                      <span className="flex-1">{item.question}</span>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <span className="flex-1 w-[500px] truncate">{item.question}</span>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{item.question}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
                       <div className="flex items-center gap-2">
                         <Badge variant={getCategoryBadgeVariant(item.category)}>{item.category}</Badge>
                         <span className="text-xs text-muted-foreground">

@@ -9,13 +9,13 @@ import { CustomToast } from "@/components/ui/toast";
 import { useModal } from "@/hooks/use-modal";
 import { useQueryClient } from "@tanstack/react-query";
 import { useGetQa } from "@/components/app-table/hooks/use-table-data";
-import { AccordionTable, AccordionTableColumn } from "@/components/app-accordion-table";
+import { AccordionTable } from "@/components/app-accordion-table";
 import { renderQa } from "@/components/app-accordion-table/render/QAItem";
 import type { QaFormValues } from "@/lib/validations";
 import { Qa } from "@/types";
 
 // 固定のカテゴリーリスト
-const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
+const defaultCategories = ["IT", "人事", "経理", "総務", "その他"];
 
 export default function AdminQAPage() {
   const queryClient = useQueryClient();
@@ -106,7 +106,7 @@ export default function AdminQAPage() {
         categories={categories}
         renderContent={(item) => (
           <div className="rounded-md bg-muted/50 p-4">
-            <p>回答者: {item.answeredBy}</p>
+            <p className="mb-2 text-sm text-muted-foreground">回答者: {item.answeredBy}</p>
             {item.answer}
           </div>
         )}

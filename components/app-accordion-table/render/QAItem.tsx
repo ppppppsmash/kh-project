@@ -46,7 +46,7 @@ export const renderQa = ({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <p className="font-medium truncate max-w-[300px]">{item.question}</p>
+            <p className="font-medium truncate w-[500px]">{item.question}</p>
           </TooltipTrigger>
           <TooltipContent>
             <p>{item.question}</p>
