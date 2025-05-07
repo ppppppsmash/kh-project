@@ -14,8 +14,10 @@ import {
 } from "@/components/ui/pagination";
 import { Badge } from "@/components/ui/badge";
 import { Search, Filter } from "lucide-react";
-import { useQAStore } from "@/lib/store";
 import { AddButton } from "@/components/add-button";
+import { useQuery } from "@tanstack/react-query";
+import { getQA } from "@/actions/qa";
+import { format } from "date-fns";
 
 const categories = ["全て", "IT", "人事", "経理", "総務", "その他"]
 
@@ -25,17 +27,20 @@ export default function QAPage() {
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 5
 
-  const { qaItems } = useQAStore()
+  const { data: qaItems = [] } = useQuery({
+    queryKey: ["qa"],
+    queryFn: getQA,
+  });
 
   // 回答済みの質問のみをフィルタリング
-  const answeredQAItems = qaItems.filter((item) => item.status === "answered")
+  const answeredQAItems = qaItems.filter((item) => item.answer)
 
   // フィルタリングとページネーション
   const filteredQA = answeredQAItems.filter((item) => {
     const matchesSearch =
-      item.question.includes(searchTerm) ||
-      (item.answer && item.answer.includes(searchTerm)) ||
-      item.id.includes(searchTerm)
+      item.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (item.answer && item.answer.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (item.questionCode && item.questionCode.toLowerCase().includes(searchTerm.toLowerCase()))
     const matchesCategory = categoryFilter === "全て" || item.category === categoryFilter
 
     return matchesSearch && matchesCategory
@@ -64,7 +69,7 @@ export default function QAPage() {
     <div className="container mx-auto">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold">QA一覧</h1>
-        <AddButton text="質問を投稿" />
+        <AddButton text="質問を投稿" onClick={() => {}} />
       </div>
 
       <div className="mb-6 flex flex-col gap-4 md:flex-row">
@@ -102,16 +107,21 @@ export default function QAPage() {
               <AccordionItem key={item.id} value={item.id}>
                 <AccordionTrigger className="hover:no-underline">
                   <div className="flex w-full flex-col items-start gap-1 text-left sm:flex-row sm:items-center">
-                    <span className="mr-2 font-medium">{item.id}</span>
+                    <span className="mr-2 font-medium">{item.questionCode || item.id}</span>
                     <span className="flex-1">{item.question}</span>
                     <div className="flex items-center gap-2">
                       <Badge variant={getCategoryBadgeVariant(item.category)}>{item.category}</Badge>
-                      <span className="text-xs text-muted-foreground">{item.date}</span>
+                      <span className="text-xs text-muted-foreground">
+                        {format(item.createdAt, "yyyy-MM-dd")}
+                      </span>
                     </div>
                   </div>
                 </AccordionTrigger>
                 <AccordionContent>
-                  <div className="rounded-md bg-muted/50 p-4">{item.answer}</div>
+                  <div className="rounded-md bg-muted/50 p-4">
+                    <p className="mb-2 text-sm text-muted-foreground">回答者: {item.answeredBy}</p>
+                    {item.answer}
+                  </div>
                 </AccordionContent>
               </AccordionItem>
             ))}

@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { format } from "date-fns";
 
 type QaColumnOptions = {
   onEdit?: (row: Qa) => void;
@@ -62,18 +63,18 @@ export const renderQa = ({
   {
     key: "date",
     label: "日付",
-    render: (item) => <span className="text-xs text-muted-foreground">{item.createdAt.toLocaleDateString()}</span>,
+    render: (item) => <span className="text-xs text-muted-foreground">{format(item.createdAt, "yyyy-MM-dd")}</span>,
   },
   {
     key: "questionBy",
     label: "質問者",
-    render: (item) => <span className="text-xs text-muted-foreground">{item.questionBy ? `質問者: ${item.questionBy}` : "未回答"}</span>,
+    render: (item) => <span className="text-xs text-muted-foreground">{item.questionBy && `質問者: ${item.questionBy}`}</span>,
   },
-  // {
-  //   key: "answeredBy",
-  //   label: "回答者",
-  //   render: (item) => <span className="text-xs text-muted-foreground">{item.answeredBy ? `回答者: ${item.answeredBy}` : "未回答"}</span>,
-  // },
+  {
+    key: "answeredBy",
+    label: "回答者",
+    render: (item) => <span className="text-xs text-muted-foreground">{item.answeredBy && "未回答"}</span>,
+  },
   {
     key: "actions",
     label: "操作",
