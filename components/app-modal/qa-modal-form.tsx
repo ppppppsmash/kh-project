@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
@@ -9,8 +9,12 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Plus, X } from "lucide-react";
 import type { Qa } from "@/types";
 import { qaFormSchema, type QaFormValues } from "@/lib/validations";
+
+// 初期のカテゴリーリスト
+const initialCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 interface QaModalFormProps {
   isOpen: boolean;
@@ -20,6 +24,10 @@ interface QaModalFormProps {
 }
 
 export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalFormProps) {
+  const [categories, setCategories] = useState<string[]>(initialCategories);
+  const [newCategory, setNewCategory] = useState("");
+  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+
   const form = useForm<QaFormValues>({
     resolver: zodResolver(qaFormSchema),
     defaultValues: {
@@ -57,6 +65,15 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
     onSubmit(data);
   };
 
+  const handleAddCategory = () => {
+    if (newCategory && !categories.includes(newCategory)) {
+      setCategories([...categories, newCategory]);
+      form.setValue("category", newCategory);
+      setNewCategory("");
+      setShowNewCategoryInput(false);
+    }
+  };
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
@@ -72,7 +89,7 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
                 <FormItem>
                   <FormLabel>質問<span className="text-red-500">*</span></FormLabel>
                   <FormControl>
-                    <Input placeholder="質問を入力してください" {...field} />
+                    <Textarea placeholder="質問を入力してください" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -97,20 +114,61 @@ export function QaModalForm({ isOpen, onClose, onSubmit, initialData }: QaModalF
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>カテゴリー<span className="text-red-500">*</span></FormLabel>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="カテゴリーを選択してください" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="IT">IT</SelectItem>
-                      <SelectItem value="人事">人事</SelectItem>
-                      <SelectItem value="経理">経理</SelectItem>
-                      <SelectItem value="総務">総務</SelectItem>
-                      <SelectItem value="その他">その他</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="space-y-2">
+                    <Select 
+                      onValueChange={(value) => {
+                        if (value === "new") {
+                          setShowNewCategoryInput(true);
+                        } else {
+                          field.onChange(value);
+                        }
+                      }} 
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="カテゴリーを選択してください" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="new" className="text-primary">
+                          <div className="flex items-center gap-2">
+                            <Plus className="h-4 w-4" />
+                            新しいカテゴリーを追加
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {showNewCategoryInput && (
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="新しいカテゴリー名"
+                          value={newCategory}
+                          onChange={(e) => setNewCategory(e.target.value)}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setShowNewCategoryInput(false)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={handleAddCategory}
+                          disabled={!newCategory}
+                        >
+                          追加
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}

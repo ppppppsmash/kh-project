@@ -1,5 +1,6 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/db";
 import { qa } from "@/db/shecma/qa";
 import { eq, desc } from "drizzle-orm";
@@ -18,6 +19,9 @@ export const getQA = async (): Promise<Qa[]> => {
 };
 
 export const createQA = async (data: QaFormValues) => {
+  const session = await auth();
+  const currentUser = session?.user?.name;
+
   // 最新のquestionCodeを取得
   const lastQaRecord = await db
     .select({ questionCode: qa.questionCode })
@@ -43,7 +47,7 @@ export const createQA = async (data: QaFormValues) => {
     question: data.question,
     answer: data.answer ?? "",
     category: data.category,
-    questionBy: data.questionBy ?? null,
+    questionBy: currentUser ?? null,
     answeredBy: data.answeredBy ?? null,
   };
 

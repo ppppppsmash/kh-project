@@ -12,13 +12,17 @@ type QaColumnOptions = {
  // カテゴリに応じたバッジの色を返す関数
 const getCategoryBadgeVariant = (category: string) => {
   switch (category) {
-    case "IT":
+    case "現場":
       return "default";
-    case "人事":
+    case "経費":
       return "secondary";
-    case "経理":
+    case "福利厚生":
       return "destructive";
-    case "総務":
+    case "休暇":
+      return "outline";
+    case "週報":
+      return "outline";
+    case "その他":
       return "outline";
     default:
       return "secondary";
