@@ -1,9 +1,24 @@
 "use server";
 
-import type { User } from "@/types";
 import { db } from "@/db";
 import { users } from "@/db/shecma";
 import { eq } from "drizzle-orm";
+
+type User = {
+  id: string;
+  name: string;
+  image: string;
+  email: string;
+  role?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
+type CreateUserInput = {
+  name: string;
+  email: string;
+  image: string;
+};
 
 export const getUser = async (email: string) => {
   const user = await db.select().from(users).where(eq(users.email, email));
@@ -15,22 +30,23 @@ export const existsUser = async (email: string) => {
   return user.length > 0;
 }
 
-export const createUser = async (user: User) => {
-  const exists = await existsUser(user.email);
+export const createUser = async (
+  data: CreateUserInput
+): Promise<User | undefined> => {
+  const [user] = await db
+    .insert(users)
+    .values(data)
+    .onConflictDoNothing()
+    .returning();
 
-  if (exists) {
-    // 既存ユーザーの更新
-    await db.update(users).set({
-      name: user.name,
-      image: user.image,
-      updatedAt: new Date(),
-    }).where(eq(users.email, user.email));
-  } else {
-    // 新規ユーザーの追加
-    await db.insert(users).values({
-      name: user.name,
-      image: user.image,
-      email: user.email,
-    });
+  if (!user) {
+    const [existing] = await db
+      .select()
+      .from(users)
+      .where(eq(users.email, data.email))
+      .limit(1);
+    return existing;
   }
+
+  return user;
 };

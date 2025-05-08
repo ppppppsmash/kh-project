@@ -29,9 +29,15 @@ export const { auth, handlers } = NextAuth({
         profile?.email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)
       ) {
 
+        const user = await createUser({
+          name: profile.name as string,
+          email: profile.email as string,
+          image: profile.picture as string,
+        });
+
         // ログイン成功時に履歴を記録
         await createUserActivity({
-          userId: profile.sub as string, // Googleのuser ID
+          userId: user?.id as string,
           userName: profile.name as string,
           action: "login",
         });
@@ -47,18 +53,21 @@ export const { auth, handlers } = NextAuth({
         token.user = user;
         const u = user as any;
         token.role = u.role;
+        token.id = u.id;
       }
 
       if (account) {
         token.accessToken = account.access_token;
 
-        if (account.provider === "google") {
-          await createUser({
-            id: token.id as string,
-            name: token.name as string,
-            email: token.email as string,
-            image: token.picture as string,
+        if (account?.provider === "google" && profile?.email) {
+          const user = await createUser({
+            name: profile.name as string,
+            email: profile.email as string,
+            image: profile.picture as string,
           });
+      
+          // db上のuser idをtokenに格納
+          token.id = user?.id as string;
         }
       }
 
@@ -69,6 +78,7 @@ export const { auth, handlers } = NextAuth({
         ...session,
         user: {
           ...session.user,
+          id: token.id as string,
           role: token.role,
         },
       };
