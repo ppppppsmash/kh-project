@@ -1,13 +1,9 @@
 "use client";
 
 import {
-  IconCreditCard,
   IconDotsVertical,
   IconLogout,
-  IconNotification,
-  IconUserCircle,
 } from "@tabler/icons-react";
-
 import {
   Avatar,
   AvatarFallback,
@@ -16,7 +12,6 @@ import {
 import {
   DropdownMenu,
   DropdownMenuContent,
-  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -30,12 +25,29 @@ import {
 } from "@/components/ui/sidebar";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
+import { createUserActivity } from "@/actions/user-activity";
 
 export const NavUser = () => {
   const { data: session } = useSession();
   const { isMobile } = useSidebar();
 
   if (!session?.user) return null;
+
+  const signOutWithActivityHandler = async () => {
+    try {
+      if (session?.user) {
+        await createUserActivity({
+          userId: session.user.id as string,
+          userName: session.user.name as string,
+          action: "logout",
+        });
+      }
+    } catch (error) {
+      console.error("ログアウト時のエラー:", error);
+    } finally {
+      await signOut();
+    }
+  };
 
   return (
     <SidebarMenu>
@@ -80,22 +92,7 @@ export const NavUser = () => {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {/* <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <IconUserCircle />
-                Account
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconCreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <IconNotification />
-                Notifications
-              </DropdownMenuItem>
-            </DropdownMenuGroup> */}
-            <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => signOut()}>
+            <DropdownMenuItem onClick={() => signOutWithActivityHandler()}>
               <IconLogout />
               ログアウト
             </DropdownMenuItem>

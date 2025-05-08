@@ -33,15 +33,4 @@ export const createUser = async (user: User) => {
       email: user.email,
     });
   }
-
-  // // IDを取得
-  // const savedUser = await getUser(user.email);
-  // if (!savedUser) return;
-
-  // // アクティビティを記録
-  // await createUserActivity({
-  //   userId: savedUser.id,
-  //   userName: savedUser.name,
-  //   action: "login",
-  // });
 };

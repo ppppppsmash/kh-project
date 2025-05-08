@@ -24,7 +24,7 @@ export const getUserActivity = async (): Promise<UserActivity[]> => {
       })
       .from(userActivity)
       .orderBy(desc(userActivity.createdAt))
-      .limit(30);
+      .limit(10);
 
     return activities.map((activity) => ({
       ...activity,
