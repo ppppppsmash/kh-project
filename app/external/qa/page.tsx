@@ -51,7 +51,12 @@ export default function QAPage() {
 
   // カテゴリーリストを計算
   const categories = useMemo(() => {
-    const dbCategories = Array.from(new Set(qaItems.map(item => item.category))).filter(Boolean);
+    // DBから取得したカテゴリーで、デフォルトカテゴリーに含まれていないものだけを抽出
+    const dbCategories = Array.from(new Set(qaItems.map(item => item.category)))
+      .filter(Boolean)
+      .filter(category => !defaultCategories.includes(category));
+    
+    // デフォルトカテゴリーとDBのカテゴリーを結合
     return ["全て", ...defaultCategories, ...dbCategories];
   }, [qaItems]);
 
