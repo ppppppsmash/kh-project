@@ -31,7 +31,7 @@ export default async function RootLayout({
   const isScaled = activeThemeValue?.endsWith("-scaled");
 
   return (
-    <html lang="en">
+    <html lang="ja">
       <body
         className={cn(
           "bg-background overscroll-none font-sans antialiased",

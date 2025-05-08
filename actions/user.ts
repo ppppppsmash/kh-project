@@ -50,3 +50,25 @@ export const createUser = async (
 
   return user;
 };
+
+export const getUserRole = async (email: string): Promise<string> => {
+  try {
+    const user = await db
+      .select({
+        role: users.role,
+      })
+      .from(users)
+      .where(eq(users.email, email))
+      .limit(1);
+
+    if (!user.length) {
+      // ユーザーが存在しない場合はデフォルトのロールを返す
+      return "user";
+    }
+
+    return user[0].role;
+  } catch (error) {
+    console.error("Error getting user role:", error);
+    return "user"; // エラーの場合もデフォルトのロールを返す
+  }
+}
