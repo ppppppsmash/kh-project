@@ -7,15 +7,39 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, BarChart3, Calendar, Users, User } from "lucide-react";
 import { useGetUserActivity, useGetClubActivities } from "@/components/app-table/hooks/use-table-data";
 import type { ClubStatus } from "@/types";
+import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const { data: userActivity } = useGetUserActivity();
+  const { data: userActivity, isLoading: isUserActivityLoading } = useGetUserActivity();
   const { data: clubs } = useGetClubActivities();
 
   const getStatusCount = (status: ClubStatus) => {
     return clubs?.filter((club) => club.status === status).length ?? 0;
   };
+
+  if (isUserActivityLoading) {
+    return (
+      <div className="space-y-8">
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold">ダッシュボード</h2>
+          <div className="text-sm text-muted-foreground">
+            <Skeleton className="w-24 h-4" />
+            <Skeleton className="w-24 h-4" />
+          </div>
+        </div>
+        <div className="flex flex-col gap-2">
+          <Skeleton className="w-full h-8" />
+          <Skeleton className="w-full h-8" />
+          <Skeleton className="w-full h-8" />
+          <Skeleton className="w-full h-8" />
+          <Skeleton className="w-full h-8" />
+          <Skeleton className="w-full h-8" />
+          <Skeleton className="w-full h-8" />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-8">

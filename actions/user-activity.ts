@@ -2,9 +2,9 @@
 
 import { db } from "@/db";
 import { userActivity } from "@/db/shecma/user-activity";
-import { users } from "@/db/shecma/users";
-import { desc, eq } from "drizzle-orm";
+import { desc } from "drizzle-orm";
 import type { UserActivity, UserActivityAction } from "@/types";
+import { cache } from "react";
 
 type CreateUserActivityInput = {
   userId: string;
@@ -12,8 +12,10 @@ type CreateUserActivityInput = {
   action: UserActivityAction;
 };
 
-export const getUserActivity = async (): Promise<UserActivity[]> => {
+// キャッシュを使用してデータ取得を最適化
+export const getUserActivity = cache(async (): Promise<UserActivity[]> => {
   try {
+    // 必要なカラムのみを選択
     const activities = await db
       .select({
         id: userActivity.id,
@@ -35,14 +37,16 @@ export const getUserActivity = async (): Promise<UserActivity[]> => {
     console.error("Error fetching user activity:", error);
     throw error;
   }
-}
+});
 
 export const createUserActivity = async (data: CreateUserActivityInput) => {
-  const newActivity = await db.insert(userActivity).values({
-    userId: data.userId,
-    userName: data.userName,
-    action: data.action,
-  }).returning();
+  const newActivity = await db.insert(userActivity)
+    .values({
+      userId: data.userId,
+      userName: data.userName,
+      action: data.action,
+    })
+    .returning();
 
   return newActivity;
 };
