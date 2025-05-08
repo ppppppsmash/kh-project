@@ -18,6 +18,7 @@ type CreateUserInput = {
   name: string;
   email: string;
   image: string;
+  role?: string;
 };
 
 export const getUser = async (email: string) => {
@@ -33,22 +34,28 @@ export const existsUser = async (email: string) => {
 export const createUser = async (
   data: CreateUserInput
 ): Promise<User | undefined> => {
-  const [user] = await db
-    .insert(users)
-    .values(data)
-    .onConflictDoNothing()
-    .returning();
+  try {
+    // 既存のユーザーを確認
+    const existingUser = await getUser(data.email);
 
-  if (!user) {
-    const [existing] = await db
-      .select()
-      .from(users)
-      .where(eq(users.email, data.email))
-      .limit(1);
-    return existing;
+    if (existingUser) {
+      return existingUser;
+    }
+
+    // 新規ユーザーの場合のみ作成
+    const [user] = await db
+      .insert(users)
+      .values({
+        ...data,
+        role: data.role || "user", // ロールが指定されていない場合はデフォルト値を使用
+      })
+      .returning();
+
+    return user;
+  } catch (error) {
+    console.error("Error creating user:", error);
+    return undefined;
   }
-
-  return user;
 };
 
 export const getUserRole = async (email: string): Promise<"admin" | "user"> => {
