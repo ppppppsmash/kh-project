@@ -32,12 +32,13 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { useSession, signIn } from "next-auth/react";
 import { Button } from "@/components/ui/button";
 import { DialogFooter } from "@/components/ui/dialog";
+import { Header } from "@/app/adixi-public/_components/header";
 
 // 固定のカテゴリーリスト
 const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 export default function QAPage() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const queryClient = useQueryClient();
   const { isOpen, openModal, closeModal } = useModal();
   const [currentData, setCurrentData] = useState<Qa | null>(null);
@@ -111,6 +112,11 @@ export default function QAPage() {
     },
   });
 
+  // セッションのローディング中は何も表示しない
+  if (status === "loading") {
+    return null;
+  }
+
   if (!session) {
     return (
       <div className="container mx-auto">
@@ -126,16 +132,16 @@ export default function QAPage() {
         </div>
 
         <Dialog open={isSignInDialogOpen} onOpenChange={setIsSignInDialogOpen}>
-          <DialogContent>
+          <DialogContent className="w-[360px]">
             <DialogHeader>
               <DialogTitle>サインイン</DialogTitle>
               <DialogDescription>
-                Googleアカウントでサインインしてください。
+                社内Googleアカウントが許可されているユーザーのみが閲覧できます
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
               <Button onClick={handleSignIn} className="w-full">
-                Googleでサインイン
+                サインイン
               </Button>
             </DialogFooter>
           </DialogContent>

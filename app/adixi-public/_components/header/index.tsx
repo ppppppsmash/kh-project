@@ -4,13 +4,15 @@ import Link from "next/link";
 import { ModeToggle } from "@/components/app-sidebar/mode-toggle";
 import { Button } from "@/components/ui/button";
 import { LogOut } from "lucide-react";
-import { signOut } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 
 interface HeaderProps {
   type: "external" | "adixi-public";
 }
 
 export const Header = ({ type }: HeaderProps) => {
+  const { data: session } = useSession();
+
   const handleSignOut = () => {
     const callbackUrl = type === "external" ? "/external/qa" : "/adixi-public/qa";
     signOut({ callbackUrl });
@@ -23,14 +25,16 @@ export const Header = ({ type }: HeaderProps) => {
           <Link href="/">ADiXi MGR</Link>
         </h1>
         <div className="ml-auto flex items-center gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={handleSignOut}
-            className="hover:bg-muted"
-          >
-            <LogOut className="h-5 w-5" />
-          </Button>
+          {session && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={handleSignOut}
+              className="hover:bg-muted"
+            >
+              <LogOut className="h-5 w-5" />
+            </Button>
+          )}
           <ModeToggle />
         </div>
       </header>
