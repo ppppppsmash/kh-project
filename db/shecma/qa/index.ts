@@ -1,4 +1,4 @@
-import { pgTable, varchar, uuid, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, varchar, uuid, timestamp } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 
 export const qa = pgTable("qa", {

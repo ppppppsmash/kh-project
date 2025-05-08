@@ -1,5 +1,7 @@
 import { pgTable, uuid, varchar, timestamp } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
+import { relations } from "drizzle-orm";
+import { userActivity } from "../user-activity";
 
 export const users = pgTable("users", {
 	id: uuid("id").primaryKey().$defaultFn(uuidv7),
@@ -10,3 +12,7 @@ export const users = pgTable("users", {
 	createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).notNull().defaultNow(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).notNull().$onUpdate(() => new Date()),
 });
+
+export const userRelations = relations(users, ({ many }) => ({
+  activities: many(userActivity), // 1:n
+}));

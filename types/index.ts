@@ -1,5 +1,17 @@
 export type ClubStatus = "active" | "inactive" | "pending";
 export type TaskProgress = "pending" | "inProgress" | "completed";
+export type UserActivityAction = "login" | "logout";
+
+export type User = {
+  id: string;
+  name: string;
+  image: string;
+  email: string;
+  role?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+}
+
 
 export type ClubActivity = {
   id: string;
@@ -60,4 +72,12 @@ export type Qa = {
   answeredBy?: string;
   createdAt: Date;
   updatedAt: Date;
+};
+
+export type UserActivity = {
+  id: string;
+  userId: string;
+  userName: string | null;
+  action: UserActivityAction;
+  createdAt: Date;
 };
