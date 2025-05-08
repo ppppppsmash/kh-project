@@ -8,11 +8,11 @@ export default function ExternalLayout({ children }: { children: React.ReactNode
       <div className="flex flex-col min-h-[100svh]">
         <Header />
         <div className="flex flex-1">
-        <div className="w-48">
+        <div className="w-48 mt-20">
           <Sidebar />
         </div>
 
-          <main className="flex-1 p-6">{children}</main>
+          <main className="flex-1 p-6 mt-20">{children}</main>
         </div>
       </div>
     </QueryProvider>

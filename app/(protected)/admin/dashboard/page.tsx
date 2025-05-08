@@ -53,9 +53,15 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-2">
         <h3 className="text-lg font-bold">ガイドページ</h3>
 
-        <Button variant="outline" className="w-fit">
-          <Link target="_blank" href="/adixi-public/intro-card/">パブリックページへ</Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" className="w-fit">
+            <Link target="_blank" href="/adixi-public/intro-card/">パブリックページへ</Link>
+          </Button>
+
+          <Button variant="outline" className="w-fit">
+            <Link target="_blank" href="/external/qa">全社向けのQAページ</Link>
+          </Button>
+        </div>
       </div>
 
       <div className="flex flex-col gap-2">

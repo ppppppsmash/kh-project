@@ -27,10 +27,13 @@ export const { auth, handlers } = NextAuth({
       },
     } as ClientType)
   ],
+  // pages: {
+  //   error: "/error",
+  // },
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
-    maxAge: 6 * 60 * 60, // 6時間
+    maxAge: 4 * 60 * 60, // 4時間
   },
   callbacks: {
     signIn: async ({ account, profile }) => {
