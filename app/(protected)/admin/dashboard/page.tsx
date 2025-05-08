@@ -4,38 +4,17 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, BarChart3, Calendar, Users } from "lucide-react";
-import { getClubActivity } from "@/actions/club-activity";
-import { useEffect, useState } from "react";
-import type { ClubActivity, ClubStatus } from "@/types";
-import { Sparkles } from "lucide-react";
+import { Activity, BarChart3, Calendar, Users, User } from "lucide-react";
+import { useGetUserActivity, useGetClubActivities } from "@/components/app-table/hooks/use-table-data";
+import type { ClubStatus } from "@/types";
 
 export default function DashboardPage() {
   const { data: session } = useSession();
-  const [clubs, setClubs] = useState<ClubActivity[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchClubs = async () => {
-      try {
-        const data = await getClubActivity();
-        const formattedData = data.map(({ status, ...rest }) => ({
-          ...rest,
-          status: status as ClubStatus,
-        }));
-        setClubs(formattedData as ClubActivity[]);
-      } catch (error) {
-        console.error("Error fetching clubs:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchClubs();
-  }, []);
+  const { data: userActivity } = useGetUserActivity();
+  const { data: clubs } = useGetClubActivities();
 
   const getStatusCount = (status: ClubStatus) => {
-    return clubs.filter((club) => club.status === status).length;
+    return clubs?.filter((club) => club.status === status).length ?? 0;
   };
 
   return (
@@ -56,11 +35,23 @@ export default function DashboardPage() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <h3 className="text-lg font-bold">ユーザ履歴一覧</h3>
+        <h3 className="text-lg font-bold">ユーザ操作履歴</h3>
 
-        <div className="flex items-center gap-2 animate-pulse">
-          <Sparkles className="h-4 w-4 text-muted-foreground" />
-          <p className="text-muted-foreground">ユーザ操作履歴一覧 実装中...</p>
+        <div className="flex flex-col gap-2">
+          {userActivity?.map((activity) => (
+            <div key={activity.id} className="flex items-center gap-4 text-sm">
+              <div className="flex gap-4 items-center justify-between w-full">
+                <p className="flex items-center gap-1">
+                  <User className="h-4 w-4 text-muted-foreground" />
+                  <span className="font-bold">{activity.userName}</span>
+                  <span className="text-muted-foreground ml-4">
+                  {activity.action === "login" ? "ログイン" : "ログアウト"}
+                </span>
+                </p>
+              </div>
+              <p className="text-muted-foreground text-xs text-nowrap">{activity.createdAt.toLocaleString()}</p>
+            </div>
+          ))}
         </div>
       </div>
 
@@ -109,7 +100,7 @@ export default function DashboardPage() {
               <BarChart3 className="h-4 w-4 text-muted-foreground" />
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold">{clubs.length}</div>
+              <div className="text-2xl font-bold">{clubs?.length ?? 0}</div>
               <p className="text-xs text-muted-foreground">
                 全部活動
               </p>

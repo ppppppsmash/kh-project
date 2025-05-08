@@ -3,7 +3,15 @@ import { getClubActivity } from "@/actions/club-activity";
 import { getIntroCards } from "@/actions/intro-card";
 import { getQA } from "@/actions/qa";
 import { getTasks } from "@/actions/task";
-import type { ClubActivity, Member, Task, Qa } from "@/types";
+import { getUserActivity } from "@/actions/user-activity";
+import type { ClubActivity, Member, Task, Qa, UserActivity } from "@/types";
+
+export const useGetUserActivity = () => {
+  return useQuery<UserActivity[]>({
+    queryKey: ["user-activity"],
+    queryFn: getUserActivity,
+  });
+};
 
 export const useGetMembers = () => {
   return useQuery<Member[]>({
