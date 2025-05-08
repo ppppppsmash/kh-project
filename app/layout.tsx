@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/providers/theme-provider";
 import { ActiveThemeProvider } from "@/providers/active-theme";
+import AuthProvider from "@/providers/auth-provider";
+import { QueryProvider } from "@/providers/query-provider";
 import { cookies } from "next/headers";
 import { cn } from "@/lib/utils";
 
@@ -18,7 +20,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "ADiXi management system",
-  description: "ADiXi management system created by kurosawa",
+  description: "ADiXi management system",
 };
 
 export default async function RootLayout({
@@ -47,7 +49,11 @@ export default async function RootLayout({
           enableColorScheme
         >
           <ActiveThemeProvider initialTheme={activeThemeValue}>
-            {children}
+            <AuthProvider>
+              <QueryProvider>
+                {children}
+              </QueryProvider>
+            </AuthProvider>
           </ActiveThemeProvider>
         </ThemeProvider>
       </body>

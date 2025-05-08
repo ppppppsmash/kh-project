@@ -29,19 +29,24 @@ import { CustomToast } from "@/components/ui/toast";
 import type { QaFormValues } from "@/lib/validations";
 import { createQA } from "@/actions/qa";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useSession, signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
 
 // 固定のカテゴリーリスト
 const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 export default function QAPage() {
+  const { data: session } = useSession();
   const queryClient = useQueryClient();
   const { isOpen, openModal, closeModal } = useModal();
   const [currentData, setCurrentData] = useState<Qa | null>(null);
-  const [searchTerm, setSearchTerm] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("全て")
-  const [currentPage, setCurrentPage] = useState(1)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const itemsPerPage = 10
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("全て");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSignInDialogOpen, setIsSignInDialogOpen] = useState(false);
+  const itemsPerPage = 10;
 
   const { data: qaItems = [] } = useQuery({
     queryKey: ["qa"],
@@ -51,12 +56,10 @@ export default function QAPage() {
 
   // カテゴリーリストを計算
   const categories = useMemo(() => {
-    // DBから取得したカテゴリーで、デフォルトカテゴリーに含まれていないものだけを抽出
     const dbCategories = Array.from(new Set(qaItems.map(item => item.category)))
       .filter(Boolean)
       .filter(category => !defaultCategories.includes(category));
     
-    // デフォルトカテゴリーとDBのカテゴリーを結合
     return ["全て", ...defaultCategories, ...dbCategories];
   }, [qaItems]);
 
@@ -82,6 +85,10 @@ export default function QAPage() {
     openModal();
   };
 
+  const handleSignIn = async () => {
+    await signIn("google", { callbackUrl: "/external/qa" });
+  };
+
   const { handleSubmit } = useSubmit<Qa, QaFormValues>({
     action: async (data) => {
       await createQA({
@@ -103,6 +110,39 @@ export default function QAPage() {
       CustomToast.error("QAの保存に失敗しました");
     },
   });
+
+  if (!session) {
+    return (
+      <div className="container mx-auto">
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold">QA一覧</h1>
+        </div>
+        <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border p-8 text-center">
+          <h2 className="text-xl font-semibold">認証が必要です</h2>
+          <p className="text-muted-foreground">QA一覧を閲覧するには、ログインが必要です。</p>
+          <Button onClick={() => setIsSignInDialogOpen(true)}>
+            サインイン
+          </Button>
+        </div>
+
+        <Dialog open={isSignInDialogOpen} onOpenChange={setIsSignInDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>サインイン</DialogTitle>
+              <DialogDescription>
+                Googleアカウントでサインインしてください。
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button onClick={handleSignIn} className="w-full">
+                Googleでサインイン
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto">

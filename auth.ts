@@ -46,7 +46,7 @@ export const { auth, handlers } = NextAuth({
 
       // 管理者ページへのアクセス
       if (isAdmin) {
-        if (isGoogle) {
+        if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
           await createUserActivity({
             userId: user?.id || "",
             userName: profile?.name || "",
@@ -59,7 +59,7 @@ export const { auth, handlers } = NextAuth({
 
       // 外部ページへのアクセス
       if (isUser) {
-        if (isGoogle) {
+        if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
           await createUserActivity({
             userId: user?.id || "",
             userName: profile?.name || "",
