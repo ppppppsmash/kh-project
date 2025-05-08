@@ -36,44 +36,40 @@ export const { auth, handlers } = NextAuth({
     maxAge: 4 * 60 * 60, // 4時間
   },
   callbacks: {
-    signIn: async ({ account, profile }) => {
-      if (
-        account?.provider === "google" &&
-        profile?.email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN) &&
-        (await getUserRole(profile.email)) === "admin"
-      ) {
-        const user = await createUser({
-          name: profile.name as string,
-          email: profile.email as string,
-          image: profile.picture as string,
-        });
+    signIn: async ({ account, profile, user }) => {
+      const email = profile?.email;
+      const role = await getUserRole(email as string);
 
-        // ログイン成功時に履歴を記録
-        await createUserActivity({
-          userId: user?.id as string,
-          userName: profile.name as string,
-          action: "login",
-        });
+      const isGoogle = account?.provider === "google";
+      const isAdmin = role === "admin";
+      const isUser = role === "user";
 
-        return true;
-      }
-
-      // userロールの場合はログインを拒否、許可を通るためにusersに登録しておく
-      if (
-        account?.provider === "google" &&
-        profile?.email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN) &&
-        (await getUserRole(profile.email)) === "user"
-      ) {
-        const user = await createUser({
-          name: profile.name as string,
-          email: profile.email as string,
-          image: profile.picture as string,
-        });
-
+      // 管理者ページへのアクセス
+      if (isAdmin) {
+        if (isGoogle) {
+          await createUserActivity({
+            userId: user?.id || "",
+            userName: profile?.name || "",
+            action: "login",
+          });
+          return true;
+        }
         return false;
       }
 
-      // それ以外は拒否
+      // 外部ページへのアクセス
+      if (isUser) {
+        if (isGoogle) {
+          await createUserActivity({
+            userId: user?.id || "",
+            userName: profile?.name || "",
+            action: "login",
+          });
+          return true;
+        }
+        return false;
+      }
+
       return false;
     },
     jwt: async ({ token, user, account, profile }) => {
@@ -94,14 +90,13 @@ export const { auth, handlers } = NextAuth({
             image: profile.picture as string,
           });
       
-          // db上のuserIdをtokenに格納
           token.id = user?.id as string;
         }
       }
 
       return token;
     },
-    session: async ({ session, token, user }) => {
+    session: async ({ session, token }) => {
       return {
         ...session,
         user: {
@@ -115,7 +110,6 @@ export const { auth, handlers } = NextAuth({
       if (url.startsWith("/")) return `${baseUrl}${url}`;
       if (url === `${baseUrl}/api/auth/signout`) return `${baseUrl}/signin`;
       if (url === `${baseUrl}/api/auth/signin`) return `${baseUrl}/admin/dashboard`;
-
       return url;
     },
   },
