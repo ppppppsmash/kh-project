@@ -9,8 +9,11 @@ export default async function middleware(request: NextRequest) {
   });
 
   const isRoot = request.nextUrl.pathname === "/";
-  const isPublicPage = request.nextUrl.pathname.startsWith("/adixi-public");
+  // マネージャー以上
   const isAuthPage = request.nextUrl.pathname.startsWith("/signin");
+  // リーダー以上
+  const isPublicPage = request.nextUrl.pathname.startsWith("/adixi-public");
+  // リーダー以上
   const isSharePage = request.nextUrl.pathname.startsWith("/external");
   const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
 
@@ -26,12 +29,11 @@ export default async function middleware(request: NextRequest) {
   // }
 
   if (isRoot) {
-    //return NextResponse.redirect(new URL("/adixi-public/qa/", request.url));
     return NextResponse.redirect(new URL("/external/qa", request.url));
   }
 
   if (isAuthPage) {
-    if (session && session.role === "admin") {
+    if (session && session.role === "superadmin") {
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
     return NextResponse.next();

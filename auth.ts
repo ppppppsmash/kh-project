@@ -41,10 +41,25 @@ export const { auth, handlers } = NextAuth({
       const role = await getUserRole(email as string);
 
       const isGoogle = account?.provider === "google";
+      const isSuperAdmin = role === "superadmin";
       const isAdmin = role === "admin";
+      // TODO: 会社全員向け
       const isUser = role === "user";
 
       // 管理者ページへのアクセス
+      if (isSuperAdmin) {
+        if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
+          await createUserActivity({
+            userId: user?.id || "",
+            userName: profile?.name || "",
+            action: "login",
+          });
+          return true;
+        }
+        return false;
+      }
+
+      // リーダー以上に向けたページへのアクセス
       if (isAdmin) {
         if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
           await createUserActivity({
@@ -57,16 +72,8 @@ export const { auth, handlers } = NextAuth({
         return false;
       }
 
-      // 外部ページへのアクセス
+      // 一般ユーザーはアクセス不可
       if (isUser) {
-        if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
-          await createUserActivity({
-            userId: user?.id || "",
-            userName: profile?.name || "",
-            action: "login",
-          });
-          return true;
-        }
         return false;
       }
 

@@ -8,6 +8,7 @@ export const users = pgTable("users", {
 	name: varchar("name", { length: 255 }).notNull(),
 	image: varchar("image", { length: 255 }).notNull(),
 	email: varchar("email", { length: 255 }).notNull().unique(),
+	// ロールはsuperadmin, admin, userの3種類
 	role: varchar("role", { length: 255 }).notNull().default("user"),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).notNull().defaultNow(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).notNull().$onUpdate(() => new Date()),

@@ -58,7 +58,7 @@ export const createUser = async (
   }
 };
 
-export const getUserRole = async (email: string): Promise<"admin" | "user"> => {
+export const getUserRole = async (email: string): Promise<"superadmin" | "admin" | "user"> => {
   try {
     const user = await db
       .select({
@@ -73,7 +73,7 @@ export const getUserRole = async (email: string): Promise<"admin" | "user"> => {
       return "user";
     }
 
-    return user[0].role as "admin" | "user";
+    return user[0].role as "superadmin" | "admin" | "user";
   } catch (error) {
     console.error("Error getting user role:", error);
     return "user"; // エラーの場合もデフォルトのロールを返す
