@@ -115,8 +115,8 @@ export const { auth, handlers } = NextAuth({
     },
     redirect: async ({ url, baseUrl }) => {
       if (url.startsWith("/")) return `${baseUrl}${url}`;
-      if (url === `${baseUrl}/api/auth/signout`) return `${baseUrl}/signin`;
-      if (url === `${baseUrl}/api/auth/signin`) return `${baseUrl}/admin/dashboard`;
+      if (url === `${baseUrl}/api/auth/signout`) return `${baseUrl}/signin?role=superadmin`;
+      if (url === `${baseUrl}/api/auth/signin`) return `${baseUrl}/superadmin/dashboard`;
       return url;
     },
   },

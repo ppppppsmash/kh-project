@@ -10,36 +10,28 @@ export default async function middleware(request: NextRequest) {
 
   const isRoot = request.nextUrl.pathname === "/";
   // マネージャー以上
-  const isAuthPage = request.nextUrl.pathname.startsWith("/signin");
+  const isSuperAdminAuthPage = request.nextUrl.pathname.startsWith("/signin?role=superadmin");
   // リーダー以上
-  const isPublicPage = request.nextUrl.pathname.startsWith("/adixi-public");
+  const isAdminAuthPage = request.nextUrl.pathname.startsWith("/signin");
   // リーダー以上
   const isSharePage = request.nextUrl.pathname.startsWith("/external");
-  const isAdminPage = request.nextUrl.pathname.startsWith("/superadmin");
-
-  // 管理者ページへのアクセス制御
-  // if (isAdminPage) {
-  //   if (!session) {
-  //     return NextResponse.redirect(new URL("/signin", request.url));
-  //   }
-  //   // 管理者ロールのチェック
-  //   if (session.role !== "admin") {
-  //     return NextResponse.redirect(new URL("/", request.url));
-  //   }
-  // }
+  //const isSuperAdminPage = request.nextUrl.pathname.startsWith("/superadmin");
 
   if (isRoot) {
     return NextResponse.redirect(new URL("/external/qa", request.url));
   }
 
-  if (isAuthPage) {
+  if (isSuperAdminAuthPage) {
     if (session && session.role === "superadmin") {
       return NextResponse.redirect(new URL("/superadmin/dashboard", request.url));
     }
     return NextResponse.next();
   }
 
-  if (isPublicPage || isSharePage) {
+  if (isAdminAuthPage) {
+    if (session && session.role === "admin") {
+      return NextResponse.redirect(new URL("/adixi-public/qa", request.url));
+    }
     return NextResponse.next();
   }
 

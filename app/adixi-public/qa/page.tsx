@@ -122,29 +122,6 @@ export default function QAPage() {
         <div className="mb-8 flex items-center justify-between">
           <h1 className="text-3xl font-bold">QA一覧</h1>
         </div>
-        <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border p-8 text-center">
-          <h2 className="text-xl font-semibold">認証が必要です</h2>
-          <p className="text-muted-foreground">QA一覧を閲覧するには、ログインが必要です。</p>
-          <Button onClick={() => setIsSignInDialogOpen(true)}>
-            サインイン
-          </Button>
-        </div>
-
-        <Dialog open={isSignInDialogOpen} onOpenChange={setIsSignInDialogOpen}>
-          <DialogContent className="w-[360px]">
-            <DialogHeader>
-              <DialogTitle>サインイン</DialogTitle>
-              <DialogDescription>
-                社内Googleアカウントが許可されているユーザーのみが閲覧できます
-              </DialogDescription>
-            </DialogHeader>
-            <DialogFooter>
-              <Button onClick={handleSignIn} className="w-full">
-                サインイン
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
       </div>
     );
   }

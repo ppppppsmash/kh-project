@@ -45,7 +45,7 @@ export const NavUser = () => {
     } catch (error) {
       console.error("ログアウト時のエラー:", error);
     } finally {
-      await signOut();
+      await signOut({ callbackUrl: "/signin?role=superadmin" });
     }
   };
 

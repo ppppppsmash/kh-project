@@ -14,7 +14,7 @@ export const Header = ({ type }: HeaderProps) => {
   const { data: session } = useSession();
 
   const handleSignOut = () => {
-    const callbackUrl = type === "external" ? "/external/qa" : "/adixi-public/qa";
+    const callbackUrl = type === "external" ? "/external/qa" : "/signin";
     signOut({ callbackUrl });
   };
 
@@ -24,7 +24,8 @@ export const Header = ({ type }: HeaderProps) => {
         <h1 className="text-2xl font-bold">
           <Link href="/">ADiXi MGR</Link>
         </h1>
-        <div className="ml-auto flex items-center gap-2">
+        <div className="p-4 flex items-center gap-4">
+          <ModeToggle />
           {session && (
             <Button
               variant="ghost"
@@ -35,7 +36,6 @@ export const Header = ({ type }: HeaderProps) => {
               <LogOut className="h-5 w-5" />
             </Button>
           )}
-          <ModeToggle />
         </div>
       </header>
     </div>
