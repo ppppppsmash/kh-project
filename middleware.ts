@@ -15,7 +15,7 @@ export default async function middleware(request: NextRequest) {
   const isPublicPage = request.nextUrl.pathname.startsWith("/adixi-public");
   // リーダー以上
   const isSharePage = request.nextUrl.pathname.startsWith("/external");
-  const isAdminPage = request.nextUrl.pathname.startsWith("/admin");
+  const isAdminPage = request.nextUrl.pathname.startsWith("/superadmin");
 
   // 管理者ページへのアクセス制御
   // if (isAdminPage) {
@@ -34,7 +34,7 @@ export default async function middleware(request: NextRequest) {
 
   if (isAuthPage) {
     if (session && session.role === "superadmin") {
-      return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+      return NextResponse.redirect(new URL("/superadmin/dashboard", request.url));
     }
     return NextResponse.next();
   }
