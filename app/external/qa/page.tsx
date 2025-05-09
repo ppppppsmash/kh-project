@@ -64,7 +64,7 @@ export default function QAPage() {
   }, [qaItems]);
 
   // 回答済みの質問のみをフィルタリング
-  const answeredQAItems = qaItems.filter((item) => item.answer)
+  const answeredQAItems = qaItems.filter((item) => item.answer && item.isPublic)
 
   // フィルタリングとページネーション
   const filteredQA = answeredQAItems.filter((item) => {
@@ -157,7 +157,7 @@ export default function QAPage() {
       </div>
 
       <QaModalForm
-        type="public"
+        type="admin"
         isOpen={isOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}

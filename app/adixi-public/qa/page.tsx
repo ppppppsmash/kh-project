@@ -29,19 +29,24 @@ import { CustomToast } from "@/components/ui/toast";
 import type { QaFormValues } from "@/lib/validations";
 import { createQA } from "@/actions/qa";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { useSession, signIn } from "next-auth/react";
+import { Button } from "@/components/ui/button";
+import { DialogFooter } from "@/components/ui/dialog";
 
 // 固定のカテゴリーリスト
 const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 export default function QAPage() {
+  const { data: session, status } = useSession();
   const queryClient = useQueryClient();
   const { isOpen, openModal, closeModal } = useModal();
   const [currentData, setCurrentData] = useState<Qa | null>(null);
-  const [searchTerm, setSearchTerm] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("全て")
-  const [currentPage, setCurrentPage] = useState(1)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const itemsPerPage = 10
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("全て");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isSignInDialogOpen, setIsSignInDialogOpen] = useState(false);
+  const itemsPerPage = 10;
 
   const { data: qaItems = [] } = useQuery({
     queryKey: ["qa"],
@@ -51,17 +56,15 @@ export default function QAPage() {
 
   // カテゴリーリストを計算
   const categories = useMemo(() => {
-    // DBから取得したカテゴリーで、デフォルトカテゴリーに含まれていないものだけを抽出
     const dbCategories = Array.from(new Set(qaItems.map(item => item.category)))
       .filter(Boolean)
       .filter(category => !defaultCategories.includes(category));
     
-    // デフォルトカテゴリーとDBのカテゴリーを結合
     return ["全て", ...defaultCategories, ...dbCategories];
   }, [qaItems]);
 
   // 回答済みの質問のみをフィルタリング
-  const answeredQAItems = qaItems.filter((item) => item.answer)
+  const answeredQAItems = qaItems.filter((item) => item.answer && item.isPublic)
 
   // フィルタリングとページネーション
   const filteredQA = answeredQAItems.filter((item) => {
@@ -80,6 +83,10 @@ export default function QAPage() {
   const handleAdd = () => {
     setCurrentData(null);
     openModal();
+  };
+
+  const handleSignIn = async () => {
+    await signIn("google", { callbackUrl: "/adixi-public/qa" });
   };
 
   const { handleSubmit } = useSubmit<Qa, QaFormValues>({
@@ -104,6 +111,44 @@ export default function QAPage() {
     },
   });
 
+  // セッションのローディング中は何も表示しない
+  if (status === "loading") {
+    return null;
+  }
+
+  if (!session) {
+    return (
+      <div className="container mx-auto">
+        <div className="mb-8 flex items-center justify-between">
+          <h1 className="text-3xl font-bold">QA一覧</h1>
+        </div>
+        <div className="flex flex-col items-center justify-center space-y-4 rounded-lg border p-8 text-center">
+          <h2 className="text-xl font-semibold">認証が必要です</h2>
+          <p className="text-muted-foreground">QA一覧を閲覧するには、ログインが必要です。</p>
+          <Button onClick={() => setIsSignInDialogOpen(true)}>
+            サインイン
+          </Button>
+        </div>
+
+        <Dialog open={isSignInDialogOpen} onOpenChange={setIsSignInDialogOpen}>
+          <DialogContent className="w-[360px]">
+            <DialogHeader>
+              <DialogTitle>サインイン</DialogTitle>
+              <DialogDescription>
+                社内Googleアカウントが許可されているユーザーのみが閲覧できます
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button onClick={handleSignIn} className="w-full">
+                サインイン
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+      </div>
+    );
+  }
+
   return (
     <div className="container mx-auto">
       <div className="mb-8 flex items-center justify-between">
@@ -112,14 +157,14 @@ export default function QAPage() {
       </div>
 
       <QaModalForm
-        type="public"
+        type="admin"
         isOpen={isOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}
         initialData={currentData}
       />
 
-      <div>
+      <>
         <div className="mb-6 flex flex-col gap-4 md:flex-row">
           <div className="relative flex-1">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -230,7 +275,7 @@ export default function QAPage() {
             </PaginationContent>
           </Pagination>
         )}
-      </div>
+      </>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent>

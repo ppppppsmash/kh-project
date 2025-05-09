@@ -11,10 +11,11 @@ export const getQA = async (): Promise<Qa[]> => {
   const qaData = await db.select().from(qa);
   return qaData.map((q) => ({
     ...q,
-    createdAt: q.createdAt ?? new Date(),
-    updatedAt: q.updatedAt ?? new Date(),
+    isPublic: q.isPublic ?? false,
     questionBy: q.questionBy ?? undefined,
     answeredBy: q.answeredBy ?? undefined,
+    createdAt: q.createdAt ?? new Date(),
+    updatedAt: q.updatedAt ?? new Date(),
   }));
 };
 

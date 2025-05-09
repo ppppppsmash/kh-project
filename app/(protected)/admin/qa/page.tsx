@@ -24,7 +24,7 @@ export default function AdminQAPage() {
   const { isOpen, openModal, closeModal } = useModal();
   const [currentData, setCurrentData] = useState<Qa | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const itemsPerPage = 5;
+  const itemsPerPage = 10;
 
   const { data: qaItems, isLoading } = useGetQa();
 
@@ -68,6 +68,7 @@ export default function AdminQAPage() {
           category: data.category,
           questionBy: data.questionBy,
           answeredBy: data.answeredBy,
+          isPublic: data.isPublic,
         });
       } else {
         await createQA({
@@ -76,6 +77,7 @@ export default function AdminQAPage() {
           category: data.category,
           questionBy: data.questionBy,
           answeredBy: data.answeredBy,
+          isPublic: data.isPublic,
         });
       }
     },
@@ -103,7 +105,7 @@ export default function AdminQAPage() {
       </div>
 
       <QaModalForm
-        type="admin"
+        type="superadmin"
         isOpen={isOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}
@@ -126,7 +128,7 @@ export default function AdminQAPage() {
             {item.answer}
           </div>
         )}
-        itemsPerPage={10}
+        itemsPerPage={itemsPerPage}
       />
 
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
