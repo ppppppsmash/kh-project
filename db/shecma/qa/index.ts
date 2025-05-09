@@ -1,4 +1,4 @@
-import { pgTable, varchar, uuid, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, varchar, uuid, timestamp, boolean } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 
 export const qa = pgTable("qa", {
@@ -9,6 +9,7 @@ export const qa = pgTable("qa", {
   category: varchar("category", { length: 255 }).notNull(),
   questionBy: varchar("question_by", { length: 255 }),
   answeredBy: varchar("answered_by", { length: 255 }),
+  isPublic: boolean("is_public").default(false),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()),
 });

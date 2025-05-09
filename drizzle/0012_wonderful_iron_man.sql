@@ -1,0 +1,2 @@
+ALTER TABLE "qa" ADD COLUMN "is_public" boolean DEFAULT false;--> statement-breakpoint
+ALTER TABLE "user_activity" ADD CONSTRAINT "user_activity_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE no action ON UPDATE no action;

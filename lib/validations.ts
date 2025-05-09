@@ -35,6 +35,7 @@ export const qaFormSchema = z.object({
   category: z.string().min(1, "カテゴリは必須です"),
   questionBy: z.string().optional(),
   answeredBy: z.string().optional(),
+  isPublic: z.boolean().optional(),
 });
 
 export type QaFormValues = z.infer<typeof qaFormSchema>

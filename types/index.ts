@@ -70,6 +70,7 @@ export type Qa = {
   category: string;
   questionBy?: string;
   answeredBy?: string;
+  isPublic: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
