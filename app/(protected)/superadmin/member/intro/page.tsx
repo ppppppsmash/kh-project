@@ -10,7 +10,7 @@ import { EditButton } from "@/components/edit-button";
 import { useQueryClient } from "@tanstack/react-query";
 import { useModal } from "@/hooks/use-modal";
 import { CustomToast } from "@/components/ui/toast";
-import { MemberModalForm } from "@/components/app-modal/member-modal-form";
+import { UserModalForm } from "@/components/app-modal/member-modal-form";
 import { updateUserInfo } from "@/actions/user";
 import { UserDetail } from "@/components/app-member";
 
@@ -18,9 +18,6 @@ export default function MemberPage() {
   const queryClient = useQueryClient();
   const { data: userInfo, isLoading: isUserInfoLoading } = useGetUserInfo();
   const { isOpen, openModal, closeModal } = useModal();
-
-
-  console.log(userInfo)
 
   const { handleSubmit } = useSubmit<Omit<User, "id" | "createdAt" | "updatedAt" | "image" | "email">>({
     action: async (data) => {
@@ -31,7 +28,7 @@ export default function MemberPage() {
     onSuccess: () => {
       closeModal();
       CustomToast.success("メンバー情報を更新しました");
-      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["user-info"] });
     },
     onError: () => {
       CustomToast.error("メンバー情報の更新に失敗しました");
@@ -54,7 +51,7 @@ export default function MemberPage() {
           <Link target="_blank" href="/adixi-public/intro-card/">パブリック登録フォーム</Link>
         </Button>
 
-        <MemberModalForm
+        <UserModalForm
           isOpen={isOpen}
           onClose={closeModal}
           onSubmit={handleSubmit}

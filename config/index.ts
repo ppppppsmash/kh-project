@@ -66,7 +66,7 @@ export const navConfig = {
     // },
     {
       title: "部活動",
-      url: "/admin/club-activity",
+      url: "/superadmin/club-activity",
       icon: IconConfetti,
     },
   ],

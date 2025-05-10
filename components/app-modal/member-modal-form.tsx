@@ -12,7 +12,7 @@ import { BaseModalForm } from "./base-modal-form";
 import { memberFormSchema, MemberFormValues } from "@/lib/validations";
 import { formatDate } from "@/lib/utils";
 
-interface MemberModalFormProps {
+interface UserModalFormProps {
   title?: string;
   onSubmit: (data: Omit<User, "id" | "image" | "email" | "createdAt" | "updatedAt"> & { photo?: File }) => Promise<void>;
   onClose: () => void;
@@ -20,13 +20,13 @@ interface MemberModalFormProps {
   isOpen: boolean;
 }
 
-export const MemberModalForm = ({
+export const UserModalForm = ({
   title="自己紹介登録",
   onClose,
   onSubmit,
   defaultValues,
   isOpen,
-}: MemberModalFormProps) => {
+}: UserModalFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 

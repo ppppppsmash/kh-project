@@ -88,7 +88,7 @@ export default function ClubActivityPage() {
         loading={isLoading}
         searchableKeys={["name", "leader", "description", "memberCount", "status"]}
         onRowClick={(row: ClubActivity) => {
-          router.push(`/club-activity/${row.id}`);
+          router.push(`/superadmin/club-activity/${row.id}`);
         }}
       />
 
