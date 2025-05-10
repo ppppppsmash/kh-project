@@ -1,10 +1,10 @@
 import { useQuery } from "@tanstack/react-query";
 import { getClubActivity } from "@/actions/club-activity";
-import { getIntroCards } from "@/actions/intro-card";
 import { getQA } from "@/actions/qa";
 import { getTasks } from "@/actions/task";
 import { getUserActivity } from "@/actions/user-activity";
-import type { ClubActivity, Member, Task, Qa, UserActivity } from "@/types";
+import { getUserList } from "@/actions/user";
+import type { ClubActivity, Task, Qa, UserActivity, User } from "@/types";
 
 export const useGetUserActivity = () => {
   return useQuery<UserActivity[]>({
@@ -13,10 +13,10 @@ export const useGetUserActivity = () => {
   });
 };
 
-export const useGetMembers = () => {
-  return useQuery<Member[]>({
-    queryKey: ["members"],
-    queryFn: getIntroCards,
+export const useGetUserList = () => {
+  return useQuery<User[]>({
+    queryKey: ["users"],
+    queryFn: getUserList,
   });
 };
 

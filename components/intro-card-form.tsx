@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { createIntroCard } from "@/actions/intro-card";
+//import { createIntroCard } from "@/actions/intro-card";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { CopyButton } from "@/components/ui/copy-button";
@@ -33,15 +33,15 @@ export const IntroCardForm = () => {
 
   const handleSubmit = () => {
     startTransition(async () => {
-      const newMember = await createIntroCard({ 
-        name, 
-        department,
-        position,
-        hobby, 
-        skills,
-        freeText,
-        photo
-      });
+      // const newMember = await createIntroCard({ 
+      //   name, 
+      //   department,
+      //   position,
+      //   hobby, 
+      //   skills,
+      //   freeText,
+      //   photo
+      // });
       
       setName("");
       setDepartment("");
@@ -50,9 +50,9 @@ export const IntroCardForm = () => {
       setSkills("");
       setFreeText("");
       setPhoto(null);
-      setCreatedCardId(newMember.id);
-      setIsDialogOpen(true);
-      router.refresh();
+      // setCreatedCardId(newMember.id);
+      // setIsDialogOpen(true);
+      // router.refresh();
     });
   };
 

@@ -1,4 +1,4 @@
-import { getIntroCardById } from "@/actions/intro-card";
+// import { getIntroCardById } from "@/actions/intro-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -10,11 +10,11 @@ type Props = {
 
 export default async function IntroCardPage({ params }: Props) {
   const { id } = await params;
-  const member = await getIntroCardById(id);
+  // const member = await getIntroCardById(id);
 
-  if (!member) {
-    notFound();
-  }
+  // if (!member) {
+  //   notFound();
+  // }
 
   return (
     <div className="flex flex-col gap-4">
@@ -22,7 +22,7 @@ export default async function IntroCardPage({ params }: Props) {
     
       <div className="w-full mx-auto">
         <Card>
-          <CardHeader>
+          {/* <CardHeader>
             <CardTitle className="text-2xl font-bold text-center">
               {member.name} 自己紹介
             </CardTitle>
@@ -75,7 +75,7 @@ export default async function IntroCardPage({ params }: Props) {
             <div className="text-sm text-gray-500">
               登録日: {formatDate(member.createdAt ?? new Date(), "yyyy/MM/dd HH:mm")}
             </div>
-          </CardContent>
+          </CardContent> */}
         </Card>
       </div>
     </div>

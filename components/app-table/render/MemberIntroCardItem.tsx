@@ -1,9 +1,9 @@
 import Image from "next/image";
 import { TableColumn } from "@/components/app-table";
 import { formatDate } from "@/lib/utils";
-import type { Member } from "@/types";
+import type { User } from "@/types";
 
-export const renderMemberIntroCard = (): TableColumn<Member>[] => [
+export const renderMemberIntroCard = (): TableColumn<User>[] => [
   {
     key: "photoUrl",
     title: "写真",

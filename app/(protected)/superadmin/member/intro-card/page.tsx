@@ -1,17 +1,17 @@
 "use client";
 
-import type { Member } from "@/types";
+import type { User } from "@/types";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { AppTable } from "@/components/app-table";
 import { renderMemberIntroCard } from "@/components/app-table/render/MemberIntroCardItem";
-import { useGetMembers } from "@/components/app-table/hooks/use-table-data";
+import { useGetUserList } from "@/components/app-table/hooks/use-table-data";
 import { Button } from "@/components/ui/button";
 import { FilePenLine } from "lucide-react";
 
 export default function MemberIntroCardPage() {
   const router = useRouter();
-  const { data: members, isLoading } = useGetMembers();
+  const { data: users, isLoading } = useGetUserList();
 
   return (
     <div className="space-y-8">
@@ -24,10 +24,10 @@ export default function MemberIntroCardPage() {
           researchBarPlaceholder: "名前や事業部を検索...",
         }}
         columns={renderMemberIntroCard()}
-        data={members || []}
+        data={users || []}
         loading={isLoading}
         searchableKeys={["name", "department", "position", "hobby", "skills", "freeText"]}
-        onRowClick={(row: Member) => {
+        onRowClick={(row: User) => {
           router.push(`/member/intro-card/${row.id}`);
         }}
       />

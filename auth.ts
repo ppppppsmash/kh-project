@@ -49,6 +49,13 @@ export const { auth, handlers } = NextAuth({
       // 管理者ページへのアクセス
       if (isSuperAdmin) {
         if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
+          const user = await createUser({
+            name: profile?.name as string,
+            email: profile?.email as string,
+            image: profile?.picture as string,
+            role: "superadmin",
+          });
+
           await createUserActivity({
             userId: user?.id || "",
             userName: profile?.name || "",
@@ -62,6 +69,13 @@ export const { auth, handlers } = NextAuth({
       // リーダー以上に向けたページへのアクセス
       if (isAdmin) {
         if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
+          const user = await createUser({
+            name: profile?.name as string,
+            email: profile?.email as string,
+            image: profile?.picture as string,
+            role: "admin",
+          });
+
           await createUserActivity({
             userId: user?.id || "",
             userName: profile?.name || "",
