@@ -1,6 +1,6 @@
 "use client";
 
-import type { User } from "@/types";
+import type { User, Role } from "@/types";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -47,10 +47,16 @@ export const UserModalForm = ({
     setIsSubmitting(true);
     try {
       const memberData = {
-        ...data,
+        name: data.name,
+        department: data.department,
+        position: data.position,
+        hobby: data.hobby,
+        skills: data.skills,
+        freeText: data.freeText,
         isActive: data.isActive || true,
         photoUrl: data.photoUrl,
         editedAt: new Date(),
+        role: data.role as Role,
         photo: selectedFile || undefined,
       };
       await onSubmit(memberData);

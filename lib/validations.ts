@@ -11,6 +11,7 @@ export const memberFormSchema = z.object({
   photoUrl: z.string().optional(),
   isActive: z.boolean().optional(),
   editedAt: z.string().optional(),
+  role: z.enum(["superadmin", "admin", "user"]),
 });
 export type MemberFormValues = z.infer<typeof memberFormSchema>
 
