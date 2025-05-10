@@ -22,18 +22,19 @@ export default async function middleware(request: NextRequest) {
   }
 
   if (isSuperAdminAuthPage) {
-    if (session && session.role === "superadmin") {
+    if (session) {
       return NextResponse.redirect(new URL("/superadmin/dashboard", request.url));
     }
     return NextResponse.next();
   }
 
   if (isAdminAuthPage) {
-    if (session && session.role === "admin") {
+    if (session) {
       return NextResponse.redirect(new URL("/adixi-public/qa", request.url));
     }
     return NextResponse.next();
   }
+
 
   if (!session) {
     return NextResponse.redirect(new URL("/signin", request.url));

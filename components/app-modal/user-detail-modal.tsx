@@ -25,13 +25,19 @@ export const UserDetailModal = ({ user, isOpen, onClose }: UserDetailModalProps)
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="flex items-start gap-4">
+            {user.photoUrl ? (
             <Image
               src={user.photoUrl || ""}
-              alt={user.name}
-              width={300}
-              height={300}
-              className="rounded-lg object-cover"
-            />
+                alt={user.name}
+                width={300}
+                height={300}
+                className="rounded-lg object-cover"
+              />
+            ) : (
+              <div className="w-20 h-20 rounded-lg bg-gray-200 flex items-center justify-center">
+                No Image
+              </div>
+            )}
             <div className="flex-1">
               <h3 className="text-lg font-semibold">{user.name}</h3>
               <p className="text-sm text-muted-foreground">{user.email}</p>

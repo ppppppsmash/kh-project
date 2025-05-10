@@ -46,14 +46,13 @@ export const { auth, handlers } = NextAuth({
       // TODO: 会社全員向け
       const isUser = role === "user";
 
-      // 管理者ページへのアクセス
-      if (isSuperAdmin) {
+      // 新規ニューザーは初期ログイン不可だが、usertableにデータを残しておく
+      if (isUser) {
         if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
           const user = await createUser({
             name: profile?.name as string,
             email: profile?.email as string,
             image: profile?.picture as string,
-            role: "superadmin",
           });
 
           await createUserActivity({
@@ -61,9 +60,28 @@ export const { auth, handlers } = NextAuth({
             userName: profile?.name || "",
             action: "login",
           });
+
+          return false;
+        }
+      }
+
+      // 管理者ページへのアクセス
+      if (isSuperAdmin) {
+        if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
+          const user = await createUser({
+            name: profile?.name as string,
+            email: profile?.email as string,
+            image: profile?.picture as string,
+          });
+
+          await createUserActivity({
+            userId: user?.id || "",
+            userName: profile?.name || "",
+            action: "login",
+          });
+
           return true;
         }
-        return false;
       }
 
       // リーダー以上に向けたページへのアクセス
@@ -73,7 +91,6 @@ export const { auth, handlers } = NextAuth({
             name: profile?.name as string,
             email: profile?.email as string,
             image: profile?.picture as string,
-            role: "admin",
           });
 
           await createUserActivity({
@@ -81,8 +98,8 @@ export const { auth, handlers } = NextAuth({
             userName: profile?.name || "",
             action: "login",
           });
-          return true;
         }
+
         return false;
       }
 
