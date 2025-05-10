@@ -2,60 +2,62 @@
 
 import { useState, useRef } from "react";
 import Image from "next/image";
-import { Upload, X, Check, AlertCircle } from "lucide-react";
+import { Upload, X, AlertCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 // import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 
 interface ImageUploadProps {
+  initialImage?: string
   onUploadComplete?: (file: File) => void
   maxSizeMB?: number
   acceptedFileTypes?: string[]
 }
 
 export const ImageUpload = ({
+  initialImage,
   onUploadComplete,
   maxSizeMB = 5,
   acceptedFileTypes = ["image/jpeg", "image/png", "image/webp", "image/heic", "image/heif"],
 }: ImageUploadProps) => {
-  const [selectedImage, setSelectedImage] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null)
-  const [error, setError] = useState<string | null>(null)
-  const fileInputRef = useRef<HTMLInputElement>(null)
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(initialImage || null);
+  const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
+    const file = e.target.files?.[0];
+    if (!file) return;
 
     // ファイルタイプの検証
     if (!acceptedFileTypes.includes(file.type)) {
-      setError(`対応していないファイル形式です。${acceptedFileTypes.join(", ")}のみ対応しています。`)
-      return
+      setError(`対応していないファイル形式です。${acceptedFileTypes.join(", ")}のみ対応しています。`);
+      return;
     }
 
     // ファイルサイズの検証
     if (file.size > maxSizeMB * 1024 * 1024) {
-      setError(`ファイルサイズが大きすぎます。${maxSizeMB}MB以下のファイルを選択してください。`)
-      return
+      setError(`ファイルサイズが大きすぎます。${maxSizeMB}MB以下のファイルを選択してください。`);
+      return;
     }
 
-    setError(null)
-    setSelectedImage(file)
+    setError(null);
+    setSelectedImage(file);
     if (onUploadComplete) {
-      onUploadComplete(file)
+      onUploadComplete(file);
     }
 
     // プレビュー用のURLを作成
-    const objectUrl = URL.createObjectURL(file)
-    setPreviewUrl(objectUrl)
+    const objectUrl = URL.createObjectURL(file);
+    setPreviewUrl(objectUrl);
   }
 
   const resetUpload = () => {
-    setSelectedImage(null)
-    setPreviewUrl(null)
-    setError(null)
+    setSelectedImage(null);
+    setPreviewUrl(null);
+    setError(null);
     if (fileInputRef.current) {
-      fileInputRef.current.value = ""
+      fileInputRef.current.value = "";
     }
   }
 

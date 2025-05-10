@@ -1,9 +1,11 @@
 "use server";
 
+import { auth } from "@/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import type { Role, User } from "@/types";
+import { uploadImage } from "@/lib/uploadImage";
 
 type Account = {
   id: string;
@@ -22,9 +24,47 @@ type CreateUserInput = {
   role?: Role;
 };
 
+export interface PhotoInUser extends User {
+  photo: File;
+}
+
 export const getUser = async (email: string) => {
   const user = await db.select().from(users).where(eq(users.email, email));
   return user[0];
+}
+
+export const getUserInfo = async (): Promise<User | undefined> => {
+  const session = await auth();
+
+  if (!session?.user?.email) {
+    return undefined;
+  }
+
+  const user = await db
+    .select()
+    .from(users)
+    .where(eq(users.email, session.user.email));
+
+  if (!user[0]) {
+    return undefined;
+  }
+
+  return {
+    ...user[0],
+    role: user[0].role as Role,
+    department: user[0].department as string,
+    position: user[0].position as string,
+    hobby: user[0].hobby as string,
+    skills: user[0].skills as string,
+    freeText: user[0].freeText as string,
+    photoUrl: user[0].photoUrl as string,
+    isActive: user[0].isActive as boolean,
+    joinDate: user[0].joinDate as Date,
+    leaveDate: user[0].leaveDate as Date,
+    editedAt: user[0].editedAt as Date,
+    createdAt: user[0].createdAt as Date,
+    updatedAt: user[0].updatedAt as Date,
+  };
 }
 
 export const existsUser = async (email: string) => {
@@ -94,7 +134,7 @@ export const getUserRole = async (email: string): Promise<Role> => {
     console.error("Error getting user role:", error);
     return "user"; // エラーの場合もデフォルトのロールを返す
   }
-}
+};
 
 export const getUserList = async (): Promise<User[]> => {
   const usersData = await db.select().from(users);
@@ -114,4 +154,15 @@ export const getUserList = async (): Promise<User[]> => {
     createdAt: user.createdAt as Date,
     updatedAt: user.updatedAt as Date,
   }));
-}
+};
+
+export const updateUserInfo = async (id: string, data: Omit<PhotoInUser, "id" | "createdAt" | "updatedAt" | "image" | "email"> ) => {
+  if (data.photo) {
+    const photoUrl = await uploadImage(data.photo);
+    console.log(photoUrl);
+    data.photoUrl = photoUrl;
+  }
+
+  const [updatedUser] = await db.update(users).set(data).where(eq(users.id, id)).returning();
+  return updatedUser;
+};

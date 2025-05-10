@@ -1,5 +1,19 @@
 import { z } from "zod"
 
+export const memberFormSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "名前は必須です"),
+  department: z.string().min(1, "事業部は必須です"),
+  position: z.string().min(1, "役職は必須です"),
+  hobby: z.string().min(1, "趣味は必須です"),
+  skills: z.string().min(1, "スキルは必須です"),
+  freeText: z.string().optional(),
+  photoUrl: z.string().optional(),
+  isActive: z.boolean().optional(),
+  editedAt: z.string().optional(),
+});
+export type MemberFormValues = z.infer<typeof memberFormSchema>
+
 export const taskFormSchema = z.object({
   title: z.string().min(1, "項目名は必須です"),
   content: z.string().min(1, "内容は必須です"),
@@ -13,7 +27,6 @@ export const taskFormSchema = z.object({
   completedAt: z.string().optional(),
   isPublic: z.boolean().optional(),
 });
-
 export type TaskFormValues = z.infer<typeof taskFormSchema>
 
 export const clubFormSchema = z.object({
@@ -26,7 +39,6 @@ export const clubFormSchema = z.object({
   location: z.string().optional(),
   detail: z.string().optional(),
 });
-
 export type ClubFormValues = z.infer<typeof clubFormSchema>
 
 export const qaFormSchema = z.object({
@@ -37,5 +49,4 @@ export const qaFormSchema = z.object({
   answeredBy: z.string().optional(),
   isPublic: z.boolean().optional(),
 });
-
 export type QaFormValues = z.infer<typeof qaFormSchema>

@@ -13,19 +13,19 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 
 interface TaskModalFormProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (data: Omit<Task, "id" | "createdAt" | "updatedAt">) => Promise<void>;
-  defaultValues?: Partial<Task>;
   title?: string;
+  onSubmit: (data: Omit<Task, "id" | "createdAt" | "updatedAt">) => Promise<void>;
+  onClose: () => void;
+  defaultValues?: Partial<Task>;
+  isOpen: boolean;
 }
 
 export const TaskModalForm = ({
   title = "タスク登録",
-  isOpen,
   onClose,
   onSubmit,
   defaultValues,
+  isOpen,
 }: TaskModalFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEdit = defaultValues ? true : false;
@@ -115,10 +115,10 @@ export const TaskModalForm = ({
 
   return (
     <BaseModalForm
+      title={title}
       isOpen={isOpen}
       onClose={onClose}
       onSubmit={form.handleSubmit(handleSubmit)}
-      title={title}
       isSubmitting={isSubmitting}
       isEdit={isEdit}
     >

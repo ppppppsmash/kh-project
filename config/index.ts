@@ -25,6 +25,21 @@ export const navConfig = {
       icon: IconDashboard,
     },
     {
+      title: "メンバー",
+      url: "/superadmin/member",
+      icon: IconUser,
+      items: [
+        {
+          title: "自己紹介",
+          url: "/superadmin/member/intro",
+        },
+        {
+          title: "自己紹介一覧",
+          url: "/superadmin/member/member-list",
+        },
+      ],
+    },
+    {
       title: "タスク管理",
       url: "/superadmin/task",
       icon: IconListCheck,
@@ -33,17 +48,6 @@ export const navConfig = {
       title: "QA管理",
       url: "/superadmin/qa",
       icon: IconHelp,
-    },
-    {
-      title: "メンバー",
-      url: "/superadmin/member",
-      icon: IconUser,
-      items: [
-        {
-          title: "自己紹介一覧",
-          url: "/superadmin/member/intro-card",
-        },
-      ],
     },
     // {
     //   title: "チーム",

@@ -3,13 +3,20 @@ import { getClubActivity } from "@/actions/club-activity";
 import { getQA } from "@/actions/qa";
 import { getTasks } from "@/actions/task";
 import { getUserActivity } from "@/actions/user-activity";
-import { getUserList } from "@/actions/user";
+import { getUserList, getUserInfo } from "@/actions/user";
 import type { ClubActivity, Task, Qa, UserActivity, User } from "@/types";
 
 export const useGetUserActivity = () => {
   return useQuery<UserActivity[]>({
     queryKey: ["user-activity"],
     queryFn: getUserActivity,
+  });
+};
+
+export const useGetUserInfo = () => {
+  return useQuery<User | undefined>({
+    queryKey: ["user-info"],
+    queryFn: getUserInfo,
   });
 };
 
