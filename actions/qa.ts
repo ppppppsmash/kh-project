@@ -2,7 +2,7 @@
 
 import { auth } from "@/auth";
 import { db } from "@/db";
-import { qa } from "@/db/shecma/qa";
+import { qa } from "@/db/schema/qa";
 import { eq, desc } from "drizzle-orm";
 import type { Qa } from "@/types";
 import { QaFormValues } from "@/lib/validations";

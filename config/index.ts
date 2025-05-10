@@ -209,7 +209,7 @@ export const externalNavConfig = [
     icon: IconHelp,
   },
   {
-    title: "自己紹介登録",
+    title: "自己紹介一覧",
     url: "/adixi-public/intro-card",
     icon: IconUser,
   },

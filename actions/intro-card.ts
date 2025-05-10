@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { members } from "@/db/shecma/members";
+import { members } from "@/db/schema/members";
 import { eq } from "drizzle-orm";
 import { revalidatePath } from "next/cache";
 import { uploadImage } from "@/lib/uploadImage";

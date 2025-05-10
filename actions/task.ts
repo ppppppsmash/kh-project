@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { tasks } from "@/db/shecma/tasks";
+import { tasks } from "@/db/schema/tasks";
 import { eq } from "drizzle-orm";
 import type { Task, TaskProgress } from "@/types";
 

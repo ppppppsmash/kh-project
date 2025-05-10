@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { userActivity } from "@/db/shecma/user-activity";
+import { userActivity } from "@/db/schema/user-activity";
 import { desc } from "drizzle-orm";
 import type { UserActivity, UserActivityAction } from "@/types";
 import { cache } from "react";

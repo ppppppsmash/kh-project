@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { clubActivity } from "@/db/shecma/club-activity";
+import { clubActivity } from "@/db/schema/club-activity";
 import { eq } from "drizzle-orm";
 import { ClubFormValues } from "@/lib/validations";
 import type { ClubStatus, ClubActivity } from "@/types";
