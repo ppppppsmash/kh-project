@@ -21,27 +21,27 @@ export const navConfig = {
   navMain: [
     {
       title: "ダッシュボード",
-      url: "/admin/dashboard",
+      url: "/superadmin/dashboard",
       icon: IconDashboard,
     },
     {
       title: "タスク管理",
-      url: "/admin/task",
+      url: "/superadmin/task",
       icon: IconListCheck,
     },
     {
       title: "QA管理",
-      url: "/admin/qa",
+      url: "/superadmin/qa",
       icon: IconHelp,
     },
     {
       title: "メンバー",
-      url: "/admin/member",
+      url: "/superadmin/member",
       icon: IconUser,
       items: [
         {
           title: "自己紹介一覧",
-          url: "/admin/member/intro-card",
+          url: "/superadmin/member/intro-card",
         },
       ],
     },

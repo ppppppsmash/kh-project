@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 import { relations } from "drizzle-orm";
 import { userActivity } from "../user-activity";
@@ -9,7 +9,18 @@ export const users = pgTable("users", {
 	image: varchar("image", { length: 255 }).notNull(),
 	email: varchar("email", { length: 255 }).notNull().unique(),
 	// ロールはsuperadmin, admin, userの3種類
-	role: varchar("role", { length: 255 }).notNull().default("user"),
+	role: varchar("role", { length: 255, enum: ["superadmin", "admin", "user"] }).default("user"),
+	// プロフィール情報
+  department: varchar("department", { length: 255 }),
+  position: varchar("position", { length: 255 }),
+  hobby: varchar("hobby", { length: 255 }),
+  skills: varchar("skills", { length: 255 }),
+  freeText: varchar("free_text", { length: 255 }),
+  photoUrl: varchar("photo_url", { length: 255 }),
+  isActive: boolean("is_active").default(true), // 在籍状態
+  joinDate: timestamp("join_date"), // 入社日
+  leaveDate: timestamp("leave_date"), // 退社日
+	editedAt: timestamp("edited_at", { withTimezone: true, mode: "date" }).defaultNow().$onUpdate(() => new Date()),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).notNull().defaultNow(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).notNull().$onUpdate(() => new Date()),
 });
