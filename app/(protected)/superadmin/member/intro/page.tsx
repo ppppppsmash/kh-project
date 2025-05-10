@@ -12,7 +12,7 @@ import { useModal } from "@/hooks/use-modal";
 import { CustomToast } from "@/components/ui/toast";
 import { UserModalForm } from "@/components/app-modal/member-modal-form";
 import { updateUserInfo } from "@/actions/user";
-import { UserDetail } from "@/components/app-member";
+import { UserDetail } from "@/components/app-user-detail";
 
 export default function MemberPage() {
   const queryClient = useQueryClient();

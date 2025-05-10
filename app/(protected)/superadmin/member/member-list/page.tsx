@@ -4,23 +4,26 @@ import type { User } from "@/types";
 import Link from "next/link";
 import { useState } from "react";
 import { FilePenLine } from "lucide-react";
-import { useRouter } from "next/navigation";
 import { AppTable } from "@/components/app-table";
 import { renderMemberIntroCard } from "@/components/app-table/render/MemberIntroCardItem";
 import { useGetUserList } from "@/components/app-table/hooks/use-table-data";
 import { Button } from "@/components/ui/button";
-import { useQueryClient } from "@tanstack/react-query";
-import { useModal } from "@/hooks/use-modal";
+import { UserDetailModal } from "@/components/app-modal/user-detail-modal";
 
 export default function MemberListPage() {
-  const queryClient = useQueryClient();
   const { data: users, isLoading } = useGetUserList();
-  const { isOpen, openModal, closeModal } = useModal();
-  const [currentData, setCurrentData] = useState<User | null>(null);
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const router = useRouter();
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const handleRowClick = (user: User) => {
+    setSelectedUser(user);
+    setIsModalOpen(true);
+  };
 
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+    setSelectedUser(null);
+  };
 
   return (
     <div className="mx-auto">
@@ -42,11 +45,16 @@ export default function MemberListPage() {
           loading={isLoading}
           searchableKeys={["name", "department", "position", "hobby", "skills", "freeText"]}
           onRowClick={(row: User) => {
-            router.push(`/superadmin/member/member-list/${row.id}`);
+            handleRowClick(row);
           }}
         />
-
       </div>
+
+      <UserDetailModal
+        user={selectedUser}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 }
