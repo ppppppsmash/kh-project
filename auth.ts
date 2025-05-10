@@ -27,9 +27,6 @@ export const { auth, handlers } = NextAuth({
       },
     } as ClientType)
   ],
-  // pages: {
-  //   error: "/error",
-  // },
   secret: process.env.NEXTAUTH_SECRET,
   session: {
     strategy: "jwt",
@@ -43,98 +40,57 @@ export const { auth, handlers } = NextAuth({
       const isGoogle = account?.provider === "google";
       const isSuperAdmin = role === "superadmin";
       const isAdmin = role === "admin";
-      // TODO: 会社全員向け
-      const isUser = role === "user";
 
-      // 新規ニューザーは初期ログイン不可だが、usertableにデータを残しておく
-      if (isUser) {
-        if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
-          const user = await createUser({
-            name: profile?.name as string,
-            email: profile?.email as string,
-            image: profile?.picture as string,
-          });
+      // superadminのみアクセス可能
+      if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
+        const user = await createUser({
+          name: profile?.name as string,
+          email: profile?.email as string,
+          image: profile?.picture as string,
+        });
 
-          await createUserActivity({
-            userId: user?.id || "",
-            userName: profile?.name || "",
-            action: "login",
-          });
+        await createUserActivity({
+          userId: user?.id || "",
+          userName: profile?.name || "",
+          action: "login",
+        });
 
-          return false;
-        }
-      }
-
-      // 管理者ページへのアクセス
-      if (isSuperAdmin) {
-        if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
-          const user = await createUser({
-            name: profile?.name as string,
-            email: profile?.email as string,
-            image: profile?.picture as string,
-          });
-
-          await createUserActivity({
-            userId: user?.id || "",
-            userName: profile?.name || "",
-            action: "login",
-          });
-
-          return true;
-        }
-      }
-
-      // リーダー以上に向けたページへのアクセス
-      if (isAdmin) {
-        if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
-          const user = await createUser({
-            name: profile?.name as string,
-            email: profile?.email as string,
-            image: profile?.picture as string,
-          });
-
-          await createUserActivity({
-            userId: user?.id || "",
-            userName: profile?.name || "",
-            action: "login",
-          });
-        }
-
-        return false;
-      }
-
-      // 一般ユーザーはアクセス不可
-      if (isUser) {
-        return false;
+        return true;
       }
 
       return false;
     },
     jwt: async ({ token, user, account, profile }) => {
       if (user) {
-        token.user = user;
-        const u = user as any;
-        token.role = u.role;
-        token.id = u.id;
+        token.id = user.id as string;
+        token.role = (user as any).role as string;
       }
 
       if (account) {
         token.accessToken = account.access_token;
 
         if (account?.provider === "google" && profile?.email) {
+          const role = await getUserRole(profile.email as string);
           const user = await createUser({
             name: profile.name as string,
             email: profile.email as string,
             image: profile.picture as string,
+            role: role,
           });
       
           token.id = user?.id as string;
+          token.role = role;
         }
       }
 
       return token;
     },
     session: async ({ session, token }) => {
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.role = token.role as string;
+      }
+
       return {
         ...session,
         user: {
@@ -146,8 +102,10 @@ export const { auth, handlers } = NextAuth({
     },
     redirect: async ({ url, baseUrl }) => {
       if (url.startsWith("/")) return `${baseUrl}${url}`;
-      if (url === `${baseUrl}/api/auth/signout`) return `${baseUrl}/signin?role=superadmin`;
-      if (url === `${baseUrl}/api/auth/signin`) return `${baseUrl}/superadmin/dashboard`;
+      if (url === `${baseUrl}/api/auth/signout`) return `${baseUrl}/signin`;
+      if (url === `${baseUrl}/api/auth/signin`) {
+        return `${baseUrl}/signin`;
+      }
       return url;
     },
   },

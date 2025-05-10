@@ -8,7 +8,7 @@ export type User = {
   name: string;
   image: string;
   email: string;
-  role?: Role;
+  role: Role;
   department?: string;
   position?: string;
   hobby?: string;

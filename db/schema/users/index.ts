@@ -9,7 +9,7 @@ export const users = pgTable("users", {
 	image: varchar("image", { length: 255 }).notNull(),
 	email: varchar("email", { length: 255 }).notNull().unique(),
 	// ロールはsuperadmin, admin, userの3種類
-	role: varchar("role", { length: 255, enum: ["superadmin", "admin", "user"] }).default("user"),
+	role: varchar("role", { length: 255, enum: ["superadmin", "admin", "user"] }).default("admin"),
 	// プロフィール情報
   department: varchar("department", { length: 255 }),
   position: varchar("position", { length: 255 }),

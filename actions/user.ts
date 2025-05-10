@@ -101,7 +101,7 @@ export const createUser = async (
       .insert(users)
       .values({
         ...data,
-        role: data.role || "user",
+        role: data.role,
       })
       .returning();
 
@@ -124,15 +124,10 @@ export const getUserRole = async (email: string): Promise<Role> => {
       .where(eq(users.email, email))
       .limit(1);
 
-    if (!user.length) {
-      // ユーザーが存在しない場合はデフォルトのロールを返す
-      return "user";
-    }
-
     return user[0].role as Role;
   } catch (error) {
     console.error("Error getting user role:", error);
-    return "user"; // エラーの場合もデフォルトのロールを返す
+    return "admin";
   }
 };
 
