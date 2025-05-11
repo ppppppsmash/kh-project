@@ -8,7 +8,7 @@ import { ClubModalForm } from "@/components/app-modal/club-modal-form";
 import { createClubActivity, updateClubActivity } from "@/actions/club-activity";
 import { AddButton } from "@/components/add-button";
 import { CustomToast } from "@/components/ui/toast";
-import type { ClubActivity } from "@/types";
+import { ClubFormValues } from "@/lib/validations";
 import { renderClubActivity } from "@/components/app-table/render/ClubActivityItem";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
@@ -22,12 +22,12 @@ export default function ClubActivityPage() {
   const { data: activities, isLoading } = useGetClubActivities();
   const router = useRouter();
   const { isOpen, openModal, closeModal } = useModal();
-  const [currentData, setCurrentData] = useState<ClubActivity | null>(null);
+  const [currentData, setCurrentData] = useState<ClubFormValues | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const { handleSubmit } = useSubmit<ClubActivity>({
+  const { handleSubmit } = useSubmit<ClubFormValues>({
     action: async (data) => {
-      if (currentData) {
+      if (currentData && currentData.id) {
         await updateClubActivity(currentData.id, data);
       } else {
         await createClubActivity(data);
@@ -44,20 +44,20 @@ export default function ClubActivityPage() {
     },
   });
 
-  const handleEdit = (data: ClubActivity, e: React.MouseEvent) => {
+  const handleEdit = (data: ClubFormValues, e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentData(data);
     openModal();
   };
 
-  const handleDelete = (data: ClubActivity, e: React.MouseEvent) => {
+  const handleDelete = (data: ClubFormValues, e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentData(data);
     setIsDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
-    if (currentData) {
+    if (currentData && currentData.id) {
       await deleteClubActivity(currentData.id);
       CustomToast.success("部活動を削除しました");
       setIsDeleteDialogOpen(false);
@@ -87,7 +87,7 @@ export default function ClubActivityPage() {
         data={activities || []}
         loading={isLoading}
         searchableKeys={["name", "leader", "description", "memberCount", "status"]}
-        onRowClick={(row: ClubActivity) => {
+        onRowClick={(row: ClubFormValues) => {
           router.push(`/superadmin/club-activity/${row.id}`);
         }}
       />

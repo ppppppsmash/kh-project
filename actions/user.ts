@@ -34,7 +34,7 @@ export const getUser = async (email: string) => {
   return user[0];
 }
 
-export const getUserInfo = async (): Promise<User | undefined> => {
+export const getUserInfo = async (): Promise<MemberFormValues | undefined> => {
   const session = await auth();
 
   if (!session?.user?.email) {
@@ -60,9 +60,9 @@ export const getUserInfo = async (): Promise<User | undefined> => {
     freeText: user[0].freeText as string,
     photoUrl: user[0].photoUrl as string,
     isActive: user[0].isActive as boolean,
+    editedAt: user[0].editedAt as Date,
     joinDate: user[0].joinDate as Date,
     leaveDate: user[0].leaveDate as Date,
-    editedAt: user[0].editedAt as Date,
     createdAt: user[0].createdAt as Date,
     updatedAt: user[0].updatedAt as Date,
   };
@@ -132,7 +132,7 @@ export const getUserRole = async (email: string): Promise<Role> => {
   }
 };
 
-export const getUserList = async (): Promise<User[]> => {
+export const getUserList = async (): Promise<MemberFormValues[]> => {
   const usersData = await db.select().from(users);
   return usersData.map((user) => ({
     ...user,

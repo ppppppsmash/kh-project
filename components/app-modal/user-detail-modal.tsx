@@ -7,9 +7,9 @@ import {
 } from "@/components/ui/dialog";
 import { formatDate } from "@/lib/utils";
 import Image from "next/image";
-
+import { MemberFormValues } from "@/lib/validations";
 interface UserDetailModalProps {
-  user: User | null;
+  user: MemberFormValues | null;
   isOpen: boolean;
   onClose: () => void;
 }
@@ -25,9 +25,9 @@ export const UserDetailModal = ({ user, isOpen, onClose }: UserDetailModalProps)
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="flex items-start gap-4">
-            {user.photoUrl ? (
-            <Image
-              src={user.photoUrl || ""}
+            {user.photoUrl && user.name ? (
+              <Image
+                src={user.photoUrl}
                 alt={user.name}
                 width={300}
                 height={300}
@@ -39,8 +39,8 @@ export const UserDetailModal = ({ user, isOpen, onClose }: UserDetailModalProps)
               </div>
             )}
             <div className="flex-1">
-              <h3 className="text-lg font-semibold">{user.name}</h3>
-              <p className="text-sm text-muted-foreground">{user.email}</p>
+              <h3 className="text-lg font-semibold">{user?.name}</h3>
+              <p className="text-sm text-muted-foreground">{user?.email}</p>
             </div>
           </div>
           <div className="grid space-y-4">

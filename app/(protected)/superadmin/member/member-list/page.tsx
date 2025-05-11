@@ -1,6 +1,6 @@
 "use client";
 
-import type { User } from "@/types";
+import { MemberFormValues } from "@/lib/validations";
 import Link from "next/link";
 import { useState } from "react";
 import { FilePenLine } from "lucide-react";
@@ -12,10 +12,10 @@ import { UserDetailModal } from "@/components/app-modal/user-detail-modal";
 
 export default function MemberListPage() {
   const { data: users, isLoading } = useGetUserList();
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [selectedUser, setSelectedUser] = useState<MemberFormValues | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleRowClick = (user: User) => {
+  const handleRowClick = (user: MemberFormValues) => {
     setSelectedUser(user);
     setIsModalOpen(true);
   };
@@ -44,7 +44,7 @@ export default function MemberListPage() {
           data={users || []}
           loading={isLoading}
           searchableKeys={["name", "department", "position", "hobby", "skills", "freeText"]}
-          onRowClick={(row: User) => {
+          onRowClick={(row: MemberFormValues) => {
             handleRowClick(row);
           }}
         />

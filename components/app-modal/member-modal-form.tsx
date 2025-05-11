@@ -102,7 +102,16 @@ export const UserModalForm = ({
         <Input
           id="name"
           {...form.register("name")}
-          readOnly
+          disabled
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="email">メールアドレス</Label>
+        <Input
+          id="email"
+          {...form.register("email")}
+          disabled
         />
       </div>
 

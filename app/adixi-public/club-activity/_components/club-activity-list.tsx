@@ -4,11 +4,11 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getClubActivity } from "@/actions/club-activity";
-import { ClubActivity } from "@/types";
+import { ClubFormValues } from "@/lib/validations";
 import { useRouter } from "next/navigation";
 
 export const ClubActivityList = () => {
-  const [activities, setActivities] = useState<ClubActivity[]>([]);
+  const [activities, setActivities] = useState<ClubFormValues[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
 

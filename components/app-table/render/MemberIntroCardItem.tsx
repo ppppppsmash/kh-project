@@ -1,9 +1,9 @@
+import type { MemberFormValues } from "@/lib/validations";
 import Image from "next/image";
 import { TableColumn } from "@/components/app-table";
 import { formatDate } from "@/lib/utils";
-import type { User } from "@/types";
 
-export const renderMemberIntroCard = (): TableColumn<User>[] => [
+export const renderMemberIntroCard = (): TableColumn<MemberFormValues>[] => [
   {
     key: "photoUrl",
     title: "写真",

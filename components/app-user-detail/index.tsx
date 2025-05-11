@@ -3,11 +3,11 @@
 import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
-import type { User } from "@/types";
-import { Building2, Briefcase, Heart, Code2, MessageSquare, Calendar } from "lucide-react";
+import type { MemberFormValues } from "@/lib/validations";
+import { Building2, Briefcase, Heart, Code2, MessageSquare, Calendar, Mail } from "lucide-react";
 
 interface UserDetailProps {
-  user?: User;
+  user?: MemberFormValues;
 }
 
 export const UserDetail = ({ user }: UserDetailProps) => {
@@ -22,7 +22,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
                 {user?.photoUrl ? (
                   <Image
                     src={user.photoUrl}
-                    alt={user.name}
+                    alt={user.name || "プロフィール画像"}
                     fill
                     className="object-cover"
                     sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -40,6 +40,13 @@ export const UserDetail = ({ user }: UserDetailProps) => {
             </div>
 
             <div className="space-y-6">
+              <div className="space-y-2">
+                  <div className="flex items-center gap-2 text-gray-600">
+                    <Mail className="w-5 h-5" />
+                  <h3 className="font-medium">メールアドレス</h3>
+                </div>
+                <p className="text-lg">{user?.email || "未設定"}</p>
+              </div>
               {/* 基本情報 */}
               <div className="grid grid-cols-2 gap-6">
                 <div className="space-y-2">

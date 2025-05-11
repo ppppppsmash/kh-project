@@ -14,14 +14,14 @@ import { UserModalForm } from "@/components/app-modal/member-modal-form";
 import { updateUserInfo } from "@/actions/user";
 import { UserDetail } from "@/components/app-user-detail";
 
-export default function MemberPage() {
+export default function UserPage() {
   const queryClient = useQueryClient();
   const { data: userInfo, isLoading: isUserInfoLoading } = useGetUserInfo();
   const { isOpen, openModal, closeModal } = useModal();
 
   const { handleSubmit } = useSubmit<MemberFormValues>({
     action: async (data) => {
-      if (userInfo) {
+      if (userInfo?.id) {
         await updateUserInfo(userInfo.id, data as any);
       }
     },

@@ -1,7 +1,9 @@
 import * as z from "zod";
 
 export const memberFormSchema = z.object({
+  id: z.string().optional(),
   name: z.string().optional(),
+  email: z.string().email("有効なメールアドレスを入力してください").optional(),
   department: z.string().optional(),
   position: z.string().optional(),
   skills: z.string().optional(),
@@ -9,9 +11,13 @@ export const memberFormSchema = z.object({
   freeText: z.string().optional(),
   photoUrl: z.string().optional(),
   isActive: z.boolean().default(true).optional(),
+  joinDate: z.date().optional(),
+  leaveDate: z.date().optional(),
+  createdAt: z.date().optional(),
+  editedAt: z.date().optional(),
+  updatedAt: z.date().optional(),
   role: z.enum(["superadmin", "admin", "user"] as const).default("admin").optional(),
 });
-
 export type MemberFormValues = z.infer<typeof memberFormSchema>;
 
 export const taskFormSchema = z.object({
@@ -30,6 +36,7 @@ export const taskFormSchema = z.object({
 export type TaskFormValues = z.infer<typeof taskFormSchema>
 
 export const clubFormSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(1, "部活動名は必須です"),
   description: z.string().optional(),
   leader: z.string().min(1, "部長は必須です"),
@@ -38,6 +45,8 @@ export const clubFormSchema = z.object({
   status: z.enum(["active", "inactive", "pending"]),
   location: z.string().optional(),
   detail: z.string().optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 export type ClubFormValues = z.infer<typeof clubFormSchema>
 

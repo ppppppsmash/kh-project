@@ -1,22 +1,22 @@
+import type { ClubFormValues } from "@/lib/validations";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { MoreHorizontal, Pencil, Trash } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import type { ClubActivity } from "@/types";
 import { TableColumn } from "@/components/app-table";
 import { statusConfig } from "@/config";
 
 type ClubActivityColumnOptions = {
-  onEdit?: (row: ClubActivity, e: React.MouseEvent) => void;
-  onDelete?: (row: ClubActivity, e: React.MouseEvent) => void;
+  onEdit?: (row: ClubFormValues, e: React.MouseEvent) => void;
+  onDelete?: (row: ClubFormValues, e: React.MouseEvent) => void;
 };
 
 export const renderClubActivity = ({
   onEdit,
   onDelete,
-}: ClubActivityColumnOptions): TableColumn<ClubActivity>[] => [
+}: ClubActivityColumnOptions): TableColumn<ClubFormValues>[] => [
   {
     key: "name",
     title: "部活動名",
@@ -74,7 +74,7 @@ export const renderClubActivity = ({
 export const createClubActivityColumns = ({
   onEdit,
   onDelete,
-}: ClubActivityColumnOptions): TableColumn<ClubActivity>[] => [
+}: ClubActivityColumnOptions): TableColumn<ClubFormValues>[] => [
   {
     key: "action",
     title: "操作",
