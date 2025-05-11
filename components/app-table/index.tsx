@@ -66,8 +66,6 @@ export function AppTable<T>({
   onRowClick,
   onFilter,
 }: TableProps<T>) {
-  const router = useRouter();
-  const pathname = usePathname();
   const [reload, setReload] = useState(false);
   const [filteredData, setFilteredData] = useState<T[]>(data);
   const [searchQuery, setSearchQuery] = useState("");

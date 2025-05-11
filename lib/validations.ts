@@ -21,16 +21,19 @@ export const memberFormSchema = z.object({
 export type MemberFormValues = z.infer<typeof memberFormSchema>;
 
 export const taskFormSchema = z.object({
+  id: z.string().optional(),
   title: z.string().min(1, "項目名は必須です"),
   content: z.string().min(1, "内容は必須です"),
   assignee: z.string().min(1, "担当者は必須です"),
-  dueDate: z.string().min(1, "期限は必須です"),
+  dueDate: z.date({ required_error: "期限は必須です" }),
   progress: z.enum(["pending", "inProgress", "completed"]),
   progressDetails: z.string().optional(),
   link: z.string().url("有効なURLを入力してください").optional().or(z.literal("")),
   notes: z.string().optional(),
-  startedAt: z.string(),
-  completedAt: z.string().optional(),
+  startedAt: z.date({ required_error: "開始日は必須です" }),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+  completedAt: z.date().optional(),
   isPublic: z.boolean().optional(),
 });
 export type TaskFormValues = z.infer<typeof taskFormSchema>

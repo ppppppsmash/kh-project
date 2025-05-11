@@ -1,7 +1,7 @@
 "use client";
 
 import { Pencil, Trash2, ListTodo, Clock, Check } from "lucide-react";
-import { Task } from "@/types";
+import { TaskFormValues } from "@/lib/validations";
 import {
   Sheet,
   SheetContent,
@@ -14,15 +14,15 @@ import { Button } from "@/components/ui/button";
 
 
 interface TaskDetailSheetProps {
-  task: Task | null;
+  task: TaskFormValues | null;
   isOpen: boolean;
   onClose: () => void;
-  onEdit: (task: Task) => void;
-  onDelete: (task: Task) => void;
+  onEdit: (task: TaskFormValues) => void;
+  onDelete: (task: TaskFormValues) => void;
 }
 
 // タスク進捗アイコン
-export const getProgressIcon = (progress: Task["progress"]) => {
+export const getProgressIcon = (progress: TaskFormValues["progress"]) => {
   switch (progress) {
     case "pending":
       return <ListTodo className="h-3.5 w-3.5" />;
@@ -53,7 +53,7 @@ export const TaskDetailSheet = ({
               {getProgressLabel(task.progress)}
             </Badge>
             <span className="text-sm text-gray-500">
-              作成日: {formatDate(task.createdAt, "yyyy/MM/dd HH:mm")}
+              作成日: {task.createdAt ? formatDate(task.createdAt, "yyyy/MM/dd HH:mm") : "未設定"}
             </span>
           </div>
         </SheetHeader>

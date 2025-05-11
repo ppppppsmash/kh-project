@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useModal } from "@/hooks/use-modal";
-import { Task } from '@/types';
+import { TaskFormValues } from '@/lib/validations';
 import { AddButton } from "@/components/add-button";
 import { AppTable } from "@/components/app-table";
 import { renderTask, filterTask, getTaskStatusFilters } from "@/components/app-table/render/TaskItem";
@@ -19,18 +19,18 @@ import { Button } from "@/components/ui/button";
 export default function TaskPage() {
   const queryClient = useQueryClient();
   const { data: tasks, isLoading } = useGetTasks();
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTask, setSelectedTask] = useState<TaskFormValues | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
-  const [currentData, setCurrentData] = useState<Task | null>(null);
+  const [currentData, setCurrentData] = useState<TaskFormValues | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 
-  const { handleSubmit } = useSubmit<Task>({
+  const { handleSubmit } = useSubmit<TaskFormValues>({
     action: async (data) => {
-      if (currentData) {
-        await updateTask(currentData.id, data as Task);
+      if (currentData && currentData.id) {
+        await updateTask(currentData.id, data);
       } else {
-        await createTask(data as Task);
+        await createTask(data);
       }
     },
     onSuccess: () => {
@@ -44,14 +44,14 @@ export default function TaskPage() {
     },
   });
 
-  const handleEdit = (row: Task, e: React.MouseEvent) => {
+  const handleEdit = (row: TaskFormValues, e: React.MouseEvent) => {
     e.stopPropagation();
     setSelectedTask(row);
     setCurrentData(row);
     openModal();
   };
 
-  const handleDelete = (row: Task, e: React.MouseEvent) => {
+  const handleDelete = (row: TaskFormValues, e: React.MouseEvent) => {
     e.stopPropagation();
     setCurrentData(row);
     setSelectedTask(row);
@@ -59,7 +59,7 @@ export default function TaskPage() {
   };
 
   const handleDeleteConfirm = async () => {
-    if (currentData) {
+    if (currentData && currentData.id) {
       await deleteTask(currentData.id);
       CustomToast.success("タスクを削除しました");
       setIsDeleteDialogOpen(false);
@@ -96,7 +96,7 @@ export default function TaskPage() {
           researchStatusFilter: getTaskStatusFilters(),
         }}
         onFilter={filterTask}
-        onRowClick={(row: Task) => {
+        onRowClick={(row: TaskFormValues) => {
           setSelectedTask(row);
           setIsDetailOpen(true);
         }}

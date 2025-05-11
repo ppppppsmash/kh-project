@@ -8,7 +8,7 @@ export const tasks = pgTable("tasks", {
   assignee: varchar("assignee", { length: 255 }).notNull(),
   dueDate: timestamp("due_date").notNull(),
   progress: varchar("progress", { length: 255 }).notNull(),
-  progressDetails: varchar("progress_details", { length: 255 }).notNull(),
+  progressDetails: varchar("progress_details", { length: 255 }),
   link: varchar("link", { length: 255 }).notNull(),
   notes: varchar("notes", { length: 255 }).notNull(),
   startedAt: timestamp("started_at").notNull(),

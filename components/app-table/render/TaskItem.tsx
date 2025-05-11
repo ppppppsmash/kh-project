@@ -1,4 +1,4 @@
-import type { Task } from "@/types";
+import type { TaskFormValues } from "@/lib/validations";
 import { MoreHorizontal, Pencil, Trash, Eye, EyeOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -9,12 +9,12 @@ import { getProgressIcon } from "@/components/app-sheet/task-detail-sheet";
 import { getProgressLabel, getProgressColor } from "@/lib/utils";
 
 type TaskColumnOptions = {
-  onEdit?: (row: Task, e: React.MouseEvent) => void;
-  onDelete?: (row: Task, e: React.MouseEvent) => void;
+  onEdit?: (row: TaskFormValues, e: React.MouseEvent) => void;
+  onDelete?: (row: TaskFormValues, e: React.MouseEvent) => void;
 };
 
 // タスクのフィルター処理
-export const filterTask = (data: Task[], searchQuery: string, statusFilter: string) => {
+export const filterTask = (data: TaskFormValues[], searchQuery: string, statusFilter: string) => {
   let result = [...data];
 
   // 検索フィルタリング
@@ -56,7 +56,7 @@ export const getTaskStatusFilters = () => ["すべて", "未着手", "進行中"
 export const renderTask = ({
   onEdit,
   onDelete,
-}: TaskColumnOptions): TableColumn<Task>[] => [
+}: TaskColumnOptions): TableColumn<TaskFormValues>[] => [
   {
     key: "title",
     title: "項目",
@@ -118,7 +118,7 @@ export const renderTask = ({
 export const createTaskColumns = ({
   onEdit,
   onDelete,
-}: TaskColumnOptions): TableColumn<Task>[] => [
+}: TaskColumnOptions): TableColumn<TaskFormValues>[] => [
   {
     key: "action",
     title: "操作",

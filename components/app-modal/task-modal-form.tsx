@@ -11,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { formatDate } from "@/lib/utils";
 
 interface TaskModalFormProps {
   title?: string;
@@ -19,6 +20,11 @@ interface TaskModalFormProps {
   defaultValues?: Partial<Task>;
   isOpen: boolean;
 }
+
+const formatDateForInput = (date: Date | undefined): string => {
+  if (!date) return "";
+  return date.toISOString().split("T")[0];
+};
 
 export const TaskModalForm = ({
   title = "タスク登録",
@@ -36,29 +42,32 @@ export const TaskModalForm = ({
       title: "",
       content: "",
       assignee: "",
-      dueDate: "",
+      dueDate: new Date(),
+      startedAt: new Date(),
       progress: "pending",
       progressDetails: "",
       link: "",
       notes: "",
-      completedAt: "",
+      completedAt: undefined,
       isPublic: false,
     },
   });
 
   const handleSubmit = async (data: TaskFormValues) => {
     setIsSubmitting(true);
+
     try {
-      const taskData: Omit<Task, "id" | "createdAt" | "updatedAt"> = {
+      const taskData = {
         ...data,
         dueDate: new Date(data.dueDate),
-        link: data.link || "",
-        progressDetails: data.progressDetails || "",
-        notes: data.notes || "",
         startedAt: new Date(data.startedAt),
         completedAt: data.completedAt ? new Date(data.completedAt) : undefined,
-        isPublic: data.isPublic || false,
+        progressDetails: data.progressDetails || "",
+        link: data.link || "",
+        notes: data.notes || "",
+        isPublic: data.isPublic ?? false,
       };
+      
       await onSubmit(taskData);
       form.reset();
       onClose();
@@ -69,27 +78,16 @@ export const TaskModalForm = ({
     }
   };
 
-  // モーダルが開かれたときにフォームをリセット
   useEffect(() => {
     if (isOpen) {
       if (defaultValues) {
-        const dueDate = defaultValues.dueDate
-          ? new Date(defaultValues.dueDate).toISOString().split('T')[0]
-          : "";
-        const startedAt = defaultValues.startedAt
-          ? new Date(defaultValues.startedAt).toISOString().split('T')[0]
-          : "";
-        const completedAt = defaultValues.completedAt
-          ? new Date(defaultValues.completedAt).toISOString().split('T')[0]
-          : "";
-        
         form.reset({
           title: defaultValues.title || "",
           content: defaultValues.content || "",
           assignee: defaultValues.assignee || "",
-          dueDate,
-          startedAt,
-          completedAt,
+          dueDate: defaultValues.dueDate,
+          startedAt: defaultValues.startedAt,
+          completedAt: defaultValues.completedAt,
           progress: defaultValues.progress || "pending",
           progressDetails: defaultValues.progressDetails || "",
           link: defaultValues.link || "",
@@ -101,17 +99,18 @@ export const TaskModalForm = ({
           title: "",
           content: "",
           assignee: "",
-          dueDate: "",
+          dueDate: new Date(),
+          startedAt: new Date(),
           progress: "pending",
           progressDetails: "",
           link: "",
           notes: "",
-          completedAt: "",
+          completedAt: undefined,
           isPublic: false,
         });
       }
     }
-  }, [isOpen, defaultValues]);
+  }, [isOpen, defaultValues, form]);
 
   return (
     <BaseModalForm
@@ -164,11 +163,15 @@ export const TaskModalForm = ({
           <Input
             id="startedAt"
             type="date"
-            {...form.register("startedAt")}
+            value={formatDateForInput(form.watch("startedAt"))}
+            onChange={(e) => {
+              const date = e.target.value ? new Date(e.target.value) : new Date();
+              form.setValue("startedAt", date);
+            }}
             required
           />
-          {form.formState.errors.dueDate && (
-            <p className="text-sm text-red-500">{form.formState.errors.dueDate.message}</p>
+          {form.formState.errors.startedAt && (
+            <p className="text-sm text-red-500">{form.formState.errors.startedAt.message}</p>
           )}
         </div>
         <div className="space-y-2 w-full">
@@ -176,7 +179,11 @@ export const TaskModalForm = ({
           <Input
             id="dueDate"
             type="date"
-            {...form.register("dueDate")}
+            value={formatDateForInput(form.watch("dueDate"))}
+            onChange={(e) => {
+              const date = e.target.value ? new Date(e.target.value) : new Date();
+              form.setValue("dueDate", date);
+            }}
             required
           />
           {form.formState.errors.dueDate && (
@@ -184,11 +191,15 @@ export const TaskModalForm = ({
           )}
         </div>
         <div className="space-y-2 w-full">
-            <Label htmlFor="completedAt">完了日</Label>
-            <Input
-              id="completedAt"
-              type="date"
-            {...form.register("completedAt")}
+          <Label htmlFor="completedAt">完了日</Label>
+          <Input
+            id="completedAt"
+            type="date"
+            value={formatDateForInput(form.watch("completedAt"))}
+            onChange={(e) => {
+              const date = e.target.value ? new Date(e.target.value) : undefined;
+              form.setValue("completedAt", date);
+            }}
           />
         </div>
       </div>
