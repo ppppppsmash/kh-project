@@ -18,9 +18,6 @@ export const users = pgTable("users", {
   freeText: varchar("free_text", { length: 255 }),
   photoUrl: varchar("photo_url", { length: 255 }),
   isActive: boolean("is_active").default(true),
-  joinDate: timestamp("join_date"), // 入社日
-  leaveDate: timestamp("leave_date"), // 退社日
-	editedAt: timestamp("edited_at", { withTimezone: true, mode: "date" }).defaultNow().$onUpdate(() => new Date()),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: "date" }).notNull().defaultNow(),
 	updatedAt: timestamp("updated_at", { withTimezone: true, mode: "date" }).notNull().$onUpdate(() => new Date()),
 });

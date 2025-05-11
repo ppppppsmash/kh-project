@@ -24,6 +24,8 @@ export default function UserPage() {
       if (userInfo?.id) {
         await updateUserInfo(userInfo.id, data as any);
       }
+
+      
     },
     onSuccess: () => {
       closeModal();

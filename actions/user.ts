@@ -60,11 +60,10 @@ export const getUserInfo = async (): Promise<MemberFormValues | undefined> => {
     freeText: user[0].freeText as string,
     photoUrl: user[0].photoUrl as string,
     isActive: user[0].isActive as boolean,
-    editedAt: user[0].editedAt as Date,
-    joinDate: user[0].joinDate as Date,
-    leaveDate: user[0].leaveDate as Date,
-    createdAt: user[0].createdAt as Date,
-    updatedAt: user[0].updatedAt as Date,
+    // joinDate: user[0].joinDate as Date,
+    // leaveDate: user[0].leaveDate as Date,
+    // createdAt: user[0].createdAt as Date,
+    // updatedAt: user[0].updatedAt as Date,
   };
 }
 
@@ -144,9 +143,6 @@ export const getUserList = async (): Promise<MemberFormValues[]> => {
     freeText: user.freeText as string,
     photoUrl: user.photoUrl as string,
     isActive: user.isActive as boolean,
-    joinDate: user.joinDate as Date,
-    leaveDate: user.leaveDate as Date,
-    editedAt: user.editedAt as Date,
     createdAt: user.createdAt as Date,
     updatedAt: user.updatedAt as Date,
   }));
@@ -166,6 +162,7 @@ export const updateUserInfo = async (id: string, data: MemberFormValues & { phot
       .set({
         ...data,
         photoUrl,
+        updatedAt: new Date(),
       })
       .where(eq(users.id, id))
       .returning();

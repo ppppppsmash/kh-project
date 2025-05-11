@@ -117,8 +117,7 @@ export const TaskModalForm = ({
         <Label htmlFor="title">項目名<span className="text-red-500">*</span></Label>
         <Input
           id="title"
-          {...form.register("title")}
-          required
+          {...form.register("title", { required: "項目名は必須です" })}
         />
         {form.formState.errors.title && (
           <p className="text-sm text-red-500">{form.formState.errors.title.message}</p>
@@ -129,8 +128,7 @@ export const TaskModalForm = ({
         <Label htmlFor="content">内容<span className="text-red-500">*</span></Label>
         <Textarea
           id="content"
-          {...form.register("content")}
-          required
+          {...form.register("content", { required: "内容は必須です" })}
         />
         {form.formState.errors.content && (
           <p className="text-sm text-red-500">{form.formState.errors.content.message}</p>
@@ -141,8 +139,7 @@ export const TaskModalForm = ({
         <Label htmlFor="assignee">担当者<span className="text-red-500">*</span></Label>
         <Input
           id="assignee"
-          {...form.register("assignee")}
-          required
+          {...form.register("assignee", { required: "担当者は必須です" })}
         />
         {form.formState.errors.assignee && (
           <p className="text-sm text-red-500">{form.formState.errors.assignee.message}</p>
@@ -160,7 +157,6 @@ export const TaskModalForm = ({
               const date = e.target.value ? new Date(e.target.value) : new Date();
               form.setValue("startedAt", date);
             }}
-            required
           />
           {form.formState.errors.startedAt && (
             <p className="text-sm text-red-500">{form.formState.errors.startedAt.message}</p>
@@ -176,7 +172,6 @@ export const TaskModalForm = ({
               const date = e.target.value ? new Date(e.target.value) : new Date();
               form.setValue("dueDate", date);
             }}
-            required
           />
           {form.formState.errors.dueDate && (
             <p className="text-sm text-red-500">{form.formState.errors.dueDate.message}</p>

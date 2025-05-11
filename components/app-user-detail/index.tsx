@@ -108,7 +108,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  <span>更新: {formatDate(user?.editedAt ?? new Date(), "yyyy/MM/dd HH:mm")}</span>
+                  <span>更新: {formatDate(user?.updatedAt ?? new Date(), "yyyy/MM/dd HH:mm")}</span>
                 </div>
               </div>
             </div>

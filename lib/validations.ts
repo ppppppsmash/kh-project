@@ -13,9 +13,6 @@ export const memberFormSchema = z.object({
   freeText: z.string().optional(),
   photoUrl: z.string().optional(),
   isActive: z.boolean().default(true).optional(),
-  joinDate: z.date().optional(),
-  leaveDate: z.date().optional(),
-  editedAt: z.date().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });
@@ -44,7 +41,7 @@ export const clubFormSchema = z.object({
   name: z.string().min(1, "部活動名は必須です"),
   description: z.string().optional(),
   leader: z.string().min(1, "部長は必須です"),
-  memberCount: z.number().min(1, "メンバー数は必須です"),
+  memberCount: z.string().min(1, "メンバー数は必須です"),
   activityType: z.string().optional(),
   status: z.enum(["active", "inactive", "pending"]),
   location: z.string().optional(),

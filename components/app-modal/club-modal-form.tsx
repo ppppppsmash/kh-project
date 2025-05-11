@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ClubActivity, ClubStatus } from "@/types";
 import { clubFormSchema, ClubFormValues } from "@/lib/validations";
 import { BaseModalForm } from "./base-modal-form";
 import { Input } from "@/components/ui/input";
@@ -14,8 +13,8 @@ import { Textarea } from "@/components/ui/textarea";
 interface ClubModalFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Omit<ClubActivity, "id" | "createdAt" | "updatedAt">) => Promise<void>;
-  defaultValues?: Partial<ClubActivity>;
+  onSubmit: (data: Omit<ClubFormValues, "id" | "createdAt" | "updatedAt">) => Promise<void>;
+  defaultValues?: Partial<ClubFormValues>;
   title?: string;
 }
 
@@ -35,7 +34,7 @@ export const ClubModalForm = ({
       name: "",
       description: "",
       leader: "",
-      memberCount: undefined,
+      memberCount: "",
       activityType: "",
       status: "active",
       location: "",
@@ -46,9 +45,9 @@ export const ClubModalForm = ({
   const handleSubmit = async (data: ClubFormValues) => {
     setIsSubmitting(true);
     try {
-      const clubData: Omit<ClubActivity, "id" | "createdAt" | "updatedAt"> = {
+      const clubData: ClubFormValues = {
         ...data,
-        memberCount: data.memberCount || 0,
+        memberCount: data.memberCount || "",
         status: data.status || "active",
         location: data.location || "",
         detail: data.detail || "",
@@ -105,8 +104,7 @@ export const ClubModalForm = ({
         <Label htmlFor="name">部活動名<span className="text-red-500">*</span></Label>
         <Input
           id="name"
-          {...form.register("name")}
-          required
+          {...form.register("name", { required: "部活動名は必須です" })}
         />
         {form.formState.errors.name && (
           <p className="text-sm text-red-500">{form.formState.errors.name.message}</p>
@@ -114,23 +112,18 @@ export const ClubModalForm = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="description">説明<span className="text-red-500">*</span></Label>
+        <Label htmlFor="description">説明</Label>
         <Textarea
           id="description"
-          {...form.register("description")}
-          required
+          {...form.register("description", { required: "説明は必須です" })}
         />
-        {form.formState.errors.description && (
-          <p className="text-sm text-red-500">{form.formState.errors.description.message}</p>
-        )}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="leader">部長<span className="text-red-500">*</span></Label>
         <Input
           id="leader"
-          {...form.register("leader")}
-          required
+          {...form.register("leader", { required: "部長は必須です" })}
         />
         {form.formState.errors.leader && (
           <p className="text-sm text-red-500">{form.formState.errors.leader.message}</p>
@@ -141,12 +134,8 @@ export const ClubModalForm = ({
         <Label htmlFor="memberCount">メンバー数<span className="text-red-500">*</span></Label>
         <Input
           id="memberCount"
-          type="number"
-          {...form.register("memberCount", { 
-            valueAsNumber: true,
-            setValueAs: (v: string) => v === "" ? undefined : Number(v)
-          })}
-          required
+          type="text"
+          {...form.register("memberCount", { required: "メンバー数は必須です" })}
         />
         {form.formState.errors.memberCount && (
           <p className="text-sm text-red-500">{form.formState.errors.memberCount.message}</p>
@@ -154,22 +143,18 @@ export const ClubModalForm = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="activityType">活動タイプ<span className="text-red-500">*</span></Label>
+        <Label htmlFor="activityType">活動タイプ</Label>
         <Input
           id="activityType"
-          {...form.register("activityType")}
-          required
+          {...form.register("activityType", { required: "活動タイプは必須です" })}
         />
-        {form.formState.errors.activityType && (
-          <p className="text-sm text-red-500">{form.formState.errors.activityType.message}</p>
-        )}
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="status">ステータス</Label>
         <Select
           value={form.watch("status")}
-          onValueChange={(value: ClubStatus) => form.setValue("status", value)}
+          onValueChange={(value: ClubFormValues["status"]) => form.setValue("status", value)}
         >
           <SelectTrigger>
             <SelectValue placeholder="ステータスを選択" />
