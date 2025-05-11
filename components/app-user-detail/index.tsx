@@ -97,11 +97,11 @@ export const UserDetail = ({ user }: UserDetailProps) => {
               <div className="flex items-center gap-4 text-sm text-gray-500 pt-4 border-t">
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  <span>登録: {formatDate(user?.createdAt ?? new Date(), "yyyy/MM/dd")}</span>
+                  <span>登録: {formatDate(user?.createdAt ?? new Date(), "yyyy/MM/dd HH:mm")}</span>
                 </div>
                 <div className="flex items-center gap-1">
                   <Calendar className="w-4 h-4" />
-                  <span>更新: {formatDate(user?.editedAt ?? new Date(), "yyyy/MM/dd")}</span>
+                  <span>更新: {formatDate(user?.editedAt ?? new Date(), "yyyy/MM/dd HH:mm")}</span>
                 </div>
               </div>
             </div>

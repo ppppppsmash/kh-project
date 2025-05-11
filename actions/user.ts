@@ -1,11 +1,12 @@
 "use server";
 
+import { MemberFormValues } from "@/lib/validations";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
 import type { Role, User } from "@/types";
-import { uploadImage } from "@/lib/uploadImage";
+import { uploadToBlob } from "@/lib/blob";
 
 type Account = {
   id: string;
@@ -151,13 +152,27 @@ export const getUserList = async (): Promise<User[]> => {
   }));
 };
 
-export const updateUserInfo = async (id: string, data: Omit<PhotoInUser, "id" | "createdAt" | "updatedAt" | "image" | "email"> ) => {
-  if (data.photo) {
-    const photoUrl = await uploadImage(data.photo);
-    console.log(photoUrl);
-    data.photoUrl = photoUrl;
-  }
+export const updateUserInfo = async (id: string, data: MemberFormValues & { photoFile?: File }) => {
+  try {
+    let photoUrl = data.photoUrl;
 
-  const [updatedUser] = await db.update(users).set(data).where(eq(users.id, id)).returning();
-  return updatedUser;
+    // 新しい画像がアップロードされた場合
+    if (data.photoFile) {
+      photoUrl = await uploadToBlob(data.photoFile);
+    }
+
+    const [updatedUser] = await db
+      .update(users)
+      .set({
+        ...data,
+        photoUrl,
+      })
+      .where(eq(users.id, id))
+      .returning();
+
+    return updatedUser;
+  } catch (error) {
+    console.error("ユーザー情報の更新に失敗しました:", error);
+    throw error;
+  }
 };

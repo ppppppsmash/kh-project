@@ -1,6 +1,5 @@
 "use client";
 
-import type { User, Role } from "@/types";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,13 +9,12 @@ import { Label } from "@/components/ui/label";
 import { ImageUpload } from "@/components/image-uploader";
 import { BaseModalForm } from "./base-modal-form";
 import { memberFormSchema, MemberFormValues } from "@/lib/validations";
-import { formatDate } from "@/lib/utils";
 
 interface UserModalFormProps {
   title?: string;
-  onSubmit: (data: Omit<User, "id" | "image" | "email" | "createdAt" | "updatedAt"> & { photo?: File }) => Promise<void>;
+  onSubmit: (data: MemberFormValues & { photoFile?: File }) => Promise<void>;
   onClose: () => void;
-  defaultValues?: Partial<User>;
+  defaultValues?: Partial<MemberFormValues>;
   isOpen: boolean;
 }
 
@@ -33,31 +31,23 @@ export const UserModalForm = ({
   const form = useForm<MemberFormValues>({
     resolver: zodResolver(memberFormSchema),
     defaultValues: {
+      name: defaultValues?.name || "",
       photoUrl: defaultValues?.photoUrl || "",
       department: defaultValues?.department || "",
       position: defaultValues?.position || "",
       skills: defaultValues?.skills || "",
       hobby: defaultValues?.hobby || "",
       freeText: defaultValues?.freeText || "",
-      editedAt: undefined,
     },
   });
 
   const handleSubmit = async (data: MemberFormValues) => {
     setIsSubmitting(true);
+
     try {
       const memberData = {
-        name: data.name,
-        department: data.department,
-        position: data.position,
-        hobby: data.hobby,
-        skills: data.skills,
-        freeText: data.freeText,
-        isActive: data.isActive || true,
-        photoUrl: data.photoUrl,
-        editedAt: new Date(),
-        role: data.role as Role,
-        photo: selectedFile || undefined,
+        ...data,
+        photoFile: selectedFile || undefined,
       };
       await onSubmit(memberData);
       form.reset();
@@ -71,21 +61,18 @@ export const UserModalForm = ({
 
   useEffect(() => {
     if (isOpen && defaultValues) {
-      const formattedDefaultValues = {
+      form.reset({
         ...defaultValues,
-        editedAt: defaultValues.editedAt ? formatDate(defaultValues.editedAt, "yyyy-MM-dd") : undefined,
-        photoUrl: defaultValues.photoUrl || "",
-      };
-      form.reset(formattedDefaultValues);
+      });
     } else if (isOpen) {
       form.reset({
+        name: "",
         photoUrl: "",
         department: "",
         position: "",
         skills: "",
         hobby: "",
         freeText: "",
-        editedAt: undefined,
       });
     }
   }, [isOpen, defaultValues, form]);
@@ -115,7 +102,7 @@ export const UserModalForm = ({
         <Input
           id="name"
           {...form.register("name")}
-          disabled={true}
+          readOnly
         />
       </div>
 
@@ -126,7 +113,6 @@ export const UserModalForm = ({
             id="department"
             {...form.register("department")}
             placeholder="事業部を入力"
-            required
           />
         </div>
 
@@ -136,7 +122,6 @@ export const UserModalForm = ({
             id="position"
             {...form.register("position")}
             placeholder="役職を入力"
-            required
           />
         </div>
       </div>
@@ -147,7 +132,6 @@ export const UserModalForm = ({
           id="skills"
           {...form.register("skills")}
           placeholder="得意な技術やスキルを入力"
-          required
         />
       </div>
 
@@ -157,7 +141,6 @@ export const UserModalForm = ({
           id="hobby"
           {...form.register("hobby")}
           placeholder="趣味や特技を入力"
-          required
         />
       </div>
 

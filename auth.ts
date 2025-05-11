@@ -41,7 +41,6 @@ export const { auth, handlers } = NextAuth({
       const isSuperAdmin = role === "superadmin";
       const isAdmin = role === "admin";
 
-      // superadminのみアクセス可能
       if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
         const user = await createUser({
           name: profile?.name as string,

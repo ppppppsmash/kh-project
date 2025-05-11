@@ -1,19 +1,18 @@
-import { z } from "zod"
+import * as z from "zod";
 
 export const memberFormSchema = z.object({
-  id: z.string().optional(),
-  name: z.string().min(1, "名前は必須です"),
-  department: z.string().min(1, "事業部は必須です"),
-  position: z.string().min(1, "役職は必須です"),
-  hobby: z.string().min(1, "趣味は必須です"),
-  skills: z.string().min(1, "スキルは必須です"),
+  name: z.string().optional(),
+  department: z.string().optional(),
+  position: z.string().optional(),
+  skills: z.string().optional(),
+  hobby: z.string().optional(),
   freeText: z.string().optional(),
   photoUrl: z.string().optional(),
-  isActive: z.boolean().optional(),
-  editedAt: z.string().optional(),
-  role: z.enum(["superadmin", "admin", "user"]),
+  isActive: z.boolean().default(true).optional(),
+  role: z.enum(["superadmin", "admin", "user"] as const).default("admin").optional(),
 });
-export type MemberFormValues = z.infer<typeof memberFormSchema>
+
+export type MemberFormValues = z.infer<typeof memberFormSchema>;
 
 export const taskFormSchema = z.object({
   title: z.string().min(1, "項目名は必須です"),

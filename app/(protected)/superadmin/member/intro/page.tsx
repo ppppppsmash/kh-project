@@ -1,6 +1,6 @@
 "use client";
 
-import type { User } from "@/types";
+import { MemberFormValues } from "@/lib/validations";
 import Link from "next/link";
 import { FilePenLine } from "lucide-react";
 import { useSubmit } from "@/lib/submitHandler";
@@ -19,7 +19,7 @@ export default function MemberPage() {
   const { data: userInfo, isLoading: isUserInfoLoading } = useGetUserInfo();
   const { isOpen, openModal, closeModal } = useModal();
 
-  const { handleSubmit } = useSubmit<Omit<User, "id" | "createdAt" | "updatedAt" | "image" | "email">>({
+  const { handleSubmit } = useSubmit<MemberFormValues>({
     action: async (data) => {
       if (userInfo) {
         await updateUserInfo(userInfo.id, data as any);
