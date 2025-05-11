@@ -39,17 +39,17 @@ export const TaskModalForm = ({
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
     defaultValues: {
-      title: "",
-      content: "",
-      assignee: "",
-      dueDate: new Date(),
-      startedAt: new Date(),
-      progress: "pending",
-      progressDetails: "",
-      link: "",
-      notes: "",
-      completedAt: undefined,
-      isPublic: false,
+      title: defaultValues?.title || "",
+      content: defaultValues?.content || "",
+      assignee: defaultValues?.assignee || "",
+      dueDate: defaultValues?.dueDate || new Date(),
+      startedAt: defaultValues?.startedAt || new Date(),
+      progress: defaultValues?.progress || "pending",
+      progressDetails: defaultValues?.progressDetails || "",
+      link: defaultValues?.link || "",
+      notes: defaultValues?.notes || "",
+      completedAt: defaultValues?.completedAt || undefined,
+      isPublic: defaultValues?.isPublic || false,
     },
   });
 
@@ -59,13 +59,13 @@ export const TaskModalForm = ({
     try {
       const taskData = {
         ...data,
-        dueDate: new Date(data.dueDate),
-        startedAt: new Date(data.startedAt),
-        completedAt: data.completedAt ? new Date(data.completedAt) : undefined,
+        dueDate: data.dueDate,
+        startedAt: data.startedAt,
+        completedAt: data.completedAt,
         progressDetails: data.progressDetails || "",
         link: data.link || "",
         notes: data.notes || "",
-        isPublic: data.isPublic ?? false,
+        isPublic: data.isPublic || false,
       };
       
       await onSubmit(taskData);
@@ -78,29 +78,21 @@ export const TaskModalForm = ({
     }
   };
 
+  console.log(form.formState.errors);
+
   useEffect(() => {
     if (isOpen) {
       if (defaultValues) {
         form.reset({
-          title: defaultValues.title || "",
-          content: defaultValues.content || "",
-          assignee: defaultValues.assignee || "",
-          dueDate: defaultValues.dueDate,
-          startedAt: defaultValues.startedAt,
-          completedAt: defaultValues.completedAt,
-          progress: defaultValues.progress || "pending",
-          progressDetails: defaultValues.progressDetails || "",
-          link: defaultValues.link || "",
-          notes: defaultValues.notes || "",
-          isPublic: defaultValues.isPublic || false,
+          ...defaultValues,
         });
       } else {
         form.reset({
           title: "",
           content: "",
           assignee: "",
-          dueDate: new Date(),
-          startedAt: new Date(),
+          dueDate: undefined,
+          startedAt: undefined,
           progress: "pending",
           progressDetails: "",
           link: "",

@@ -4,6 +4,8 @@ export const memberFormSchema = z.object({
   id: z.string().optional(),
   name: z.string().optional(),
   email: z.string().email("有効なメールアドレスを入力してください").optional(),
+  // email: z.union([z.string().email(), z.literal("")]).optional(),
+  role: z.enum(["superadmin", "admin", "user"] as const).default("admin").optional(),
   department: z.string().optional(),
   position: z.string().optional(),
   skills: z.string().optional(),
@@ -13,10 +15,9 @@ export const memberFormSchema = z.object({
   isActive: z.boolean().default(true).optional(),
   joinDate: z.date().optional(),
   leaveDate: z.date().optional(),
-  createdAt: z.date().optional(),
   editedAt: z.date().optional(),
+  createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
-  role: z.enum(["superadmin", "admin", "user"] as const).default("admin").optional(),
 });
 export type MemberFormValues = z.infer<typeof memberFormSchema>;
 
@@ -34,7 +35,7 @@ export const taskFormSchema = z.object({
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
   completedAt: z.date().optional(),
-  isPublic: z.boolean().optional(),
+  isPublic: z.boolean().default(false).optional(),
 });
 export type TaskFormValues = z.infer<typeof taskFormSchema>
 

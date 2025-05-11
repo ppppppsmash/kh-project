@@ -84,9 +84,9 @@ export const createUser = async (
       const [updatedUser] = await db
         .update(users)
         .set({
-          updatedAt: new Date(),
           name: data.name,
           image: data.image,
+          updatedAt: new Date(),
         })
         .where(eq(users.email, data.email))
         .returning();

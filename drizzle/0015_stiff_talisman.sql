@@ -1,0 +1,1 @@
+ALTER TABLE "tasks" ALTER COLUMN "progress_details" DROP NOT NULL;
