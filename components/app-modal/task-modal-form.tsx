@@ -19,7 +19,7 @@ interface TaskModalFormProps {
   isOpen: boolean;
 }
 
-const formatDateForInput = (date: Date | undefined): string => {
+const formatDateForInput = (date: Date | null | undefined): string => {
   if (!date) return "";
   return date.toISOString().split("T")[0];
 };
@@ -46,7 +46,7 @@ export const TaskModalForm = ({
       progressDetails: defaultValues?.progressDetails || "",
       link: defaultValues?.link || "",
       notes: defaultValues?.notes || "",
-      completedAt: defaultValues?.completedAt || undefined,
+      completedAt: defaultValues?.completedAt || null,
       isPublic: defaultValues?.isPublic || false,
     },
   });
@@ -89,13 +89,13 @@ export const TaskModalForm = ({
           title: "",
           content: "",
           assignee: "",
-          dueDate: undefined,
-          startedAt: undefined,
+          dueDate: new Date(),
+          startedAt: new Date(),
           progress: "pending",
           progressDetails: "",
           link: "",
           notes: "",
-          completedAt: undefined,
+          completedAt: null,
           isPublic: false,
         });
       }
@@ -183,7 +183,7 @@ export const TaskModalForm = ({
             value={formatDateForInput(form.watch("completedAt"))}
             onChange={(e) => {
               const date = e.target.value ? new Date(e.target.value) : undefined;
-              form.setValue("completedAt", date);
+              form.setValue("completedAt", date, { shouldValidate: true });
             }}
           />
         </div>

@@ -31,7 +31,7 @@ export const taskFormSchema = z.object({
   startedAt: z.date({ required_error: "開始日は必須です" }),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
-  completedAt: z.date().optional(),
+  completedAt: z.date().nullable().optional(),
   isPublic: z.boolean().default(false).optional(),
 });
 export type TaskFormValues = z.infer<typeof taskFormSchema>
