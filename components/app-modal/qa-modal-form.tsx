@@ -1,5 +1,6 @@
 "use client";
 
+import { qaFormSchema, type QaFormValues } from "@/lib/validations";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -11,8 +12,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Plus, X } from "lucide-react";
-import type { Qa } from "@/types";
-import { qaFormSchema, type QaFormValues } from "@/lib/validations";
 import { useQuery } from "@tanstack/react-query";
 import { getQA } from "@/actions/qa";
 
@@ -20,11 +19,11 @@ import { getQA } from "@/actions/qa";
 const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 interface QaModalFormProps {
-  type: "superadmin" | "admin" | "user";
+  type: string;
   isOpen: boolean;
   onClose: () => void;
   onSubmit: (data: QaFormValues) => void;
-  initialData?: Qa | null;
+  initialData?: QaFormValues | null;
 }
 
 export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: QaModalFormProps) {
@@ -44,12 +43,12 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
   const form = useForm<QaFormValues>({
     resolver: zodResolver(qaFormSchema),
     defaultValues: {
-      question: "",
-      answer: "",
-      category: "",
-      questionBy: "",
-      answeredBy: "",
-      isPublic: false,
+      question: initialData?.question || "",
+      answer: initialData?.answer || "",
+      category: initialData?.category || "",
+      questionBy: initialData?.questionBy || "",
+      answeredBy: initialData?.answeredBy || "",
+      isPublic: initialData?.isPublic || false,
     },
   });
 
@@ -68,7 +67,7 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
     if (isOpen && initialData) {
       form.reset({
         question: initialData.question,
-        answer: initialData.answer || "",
+        answer: initialData.answer,
         category: initialData.category,
         questionBy: initialData.questionBy,
         answeredBy: initialData.answeredBy,
@@ -135,7 +134,7 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
                 </FormItem>
               )}
             />
-            {type === "admin" && (
+            {type === "superadmin" && (
               <FormField
                 control={form.control}
                 name="answer"

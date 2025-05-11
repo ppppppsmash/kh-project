@@ -52,11 +52,15 @@ export const clubFormSchema = z.object({
 export type ClubFormValues = z.infer<typeof clubFormSchema>
 
 export const qaFormSchema = z.object({
+  id: z.string().optional(),
+  questionCode: z.string().optional(),
   question: z.string().min(1, "質問は必須です"),
   answer: z.string().optional(),
   category: z.string().min(1, "カテゴリは必須です"),
   questionBy: z.string().optional(),
   answeredBy: z.string().optional(),
-  isPublic: z.boolean().optional(),
+  isPublic: z.boolean().default(false).optional(),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
 });
 export type QaFormValues = z.infer<typeof qaFormSchema>

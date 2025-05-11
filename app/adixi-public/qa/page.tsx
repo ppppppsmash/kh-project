@@ -30,8 +30,6 @@ import type { QaFormValues } from "@/lib/validations";
 import { createQA } from "@/actions/qa";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { useSession, signIn } from "next-auth/react";
-import { Button } from "@/components/ui/button";
-import { DialogFooter } from "@/components/ui/dialog";
 
 // 固定のカテゴリーリスト
 const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
@@ -47,6 +45,8 @@ export default function QAPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isSignInDialogOpen, setIsSignInDialogOpen] = useState(false);
   const itemsPerPage = 10;
+
+  const role = session?.user?.role;
 
   const { data: qaItems = [] } = useQuery({
     queryKey: ["qa"],
@@ -83,10 +83,6 @@ export default function QAPage() {
   const handleAdd = () => {
     setCurrentData(null);
     openModal();
-  };
-
-  const handleSignIn = async () => {
-    await signIn("google", { callbackUrl: "/adixi-public/qa" });
   };
 
   const { handleSubmit } = useSubmit<Qa, QaFormValues>({
@@ -134,7 +130,7 @@ export default function QAPage() {
       </div>
 
       <QaModalForm
-        type="admin"
+        type={role || ""}
         isOpen={isOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}
@@ -174,7 +170,7 @@ export default function QAPage() {
           {currentItems.length > 0 ? (
             <Accordion type="single" collapsible className="w-full">
               {currentItems.map((item) => (
-                <AccordionItem key={item.id} value={item.id}>
+                <AccordionItem key={item.id} value={item.id || ""}>
                   <AccordionTrigger className="hover:no-underline">
                     <div className="flex w-full flex-col items-start gap-1 text-left sm:flex-row sm:items-center">
                       <span className="mr-2 font-medium">{item.questionCode || item.id}</span>
@@ -191,7 +187,7 @@ export default function QAPage() {
                       <div className="flex items-center gap-2">
                         <Badge variant={getCategoryBadgeVariant(item.category)}>{item.category}</Badge>
                         <span className="text-xs text-muted-foreground">
-                          {format(item.createdAt, "yyyy-MM-dd")}
+                          {format(item.createdAt || new Date(), "yyyy-MM-dd")}
                         </span>
                       </div>
                     </div>

@@ -1,13 +1,12 @@
 "use server";
 
+import type { QaFormValues } from "@/lib/validations";
 import { auth } from "@/auth";
 import { db } from "@/db";
 import { qa } from "@/db/schema/qa";
 import { eq, desc } from "drizzle-orm";
-import type { Qa } from "@/types";
-import { QaFormValues } from "@/lib/validations";
 
-export const getQA = async (): Promise<Qa[]> => {
+export const getQA = async (): Promise<QaFormValues[]> => {
   const qaData = await db.select().from(qa);
   return qaData.map((q) => ({
     ...q,
@@ -46,8 +45,9 @@ export const createQA = async (data: QaFormValues) => {
   const insertData = {
     questionCode,
     question: data.question,
-    answer: data.answer ?? "",
+    answer: data.answer || "",
     category: data.category,
+    isPublic: data.isPublic,
     questionBy: data.questionBy ? data.questionBy : currentUser ?? null,
     answeredBy: data.answer ? currentUser : null,
   };

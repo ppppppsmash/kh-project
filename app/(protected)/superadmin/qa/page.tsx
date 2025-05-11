@@ -1,5 +1,6 @@
 "use client";
 
+import type { QaFormValues } from "@/lib/validations";
 import { useState, useMemo } from "react";
 import { AddButton } from "@/components/add-button";
 import { QaModalForm } from "@/components/app-modal/qa-modal-form";
@@ -11,22 +12,23 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useGetQa } from "@/components/app-table/hooks/use-table-data";
 import { AccordionTable } from "@/components/app-accordion-table";
 import { renderQa } from "@/components/app-accordion-table/render/QAItem";
-import type { QaFormValues } from "@/lib/validations";
-import { Qa } from "@/types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useSession } from "next-auth/react";
 
 // 固定のカテゴリーリスト
 const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
 export default function AdminQAPage() {
   const queryClient = useQueryClient();
+  const { data: session } = useSession();
   const { isOpen, openModal, closeModal } = useModal();
-  const [currentData, setCurrentData] = useState<Qa | null>(null);
+  const [currentData, setCurrentData] = useState<QaFormValues | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const itemsPerPage = 10;
 
   const { data: qaItems, isLoading } = useGetQa();
+  const role = session?.user?.role;
 
   // カテゴリーリストを計算
   const categories = useMemo(() => {
@@ -39,18 +41,18 @@ export default function AdminQAPage() {
     return [...defaultCategories, ...dbCategories];
   }, [qaItems]);
 
-  const handleEdit = (item: Qa) => {
+  const handleEdit = (item: QaFormValues) => {
     setCurrentData(item);
     openModal();
   };
 
-  const handleDelete = (item: Qa) => {
+  const handleDelete = (item: QaFormValues) => {
     setCurrentData(item);
     setIsDeleteDialogOpen(true);
   };
 
   const handleDeleteConfirm = async () => {
-    if (currentData) {
+    if (currentData?.id) {
       await deleteQA(currentData.id);
       CustomToast.success("QAを削除しました");
       setIsDeleteDialogOpen(false);
@@ -59,9 +61,9 @@ export default function AdminQAPage() {
     }
   };
 
-  const { handleSubmit } = useSubmit<Qa, QaFormValues>({
+  const { handleSubmit } = useSubmit<QaFormValues>({
     action: async (data) => {
-      if (currentData) {
+      if (currentData?.id) {
         await updateQA(currentData.id, {
           question: data.question,
           answer: data.answer || '',
@@ -105,7 +107,7 @@ export default function AdminQAPage() {
       </div>
 
       <QaModalForm
-        type="superadmin"
+        type={role || ""}
         isOpen={isOpen}
         onClose={closeModal}
         onSubmit={handleSubmit}
@@ -113,7 +115,14 @@ export default function AdminQAPage() {
       />
 
       <AccordionTable
-        data={qaItems ?? []}
+        data={(qaItems ?? []).map(item => ({
+          ...item,
+          id: item.id || '',
+          answer: item.answer || '',
+          isPublic: item.isPublic ?? false,
+          createdAt: item.createdAt ?? new Date(),
+          updatedAt: item.updatedAt ?? new Date()
+        }))}
         columns={renderQa({
           onEdit: handleEdit,
           onDelete: handleDelete,
