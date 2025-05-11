@@ -6,7 +6,7 @@ import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, BarChart3, Calendar, Users, User } from "lucide-react";
 import { useGetUserActivity, useGetClubActivities } from "@/components/app-table/hooks/use-table-data";
-import type { ClubStatus } from "@/types";
+import type { ClubFormValues } from "@/lib/validations";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
@@ -14,7 +14,7 @@ export default function DashboardPage() {
   const { data: userActivity, isLoading: isUserActivityLoading } = useGetUserActivity();
   const { data: clubs } = useGetClubActivities();
 
-  const getStatusCount = (status: ClubStatus) => {
+  const getStatusCount = (status: ClubFormValues["status"]) => {
     return clubs?.filter((club) => club.status === status).length ?? 0;
   };
 

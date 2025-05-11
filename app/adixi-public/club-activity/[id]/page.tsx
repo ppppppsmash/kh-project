@@ -36,7 +36,14 @@ export default async function ClubActivityDetailPage({ params }: Props) {
         </div>
       </div>
 
-      <ClubActivityShare club={club} />
+      <ClubActivityShare club={{
+        ...club,
+        memberCount: club.memberCount ?? "",
+        description: club.description ?? undefined,
+        activityType: club.activityType ?? undefined,
+        location: club.location ?? undefined,
+        detail: club.detail ?? undefined,
+      }} />
     </div>
   );
 }

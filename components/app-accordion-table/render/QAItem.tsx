@@ -1,14 +1,14 @@
-import type { Qa } from "@/types";
+import type { QaFormValues } from "@/lib/validations";
 import { AccordionTableColumn } from "@/components/app-accordion-table";
 import { Button } from "@/components/ui/button";
 import { Pencil, Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { format } from "date-fns";
+import { formatDate } from "@/lib/utils";
 
 type QaColumnOptions = {
-  onEdit?: (row: Qa) => void;
-  onDelete?: (row: Qa) => void;
+  onEdit?: (row: QaFormValues) => void;
+  onDelete?: (row: QaFormValues) => void;
 };
 
  // カテゴリに応じたバッジの色を返す関数
@@ -34,7 +34,7 @@ export const getCategoryBadgeVariant = (category: string) => {
 export const renderQa = ({
   onEdit,
   onDelete,
-}: QaColumnOptions): AccordionTableColumn<Qa>[] => [
+}: QaColumnOptions): AccordionTableColumn<QaFormValues>[] => [
   {
     key: "questionCode",
     label: "質問コード",
@@ -63,7 +63,7 @@ export const renderQa = ({
   {
     key: "date",
     label: "日付",
-    render: (item) => <span className="text-xs text-muted-foreground">{format(item.createdAt, "yyyy-MM-dd")}</span>,
+    render: (item) => <span className="text-xs text-muted-foreground">{item.createdAt && formatDate(item.createdAt, "yyyy-MM-dd")}</span>,
   },
   {
     key: "questionBy",

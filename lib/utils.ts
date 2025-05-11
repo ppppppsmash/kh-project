@@ -2,7 +2,7 @@ import { clsx, type ClassValue } from "clsx";
 import { twMerge } from "tailwind-merge";
 import { format } from 'date-fns';
 import { ja } from 'date-fns/locale';
-import { Task } from "@/types";
+import type { TaskFormValues } from "@/lib/validations";
 
 // クラスマージ
 export const cn = (...inputs: ClassValue[]) => {
@@ -28,7 +28,7 @@ export const getPaginated = <T>(filtered: T[], currentPage: number, itemsPerPage
 };
 
 // タスク進捗色
-export const getProgressColor = (progress: Task["progress"]) => {
+export const getProgressColor = (progress: TaskFormValues["progress"]) => {
   switch (progress) {
     case "pending":
       return "bg-gray-500";
@@ -40,7 +40,7 @@ export const getProgressColor = (progress: Task["progress"]) => {
 };
 
 // タスク進捗ラベル
-export const getProgressLabel = (progress: Task["progress"]) => {
+export const getProgressLabel = (progress: TaskFormValues["progress"]) => {
   switch (progress) {
     case "pending":
       return "未着手";

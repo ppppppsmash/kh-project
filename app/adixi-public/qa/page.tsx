@@ -20,16 +20,15 @@ import { Search, Filter } from "lucide-react";
 import { AddButton } from "@/components/add-button";
 import { useQuery } from "@tanstack/react-query";
 import { getQA } from "@/actions/qa";
-import { format } from "date-fns";
 import { QaModalForm } from "@/components/app-modal/qa-modal-form";
 import { getCategoryBadgeVariant } from "@/components/app-accordion-table/render/QAItem";
 import { useSubmit } from "@/lib/submitHandler";
-import { Qa } from "@/types";
 import { CustomToast } from "@/components/ui/toast";
 import type { QaFormValues } from "@/lib/validations";
 import { createQA } from "@/actions/qa";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { useSession, signIn } from "next-auth/react";
+import { useSession } from "next-auth/react";
+import { formatDate } from "@/lib/utils";
 
 // 固定のカテゴリーリスト
 const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
@@ -38,20 +37,18 @@ export default function QAPage() {
   const { data: session, status } = useSession();
   const queryClient = useQueryClient();
   const { isOpen, openModal, closeModal } = useModal();
-  const [currentData, setCurrentData] = useState<Qa | null>(null);
+  const [currentData, setCurrentData] = useState<QaFormValues | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [categoryFilter, setCategoryFilter] = useState("全て");
   const [currentPage, setCurrentPage] = useState(1);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isSignInDialogOpen, setIsSignInDialogOpen] = useState(false);
   const itemsPerPage = 10;
 
   const role = session?.user?.role;
 
   const { data: qaItems = [] } = useQuery({
     queryKey: ["qa"],
-    queryFn: getQA,
-    staleTime: 1000 * 60 * 5, // 5分間はキャッシュを使用
+    queryFn: getQA
   });
 
   // カテゴリーリストを計算
@@ -85,7 +82,7 @@ export default function QAPage() {
     openModal();
   };
 
-  const { handleSubmit } = useSubmit<Qa, QaFormValues>({
+  const { handleSubmit } = useSubmit<QaFormValues>({
     action: async (data) => {
       await createQA({
         question: data.question,
@@ -187,7 +184,7 @@ export default function QAPage() {
                       <div className="flex items-center gap-2">
                         <Badge variant={getCategoryBadgeVariant(item.category)}>{item.category}</Badge>
                         <span className="text-xs text-muted-foreground">
-                          {format(item.createdAt || new Date(), "yyyy-MM-dd")}
+                          {item.createdAt && formatDate(item.createdAt, "yyyy-MM-dd")}
                         </span>
                       </div>
                     </div>

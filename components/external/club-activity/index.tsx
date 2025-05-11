@@ -5,13 +5,13 @@ import { Users, MapPin, User, Zap } from "lucide-react";
 type ClubActivityShareProps = {
   id: string;
   name: string;
-  description: string | null;
+  description?: string;
   leader: string;
-  memberCount: number;
-  activityType: string | null;
-  status: string;
-  location: string | null;
-  detail: string | null;
+  memberCount: string;
+  activityType?: string;
+  status?: string;
+  location?: string;
+  detail?: string;
 };
 
 export const ClubActivityShare = ({ club }: { club: ClubActivityShareProps }) => {

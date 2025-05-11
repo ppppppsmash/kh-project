@@ -3,7 +3,6 @@
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Task, TaskProgress } from "@/types";
 import { taskFormSchema, TaskFormValues } from "@/lib/validations";
 import { BaseModalForm } from "./base-modal-form";
 import { Input } from "@/components/ui/input";
@@ -11,13 +10,12 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { formatDate } from "@/lib/utils";
 
 interface TaskModalFormProps {
   title?: string;
-  onSubmit: (data: Omit<Task, "id" | "createdAt" | "updatedAt">) => Promise<void>;
+  onSubmit: (data: TaskFormValues) => Promise<void>;
   onClose: () => void;
-  defaultValues?: Partial<Task>;
+  defaultValues?: Partial<TaskFormValues>;
   isOpen: boolean;
 }
 
@@ -196,7 +194,7 @@ export const TaskModalForm = ({
           <Label htmlFor="progress">進捗状況</Label>
           <Select
             value={form.watch("progress")}
-            onValueChange={(value: TaskProgress) => form.setValue("progress", value)}
+            onValueChange={(value: TaskFormValues["progress"]) => form.setValue("progress", value)}
           >
             <SelectTrigger>
               <SelectValue placeholder="進捗状況を選択" />

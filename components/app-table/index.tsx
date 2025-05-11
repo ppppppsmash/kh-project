@@ -3,7 +3,6 @@
 import type React from "react";
 
 import { useState, useEffect } from "react";
-import { usePathname, useRouter } from "next/navigation";
 import {
   ChevronDown,
   ChevronUp,

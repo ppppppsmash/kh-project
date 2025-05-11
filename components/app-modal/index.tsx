@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ClubActivity, ClubStatus } from "@/types";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { clubFormSchema, ClubFormValues } from "@/lib/validations";
@@ -14,8 +13,8 @@ import { clubFormSchema, ClubFormValues } from "@/lib/validations";
 interface ClubModalFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Omit<ClubActivity, "id" | "createdAt" | "updatedAt">) => Promise<void>;
-  defaultValues?: Partial<ClubActivity>;
+  onSubmit: (data: ClubFormValues) => Promise<void>;
+  defaultValues?: Partial<ClubFormValues>;
   title?: string;
 }
 
@@ -36,7 +35,7 @@ export const ClubModalForm = ({
       name: defaultValues?.name || "",
       description: defaultValues?.description || "",
       leader: defaultValues?.leader || "",
-      memberCount: defaultValues?.memberCount || undefined,
+      memberCount: defaultValues?.memberCount || "",
       activityType: defaultValues?.activityType || "",
       status: "active",
       location: defaultValues?.location || "",
@@ -125,7 +124,7 @@ export const ClubModalForm = ({
             <Label htmlFor="status">ステータス</Label>
             <Select
               value={form.watch("status")}
-              onValueChange={(value: ClubStatus) => form.setValue("status", value)}
+              onValueChange={(value: ClubFormValues["status"]) => form.setValue("status", value)}
             >
               <SelectTrigger>
                 <SelectValue placeholder="ステータスを選択" />

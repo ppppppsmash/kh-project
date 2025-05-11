@@ -4,7 +4,6 @@ import { db } from "@/db";
 import { clubActivity } from "@/db/schema/club-activity";
 import { eq } from "drizzle-orm";
 import { ClubFormValues } from "@/lib/validations";
-import type { ClubStatus } from "@/types";
 
 export const createClubActivity = async (data: ClubFormValues) => {
   const club = await db.insert(clubActivity).values(data).returning();
@@ -17,8 +16,9 @@ export const getClubActivity = async (): Promise<ClubFormValues[]> => {
 
   return clubs.map((club) => ({
     ...club,
-    status: club.status as ClubStatus,
+    status: club.status as ClubFormValues["status"],
     description: club.description ?? undefined,
+    memberCount: club.memberCount ?? "",
     activityType: club.activityType ?? undefined,
     location: club.location ?? undefined,
     detail: club.detail ?? undefined,

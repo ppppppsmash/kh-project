@@ -1,12 +1,11 @@
-import { User } from "@/types";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { formatDate } from "@/lib/utils";
 import Image from "next/image";
+
 import { MemberFormValues } from "@/lib/validations";
 interface UserDetailModalProps {
   user: MemberFormValues | null;
@@ -72,18 +71,6 @@ export const UserDetailModal = ({ user, isOpen, onClose }: UserDetailModalProps)
               <p className="text-sm font-medium">自己紹介</p>
               <p className="text-sm">{user.freeText}</p>
             </div>
-            {user.joinDate && (
-              <div className="grid grid-cols-2 gap-2">
-                <p className="text-sm font-medium">入社日</p>
-                <p className="text-sm">{formatDate(user?.joinDate, "yyyy/MM/dd")}</p>
-              </div>
-            )}
-            {user.leaveDate && (
-              <div className="grid grid-cols-2 gap-2">
-                <p className="text-sm font-medium">退社日</p>
-                <p className="text-sm">{formatDate(user?.leaveDate, "yyyy/MM/dd")}</p>
-              </div>
-            )}
           </div>
         </div>
       </DialogContent>

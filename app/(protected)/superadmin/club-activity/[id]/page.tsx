@@ -49,7 +49,14 @@ export default async function ClubActivitySlugPage({ params }: Props) {
         <ShareButton id={id} dir="club-activity" />
       </div>
 
-      <ClubActivityShare club={club} />
+      <ClubActivityShare club={{
+        ...club,
+        memberCount: club.memberCount ?? "",
+        description: club.description ?? undefined,
+        activityType: club.activityType ?? undefined,
+        location: club.location ?? undefined,
+        detail: club.detail ?? undefined,
+      }} />
 
       <Card>
         <CardHeader>

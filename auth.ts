@@ -78,7 +78,7 @@ export const { auth, handlers } = NextAuth({
           });
       
           token.id = user?.id as string;
-          token.role = role;
+          token.role = role as string;
         }
       }
 

@@ -5,7 +5,6 @@ import { auth } from "@/auth";
 import { db } from "@/db";
 import { users } from "@/db/schema";
 import { eq } from "drizzle-orm";
-import type { Role, User } from "@/types";
 import { uploadToBlob } from "@/lib/blob";
 
 type Account = {
@@ -13,7 +12,7 @@ type Account = {
   name: string;
   image: string;
   email: string;
-  role?: Role;
+  role?: MemberFormValues["role"];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -22,10 +21,10 @@ type CreateUserInput = {
   name: string;
   email: string;
   image: string;
-  role?: Role;
+  role?: MemberFormValues["role"];
 };
 
-export interface PhotoInUser extends User {
+export interface PhotoInUser extends MemberFormValues {
   photo: File;
 }
 
@@ -52,7 +51,7 @@ export const getUserInfo = async (): Promise<MemberFormValues | undefined> => {
 
   return {
     ...user[0],
-    role: user[0].role as Role,
+    role: user[0].role as MemberFormValues["role"],
     department: user[0].department as string,
     position: user[0].position as string,
     hobby: user[0].hobby as string,
@@ -92,7 +91,7 @@ export const createUser = async (
 
       return {
         ...updatedUser,
-        role: updatedUser.role as Role | undefined,
+        role: updatedUser.role as MemberFormValues["role"],
       };
     }
 
@@ -107,14 +106,14 @@ export const createUser = async (
 
     return {
       ...user,
-      role: user.role as Role | undefined,
+      role: user.role as MemberFormValues["role"],
     };
   } catch (error) {
     console.error("Error creating user:", error);
   }
 };
 
-export const getUserRole = async (email: string): Promise<Role> => {
+export const getUserRole = async (email: string): Promise<MemberFormValues["role"]> => {
   try {
     const user = await db
       .select({
@@ -124,7 +123,7 @@ export const getUserRole = async (email: string): Promise<Role> => {
       .where(eq(users.email, email))
       .limit(1);
 
-    return user[0].role as Role;
+    return user[0].role as MemberFormValues["role"];
   } catch (error) {
     console.error("Error getting user role:", error);
     return "admin";
@@ -135,7 +134,7 @@ export const getUserList = async (): Promise<MemberFormValues[]> => {
   const usersData = await db.select().from(users);
   return usersData.map((user) => ({
     ...user,
-    role: user.role as Role,
+    role: user.role as MemberFormValues["role"],
     department: user.department as string,
     position: user.position as string,
     hobby: user.hobby as string,
