@@ -76,8 +76,6 @@ export const TaskModalForm = ({
     }
   };
 
-  console.log(form.formState.errors);
-
   useEffect(() => {
     if (isOpen) {
       if (defaultValues) {

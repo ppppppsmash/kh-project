@@ -17,8 +17,12 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { getTotalPages, getPaginated } from "@/lib/utils";
 import { ClubActivityTableSkeleton } from "@/components/app-skeleton";
-import { SortConfig } from "@/types";
 import { Skeleton } from "@/components/ui/skeleton";
+
+export type SortConfig<T> = {
+  key: keyof T;
+  direction: "asc" | "desc";
+}
 
 export interface TableColumn<T> {
   key: Extract<keyof T, string> | "action";

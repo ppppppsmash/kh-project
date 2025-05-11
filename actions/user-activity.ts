@@ -3,17 +3,17 @@
 import { db } from "@/db";
 import { userActivity } from "@/db/schema/user-activity";
 import { desc } from "drizzle-orm";
-import type { UserActivity, UserActivityAction } from "@/types";
 import { cache } from "react";
+import type { UserActivityFormValues } from "@/lib/validations";
 
 type CreateUserActivityInput = {
   userId: string;
   userName: string;
-  action: UserActivityAction;
+  action: UserActivityFormValues["action"];
 };
 
 // キャッシュを使用してデータ取得を最適化
-export const getUserActivity = cache(async (): Promise<UserActivity[]> => {
+export const getUserActivity = cache(async (): Promise<UserActivityFormValues[]> => {
   try {
     // 必要なカラムのみを選択
     const activities = await db
@@ -30,7 +30,7 @@ export const getUserActivity = cache(async (): Promise<UserActivity[]> => {
 
     return activities.map((activity) => ({
       ...activity,
-      action: activity.action as UserActivityAction,
+      action: activity.action as UserActivityFormValues["action"],
       createdAt: activity.createdAt ?? new Date(),
     }));
   } catch (error) {

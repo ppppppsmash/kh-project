@@ -5,10 +5,10 @@ import { getQA } from "@/actions/qa";
 import { getTasks } from "@/actions/task";
 import { getUserActivity } from "@/actions/user-activity";
 import { getUserList, getUserInfo } from "@/actions/user";
-import type { UserActivity } from "@/types";
+import type { UserActivityFormValues } from "@/lib/validations";
 
 export const useGetUserActivity = () => {
-  return useQuery<UserActivity[]>({
+  return useQuery<UserActivityFormValues[]>({
     queryKey: ["user-activity"],
     queryFn: getUserActivity,
   });

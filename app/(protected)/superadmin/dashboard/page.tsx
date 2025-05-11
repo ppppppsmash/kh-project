@@ -79,7 +79,7 @@ export default function DashboardPage() {
                 </span>
                 </p>
               </div>
-              <p className="text-muted-foreground text-xs text-nowrap">{activity.createdAt.toLocaleString()}</p>
+              <p className="text-muted-foreground text-xs text-nowrap">{activity.createdAt?.toLocaleString()}</p>
             </div>
           ))}
         </div>

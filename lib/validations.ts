@@ -64,3 +64,12 @@ export const qaFormSchema = z.object({
   updatedAt: z.date().optional(),
 });
 export type QaFormValues = z.infer<typeof qaFormSchema>
+
+export const userActivityFormSchema = z.object({
+  id: z.string().optional(),
+  userId: z.string().optional(),
+  userName: z.string().optional(),
+  action: z.enum(["login", "logout"]),
+  createdAt: z.date().optional(),
+});
+export type UserActivityFormValues = z.infer<typeof userActivityFormSchema>
