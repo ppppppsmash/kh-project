@@ -1,12 +1,13 @@
 "use client";
 
+import type { ClubFormValues } from "@/lib/validations";
 import Link from "next/link";
+import { IconExternalLink } from "@tabler/icons-react";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Activity, BarChart3, Calendar, Users, User, Link as LinkIcon } from "lucide-react";
 import { useGetUserActivity, useGetClubActivities } from "@/components/app-table/hooks/use-table-data";
-import type { ClubFormValues } from "@/lib/validations";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function DashboardPage() {
@@ -53,7 +54,10 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2">
           <Button variant="outline" className="w-fit" asChild>
-            <Link target="_blank" href="/adixi-public/qa/">リーダーQAページ</Link>
+            <Link target="_blank" href="/adixi-public/qa/">
+              <IconExternalLink className="w-4 h-4" />
+              リーダー向けのQAページ
+            </Link>
           </Button>
         </div>
       </div>

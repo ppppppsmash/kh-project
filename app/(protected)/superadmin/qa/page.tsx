@@ -1,6 +1,8 @@
 "use client";
 
 import type { QaFormValues } from "@/lib/validations";
+import { IconExternalLink } from "@tabler/icons-react";
+import Link from "next/link";
 import { useState, useMemo } from "react";
 import { AddButton } from "@/components/add-button";
 import { QaModalForm } from "@/components/app-modal/qa-modal-form";
@@ -15,7 +17,6 @@ import { renderQa } from "@/components/app-accordion-table/render/QAItem";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
-
 // 固定のカテゴリーリスト
 const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
 
@@ -104,6 +105,15 @@ export default function AdminQAPage() {
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold">QA管理</h1>
         <AddButton text="新規QA登録" onClick={handleAdd} />
+      </div>
+
+      <div className="flex flex-col gap-2 mb-4">
+        <Button variant="outline" className="w-fit" asChild>
+          <Link target="_blank" href="/adixi-public/qa/">
+            <IconExternalLink className="w-4 h-4" />
+            リーダー向けのQAページ
+          </Link>
+        </Button>
       </div>
 
       <QaModalForm
