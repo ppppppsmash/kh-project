@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { useSession } from "next-auth/react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Activity, BarChart3, Calendar, Users, User } from "lucide-react";
+import { Activity, BarChart3, Calendar, Users, User, Link as LinkIcon } from "lucide-react";
 import { useGetUserActivity, useGetClubActivities } from "@/components/app-table/hooks/use-table-data";
 import type { ClubFormValues } from "@/lib/validations";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -51,16 +51,10 @@ export default function DashboardPage() {
       </div>
 
       <div className="flex flex-col gap-2">
-        <h3 className="text-lg font-bold">ガイドページ</h3>
-
         <div className="flex items-center gap-2">
-          <Button variant="outline" className="w-fit">
-            <Link target="_blank" href="/adixi-public/intro-card/">パブリックページへ</Link>
+          <Button variant="outline" className="w-fit" asChild>
+            <Link target="_blank" href="/adixi-public/qa/">リーダーQAページ</Link>
           </Button>
-
-          {/* <Button variant="outline" className="w-fit">
-            <Link target="_blank" href="/external/qa">全社向けのQAページ</Link>
-          </Button> */}
         </div>
       </div>
 
