@@ -99,14 +99,31 @@ export function AppTable<T>({
       result = onFilter(result, searchQuery, statusFilter);
     } else {
       // デフォルトの検索フィルタリング
-      if (searchQuery && searchableKeys) {
-        result = result.filter((v) =>
+      if (searchQuery) {
+        result = result.filter((item) =>
           searchableKeys.some((key) => {
-            const value = v[key];
-            return (
-              typeof value === "string" &&
-              value.toLowerCase().includes(searchQuery.toLowerCase())
-            );
+            const value = item[key];
+            
+            // 値が存在しない場合は検索対象から除外
+            if (value == null) return false;
+            
+            // 日付型の場合は文字列に変換
+            if (value instanceof Date) {
+              return value.toLocaleDateString().toLowerCase().includes(searchQuery.toLowerCase());
+            }
+            
+            // 数値型の場合は文字列に変換
+            if (typeof value === 'number') {
+              return value.toString().toLowerCase().includes(searchQuery.toLowerCase());
+            }
+            
+            // 文字列型の場合はそのまま検索
+            if (typeof value === 'string') {
+              return value.toLowerCase().includes(searchQuery.toLowerCase());
+            }
+            
+            // その他の型の場合は文字列に変換して検索
+            return String(value).toLowerCase().includes(searchQuery.toLowerCase());
           })
         );
       }
@@ -134,7 +151,7 @@ export function AppTable<T>({
 
     setFilteredData(result);
     setCurrentPage(1);
-  }, [data, searchQuery, statusFilter, sortConfig, onFilter]);
+  }, [data, searchQuery, statusFilter, sortConfig, onFilter, searchableKeys]);
 
   // ソート処理
   const handleSort = (key: keyof T) => {
@@ -198,7 +215,7 @@ export function AppTable<T>({
                 </SelectContent>
               </Select>
               {(searchQuery || statusFilter !== "すべて" || sortConfig) && (
-                <Button variant="ghost" size="sm" onClick={() => {
+                <Button variant="outline" size="sm" onClick={() => {
                   setSearchQuery("");
                   setStatusFilter("すべて");
                   setSortConfig(null);

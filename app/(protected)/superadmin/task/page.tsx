@@ -147,9 +147,9 @@ export default function TaskPage() {
         })}
         data={tasks ?? []}
         loading={isLoading}
-        searchableKeys={["title", "assignee", "dueDate"]}
+        searchableKeys={["taskId", "title", "assignee", "dueDate"]}
         toolBar={{
-          researchBarPlaceholder: "タスク名で検索",
+          researchBarPlaceholder: "タスク検索",
           researchStatusFilter: getTaskStatusFilters(),
         }}
         onFilter={filterTask}

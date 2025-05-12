@@ -21,6 +21,7 @@ export const filterTask = (data: TaskFormValues[], searchQuery: string, statusFi
   if (searchQuery) {
     result = result.filter((task) => {
       const searchableFields = [
+        task.taskId,
         task.title,
         task.assignee,
         formatDate(task.dueDate, "yyyy/MM/dd"),

@@ -60,6 +60,16 @@ export const TaskDetailSheet = ({
 
         <div className="space-y-6 p-6">
           <div>
+            <h3 className="text-sm font-medium text-gray-500 mb-1">タスクID</h3>
+            <p className="text-gray-900 dark:text-gray-100">{task.taskId}</p>
+          </div>
+          {task.category && (
+            <div>
+              <h3 className="text-sm font-medium text-gray-500 mb-1">タスクカテゴリー</h3>
+              <p className="text-gray-900 dark:text-gray-100">{task?.category}</p>
+            </div>
+          )}
+          <div>
             <h3 className="text-sm font-medium text-gray-500 mb-1">担当者</h3>
             <p className="text-gray-900 dark:text-gray-100">{task.assignee}</p>
           </div>
