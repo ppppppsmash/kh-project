@@ -76,3 +76,11 @@ export const userActivityFormSchema = z.object({
   createdAt: z.date().optional(),
 });
 export type UserActivityFormValues = z.infer<typeof userActivityFormSchema>
+
+export const tabFormSchema = z.object({
+  id: z.string().optional(),
+  name: z.string().min(1, "タブ名は必須です"),
+  createdAt: z.date().optional(),
+  updatedAt: z.date().optional(),
+});
+export type TabFormValues = z.infer<typeof tabFormSchema>

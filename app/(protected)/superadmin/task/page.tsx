@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useModal } from "@/hooks/use-modal";
 import { TaskFormValues } from '@/lib/validations';
 import { AddButton } from "@/components/add-button";
 import { AppTable } from "@/components/app-table";
 import { renderTask, filterTask, getTaskStatusFilters } from "@/components/app-table/render/TaskItem";
-import { useGetTasks } from "@/components/app-table/hooks/use-table-data";
+import { useGetTasks, useGetTabs } from "@/components/app-table/hooks/use-table-data";
 import { TaskDetailSheet } from "@/components/app-sheet/task-detail-sheet";
 import { TaskModalForm } from "@/components/app-modal/task-modal-form";
 import { CustomToast } from "@/components/ui/toast";
@@ -15,7 +15,9 @@ import { useSubmit } from "@/lib/submitHandler";
 import { createTask, updateTask, deleteTask } from "@/actions/task";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { TabManager } from "@/components/tab-manager";
+import { TabManager } from "@/components/app-tab/tab-manager";
+import { TabFormValues } from "@/lib/validations";
+import { createTab, updateTab, deleteTab } from "@/actions/tab";
 
 export default function TaskPage() {
   const queryClient = useQueryClient();
@@ -26,6 +28,14 @@ export default function TaskPage() {
   const { isOpen, openModal, closeModal } = useModal();
   const [currentData, setCurrentData] = useState<TaskFormValues | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
+  const { data: tabs, isLoading: isTabsLoading } = useGetTabs();
+
+  useEffect(() => {
+    if (tabs && tabs.length > 0 && !selectedTabId) {
+      setSelectedTabId(tabs[0].id);
+    }
+  }, [tabs, selectedTabId]);
 
   const { handleSubmit } = useSubmit<TaskFormValues>({
     action: async (data) => {
@@ -70,6 +80,42 @@ export default function TaskPage() {
     }
   };
 
+  // タブの作成、更新、削除
+  const handleCreateTab = async (data: TabFormValues) => {
+    try {
+      await createTab(data.name);
+      CustomToast.success("タブを作成しました");
+      queryClient.invalidateQueries({ queryKey: ["tabs"] });
+    } catch (error) {
+      CustomToast.error("タブの作成に失敗しました");
+    }
+  };
+
+  const handleUpdateTab = async (data: TabFormValues) => {
+    try {
+      if (data.id) {
+        await updateTab(data.id, data.name);
+        CustomToast.success("タブを更新しました");
+        queryClient.invalidateQueries({ queryKey: ["tabs"] });
+      }
+    } catch (error) {
+      CustomToast.error("タブの更新に失敗しました");
+    }
+  };
+
+  const handleDeleteTab = async (data: TabFormValues, options: { moveTasksToTabId?: string; deleteTasks?: boolean }) => {
+    try {
+      if (data.id) {
+        await deleteTab(data.id, options);
+        CustomToast.success("タブを削除しました");
+        queryClient.invalidateQueries({ queryKey: ["tabs"] });
+        queryClient.invalidateQueries({ queryKey: ["tasks"] });
+      }
+    } catch (error) {
+      CustomToast.error("タブの削除に失敗しました");
+    }
+  };
+
   const handleAdd = () => {
     // Sheetを開く前にselectedTaskとcurrentDataをリセット
     setSelectedTask(null);
@@ -82,14 +128,18 @@ export default function TaskPage() {
     <div className="mx-auto">
       <div className="flex justify-between items-center mb-8">
         <h2 className="text-2xl font-bold">タスク管理</h2>
-        <AddButton text="新規タスク登録" onClick={handleAdd} />
       </div>
 
       <TabManager
         selectedTabId={selectedTabId}
         onTabSelect={setSelectedTabId}
+        onTabCreate={handleCreateTab}
+        onTabUpdate={handleUpdateTab}
+        onTabDelete={handleDeleteTab}
+        tabs={tabs ?? []}
       />
 
+      <AddButton className="mb-2" text="新規タスク登録" onClick={handleAdd} />
       <AppTable
         columns={renderTask({
           onEdit: handleEdit,

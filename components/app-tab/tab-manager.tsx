@@ -1,90 +1,38 @@
 "use client";
 
+import type { TabFormValues } from "@/lib/validations";
 import { useState } from "react";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { CustomToast } from "@/components/ui/toast";
-import { createTab, updateTab, deleteTab, getTabs } from "@/actions/tab";
-import { useSubmit } from "@/lib/submitHandler";
-
-interface Tab {
-  id: string;
-  name: string;
-}
+import { MoreVertical } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface TabManagerProps {
   onTabSelect: (tabId: string) => void;
   selectedTabId?: string;
+  onTabCreate: (data: TabFormValues) => Promise<void>;
+  onTabUpdate: (data: TabFormValues) => Promise<void>;
+  onTabDelete: (data: TabFormValues, options: { moveTasksToTabId?: string; deleteTasks?: boolean }) => Promise<void>;
+  tabs: TabFormValues[];
 }
 
-export function TabManager({ onTabSelect, selectedTabId }: TabManagerProps) {
+export function TabManager({ onTabSelect, selectedTabId, onTabCreate, onTabUpdate, onTabDelete, tabs }: TabManagerProps) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-  const [currentTab, setCurrentTab] = useState<Tab | null>(null);
+  const [currentTab, setCurrentTab] = useState<TabFormValues | null>(null);
   const [newTabName, setNewTabName] = useState("");
-  const queryClient = useQueryClient();
+  const [moveToTabId, setMoveToTabId] = useState("");
 
-  const { data: tabs = [], isLoading } = useQuery({
-    queryKey: ["tabs"],
-    queryFn: getTabs,
-  });
-
-  const { handleSubmit: handleCreateTab } = useSubmit({
-    action: async () => {
-      await createTab(newTabName);
-    },
-    onSuccess: () => {
-      setIsAddModalOpen(false);
-      setNewTabName("");
-      CustomToast.success("タブを作成しました");
-      queryClient.invalidateQueries({ queryKey: ["tabs"] });
-    },
-    onError: () => {
-      CustomToast.error("タブの作成に失敗しました");
-    },
-  });
-
-  const { handleSubmit: handleUpdateTab } = useSubmit({
-    action: async () => {
-      if (currentTab) {
-        await updateTab(currentTab.id, newTabName);
-      }
-    },
-    onSuccess: () => {
-      setIsEditModalOpen(false);
-      setNewTabName("");
-      setCurrentTab(null);
-      CustomToast.success("タブを更新しました");
-      queryClient.invalidateQueries({ queryKey: ["tabs"] });
-    },
-    onError: () => {
-      CustomToast.error("タブの更新に失敗しました");
-    },
-  });
-
-  const handleDelete = async () => {
-    if (currentTab) {
-      try {
-        await deleteTab(currentTab.id);
-        setIsDeleteModalOpen(false);
-        setCurrentTab(null);
-        CustomToast.success("タブを削除しました");
-        queryClient.invalidateQueries({ queryKey: ["tabs"] });
-      } catch (error) {
-        CustomToast.error("タブの削除に失敗しました");
-      }
-    }
-  };
-
-  if (isLoading) {
-    return <div>タブを読み込み中...</div>;
-  }
 
   return (
-    <div className="flex flex-col space-y-4">
+    <div className="flex flex-col space-y-4 mb-4">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-medium">タブ一覧</h3>
         <Button onClick={() => setIsAddModalOpen(true)}>新規タブを追加</Button>
@@ -94,39 +42,56 @@ export function TabManager({ onTabSelect, selectedTabId }: TabManagerProps) {
         {tabs.map((tab) => (
           <div
             key={tab.id}
-            className={`flex items-center gap-2 p-2 rounded-lg border ${
+            className={`group flex items-center gap-2 p-2 rounded-lg border ${
               selectedTabId === tab.id ? "border-primary bg-primary/5" : "border-border"
             }`}
           >
             <div
-              className="cursor-pointer"
-              onClick={() => onTabSelect(tab.id)}
+              className={`flex-1 text-center cursor-pointer ${
+                selectedTabId === tab.id ? "font-medium" : ""
+              }`}
+              onClick={() => onTabSelect(tab.id ?? "")}
             >
               {tab.name}
             </div>
-            <div className="flex gap-1">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setCurrentTab(tab);
-                  setNewTabName(tab.name);
-                  setIsEditModalOpen(true);
-                }}
-              >
-                編集
-              </Button>
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={() => {
-                  setCurrentTab(tab);
-                  setIsDeleteModalOpen(true);
-                }}
-              >
-                削除
-              </Button>
-            </div>
+            {selectedTabId === tab.id && (
+              <div className="transition-opacity">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="h-8 w-8 p-0"
+                      onClick={(e) => e.stopPropagation()}
+                    >
+                      <MoreVertical className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentTab(tab);
+                        setNewTabName(tab.name);
+                        setIsEditModalOpen(true);
+                      }}
+                    >
+                      編集
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCurrentTab(tab);
+                        setIsDeleteModalOpen(true);
+                      }}
+                      className="text-destructive"
+                    >
+                      削除
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
+            )}
           </div>
         ))}
       </div>
@@ -137,7 +102,12 @@ export function TabManager({ onTabSelect, selectedTabId }: TabManagerProps) {
           <DialogHeader>
             <DialogTitle>新規タブを作成</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleCreateTab}>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            await onTabCreate({ name: newTabName });
+            setNewTabName("");
+            setIsAddModalOpen(false);
+          }}>
             <Input
               value={newTabName}
               onChange={(e) => setNewTabName(e.target.value)}
@@ -157,7 +127,14 @@ export function TabManager({ onTabSelect, selectedTabId }: TabManagerProps) {
           <DialogHeader>
             <DialogTitle>タブを編集</DialogTitle>
           </DialogHeader>
-          <form onSubmit={handleUpdateTab}>
+          <form onSubmit={async (e) => {
+            e.preventDefault();
+            if (currentTab) {
+              await onTabUpdate({ ...currentTab, name: newTabName });
+              setNewTabName("");
+              setIsEditModalOpen(false);
+            }
+          }}>
             <Input
               value={newTabName}
               onChange={(e) => setNewTabName(e.target.value)}
@@ -177,12 +154,63 @@ export function TabManager({ onTabSelect, selectedTabId }: TabManagerProps) {
           <DialogHeader>
             <DialogTitle>タブを削除</DialogTitle>
           </DialogHeader>
-          <p>このタブを削除してもよろしいですか？</p>
+          <div className="space-y-4">
+            <p>このタブを削除する前に、関連するタスクの処理方法を選択してください：</p>
+            <div className="space-y-2">
+              <div className="flex items-center space-x-2">
+                <input
+                  type="radio"
+                  id="moveTasks"
+                  name="taskAction"
+                  value="move"
+                  defaultChecked
+                  className="h-4 w-4"
+                />
+                <label htmlFor="moveTasks">タスクを別のタブに移動</label>
+              </div>
+              <select
+                className="w-full p-2 border rounded-md"
+                onChange={(e) => setMoveToTabId(e.target.value)}
+              >
+                <option value="">移動先のタブを選択</option>
+                {tabs
+                  .filter((tab) => tab.id !== currentTab?.id)
+                  .map((tab) => (
+                    <option key={tab.id} value={tab.id}>
+                      {tab.name}
+                    </option>
+                  ))}
+              </select>
+            </div>
+            <div className="flex items-center space-x-2">
+              <input
+                type="radio"
+                id="deleteTasks"
+                name="taskAction"
+                value="delete"
+                className="h-4 w-4"
+              />
+              <label htmlFor="deleteTasks">タスクを削除</label>
+            </div>
+          </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setIsDeleteModalOpen(false)}>
               キャンセル
             </Button>
-            <Button variant="destructive" onClick={handleDelete}>
+            <Button
+              variant="destructive"
+              onClick={async () => {
+                if (currentTab) {
+                  const taskAction = document.querySelector('input[name="taskAction"]:checked') as HTMLInputElement;
+                  const options = {
+                    moveTasksToTabId: taskAction?.value === 'move' ? moveToTabId : undefined,
+                    deleteTasks: taskAction?.value === 'delete'
+                  };
+                  await onTabDelete(currentTab, options);
+                  setIsDeleteModalOpen(false);
+                }
+              }}
+            >
               削除
             </Button>
           </DialogFooter>
