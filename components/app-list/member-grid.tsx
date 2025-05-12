@@ -26,14 +26,11 @@ const PRESET_COLORS = [
   "#C0C0C0", // シルバー
   "#800080", // パープル
   "#008000", // グリーン
-  "#000080", // ブルー
-  "#800000", // マッシュルーム
-  "#008080", // ターコイズ
-  "#800080", // パープル
-  "#008000", // グリーン
-  "#000080", // ブルー
-  "#800080", // パープル
-  "#008000", // グリーン
+  "#000080", // ネイビーブルー
+  "#800000", // マルーン
+  "#008080", // ティール
+  "#4B0082", // インディゴ
+  "#FF4500", // オレンジレッド
 ];
 
 interface MemberGridProps {
@@ -42,7 +39,7 @@ interface MemberGridProps {
 }
 
 // メンバーIDに基づいて一貫したカラーを生成する関数
-const getMemberColor = (id: string | undefined): string => {
+export const getMemberColor = (id: string | undefined): string => {
   if (!id) return PRESET_COLORS[0];
   // IDの文字列を数値に変換して、カラーのインデックスを生成
   const hash = id.split('').reduce((acc, char) => acc + char.charCodeAt(0), 0);
@@ -110,8 +107,8 @@ export const MemberGrid = ({ members, onSelectMember }: MemberGridProps) => {
                 transition={{ duration: 0.3 }}
               >
                 <h2 className="text-2xl font-bold text-white mb-1">{member.name}</h2>
-                <p className="text-white/80">{member.role}</p>
-
+                <p className="text-white/80 text-xs">{member.department}</p>
+                <p className="text-white/80 text-xs">{member.position}</p>
                 <motion.div
                   className="flex flex-wrap gap-2 mt-3"
                   initial={false}
