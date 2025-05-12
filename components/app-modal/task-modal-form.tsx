@@ -1,5 +1,6 @@
 "use client";
 
+import { Plus, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -10,6 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
+import { Button } from "@/components/ui/button";
 
 interface TaskModalFormProps {
   title?: string;
@@ -33,6 +35,9 @@ export const TaskModalForm = ({
 }: TaskModalFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEdit = defaultValues ? true : false;
+  const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
+  const [newCategory, setNewCategory] = useState("");
+  const [categories, setCategories] = useState<string[]>([]);
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
@@ -84,6 +89,7 @@ export const TaskModalForm = ({
         });
       } else {
         form.reset({
+          taskId: "",
           title: "",
           content: "",
           assignee: "",
@@ -93,12 +99,22 @@ export const TaskModalForm = ({
           progressDetails: "",
           link: "",
           notes: "",
+          category: "",
           completedAt: null,
           isPublic: false,
         });
       }
     }
   }, [isOpen, defaultValues, form]);
+
+  const handleAddCategory = () => {
+    if (newCategory && !categories.includes(newCategory)) {
+      setCategories(prev => [...prev, newCategory]);
+      form.setValue("category", newCategory);
+      setNewCategory("");
+      setShowNewCategoryInput(false);
+    }
+  };
 
   return (
     <BaseModalForm
@@ -109,15 +125,28 @@ export const TaskModalForm = ({
       isSubmitting={isSubmitting}
       isEdit={isEdit}
     >
-      <div className="space-y-2">
-        <Label htmlFor="title">項目名<span className="text-red-500">*</span></Label>
-        <Input
-          id="title"
-          {...form.register("title", { required: "項目名は必須です" })}
-        />
-        {form.formState.errors.title && (
-          <p className="text-sm text-red-500">{form.formState.errors.title.message}</p>
-        )}
+      <div className="flex gap-x-10 items-start">
+        <div className="space-y-2 w-full">
+          <Label htmlFor="taskId">タスクID<span className="text-red-500">*</span></Label>
+          <Input
+            id="taskId"
+            {...form.register("taskId", { required: "タスクIDは必須です" })}
+          />
+          {form.formState.errors.taskId && (
+            <p className="text-sm text-red-500">{form.formState.errors.taskId.message}</p>
+          )}
+        </div>
+
+        <div className="space-y-2 w-full">
+          <Label htmlFor="title">項目名<span className="text-red-500">*</span></Label>
+          <Input
+            id="title"
+            {...form.register("title", { required: "項目名は必須です" })}
+          />
+          {form.formState.errors.title && (
+            <p className="text-sm text-red-500">{form.formState.errors.title.message}</p>
+          )}
+        </div>
       </div>
 
       <div className="space-y-2">
@@ -203,6 +232,60 @@ export const TaskModalForm = ({
               <SelectItem value="completed">完了</SelectItem>
             </SelectContent>
           </Select>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="category">カテゴリー</Label>
+          <Select 
+            onValueChange={(value) => {
+              if (value === "new") {
+                setShowNewCategoryInput(true);
+              } else {
+                form.setValue("category", value);
+              }
+            }} 
+            value={form.watch("category")}
+          >
+            <SelectTrigger>
+              <SelectValue placeholder="カテゴリーを選択してください" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((category) => (
+                <SelectItem key={category} value={category}>
+                  {category}
+                </SelectItem>
+              ))}
+              <SelectItem value="new" className="text-primary">
+                <div className="flex items-center gap-2">
+                  <Plus className="h-4 w-4" />
+                  新しいカテゴリーを追加
+                </div>
+              </SelectItem>
+            </SelectContent>
+          </Select>
+          {showNewCategoryInput && (
+            <div className="flex gap-2">
+              <Input
+                placeholder="新しいカテゴリー名"
+                value={newCategory}
+                onChange={(e) => setNewCategory(e.target.value)}
+              />
+              <Button
+                type="button"
+                variant="outline"
+                size="icon"
+                onClick={() => setShowNewCategoryInput(false)}
+              >
+                <X className="h-4 w-4" />
+              </Button>
+              <Button
+                type="button"
+                onClick={handleAddCategory}
+                disabled={!newCategory}
+              >
+                追加
+              </Button>
+            </div>
+          )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="isPublic">公開</Label>

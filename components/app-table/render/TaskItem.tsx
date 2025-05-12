@@ -58,6 +58,12 @@ export const renderTask = ({
   onDelete,
 }: TaskColumnOptions): TableColumn<TaskFormValues>[] => [
   {
+    key: "taskId",
+    title: "タスクID",
+    sortable: true,
+    render: (value: any) => <span className="font-medium">{value}</span>,
+  },
+  {
     key: "title",
     title: "項目",
     sortable: true,
@@ -66,6 +72,12 @@ export const renderTask = ({
   {
     key: "assignee",
     title: "担当者",
+    sortable: false,
+    render: (value: any) => <span>{value}</span>,
+  },
+  {
+    key: "category",
+    title: "カテゴリー",
     sortable: false,
     render: (value: any) => <span>{value}</span>,
   },
@@ -104,14 +116,15 @@ export const renderTask = ({
       </span>
     ),
   },
-  {
-    key: "isPublic",
-    title: "公開",
-    sortable: false,
-    render: (value: any) => (
-      <span>{value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}</span>
-    ),
-  },
+  // {
+  //   key: "isPublic",
+  //   title: "公開",
+  //   sortable: false,
+  //   render: (value: any) => (
+  //     <span>{value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}</span>
+  //   ),
+  // },
+
   ...createTaskColumns({ onEdit, onDelete }),
 ];
 

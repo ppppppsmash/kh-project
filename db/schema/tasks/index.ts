@@ -3,6 +3,7 @@ import { v7 as uuidv7 } from "uuid";
 
 export const tasks = pgTable("tasks", {
   id: uuid("id").primaryKey().$defaultFn(uuidv7),
+  taskId: varchar("task_id", { length: 255 }).notNull(),
   title: varchar("title", { length: 255 }).notNull(),
   content: varchar("content", { length: 255 }).notNull(),
   assignee: varchar("assignee", { length: 255 }).notNull(),
@@ -11,6 +12,7 @@ export const tasks = pgTable("tasks", {
   progressDetails: varchar("progress_details", { length: 255 }),
   link: varchar("link", { length: 255 }).notNull(),
   notes: varchar("notes", { length: 255 }).notNull(),
+  category: varchar("category", { length: 255 }),
   startedAt: timestamp("started_at").notNull(),
   completedAt: timestamp("completed_at"),
   isPublic: boolean("is_public").notNull().default(false),

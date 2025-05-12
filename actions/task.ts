@@ -10,14 +10,13 @@ export const getTasks = async (): Promise<TaskFormValues[]> => {
 
   return taskData.map((task) => ({
     ...task,
+    progressDetails: task.progressDetails || "",
+    category: task.category || "",
+    startedAt: task.startedAt || new Date(),
+    completedAt: task.completedAt || null,
+    createdAt: task.createdAt || new Date(),
+    updatedAt: task.updatedAt || new Date(),
     progress: task.progress as TaskFormValues["progress"],
-    progressDetails: task.progressDetails as TaskFormValues["progressDetails"],
-    link: task.link as TaskFormValues["link"],
-    notes: task.notes as TaskFormValues["notes"],
-    startedAt: task.startedAt as TaskFormValues["startedAt"],
-    completedAt: task.completedAt as TaskFormValues["completedAt"],
-    createdAt: task.createdAt as TaskFormValues["createdAt"],
-    updatedAt: task.updatedAt as TaskFormValues["updatedAt"],
   }));
 };
 
@@ -27,8 +26,8 @@ export const createTask = async (data: TaskFormValues) => {
     link: data.link ?? "",
     notes: data.notes ?? "",
     startedAt: data.startedAt ?? new Date(),
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: null,
+    updatedAt: null,
   }
   const newTask = await db.insert(tasks).values(taskData).returning();
 
