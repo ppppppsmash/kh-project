@@ -38,12 +38,12 @@ export const BaseModalForm = ({
           <form onSubmit={onSubmit} className="space-y-4">
             {children}
             <div className="flex justify-end space-x-2">
-            <Button type="button" variant="outline" onClick={onClose}>
-              キャンセル
-            </Button>
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "処理中..." : isEdit ? "更新" : submitText}
-            </Button>
+              <Button type="button" variant="outline" onClick={onClose}>
+                キャンセル
+              </Button>
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? "処理中..." : isEdit ? "更新" : submitText}
+              </Button>
             </div>
           </form>
         </Form>

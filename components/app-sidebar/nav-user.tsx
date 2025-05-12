@@ -1,8 +1,10 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import {
   IconDotsVertical,
   IconLogout,
+  IconUsers,
 } from "@tabler/icons-react";
 import {
   Avatar,
@@ -30,7 +32,7 @@ import { createUserActivity } from "@/actions/user-activity";
 export const NavUser = () => {
   const { data: session } = useSession();
   const { isMobile } = useSidebar();
-
+  const router = useRouter();
   if (!session?.user) return null;
 
   const signOutWithActivityHandler = async () => {
@@ -92,6 +94,10 @@ export const NavUser = () => {
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => router.push("/adixi-public/qa")}>
+              <IconUsers />
+              リーダー向けページ
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => signOutWithActivityHandler()}>
               <IconLogout />
               ログアウト

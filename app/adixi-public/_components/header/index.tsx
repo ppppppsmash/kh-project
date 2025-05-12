@@ -28,7 +28,7 @@ export const Header = () => {
     <div className="w-full fixed top-0 left-0 z-50 bg-background">
       <header className="py-2 px-4 h-16 flex items-center justify-between">
         <h1 className="text-2xl font-bold">
-          <Link href="/">ADiXi MGR</Link>
+          <Link href="/">ADiXi LDR</Link>
         </h1>
         <div className="p-4 flex items-center gap-4">
           <ModeToggle />
