@@ -30,15 +30,6 @@ export const UserModalForm = ({
 
   const form = useForm<MemberFormValues>({
     resolver: zodResolver(memberFormSchema),
-    defaultValues: {
-      name: defaultValues?.name || "",
-      photoUrl: defaultValues?.photoUrl || "",
-      department: defaultValues?.department || "",
-      position: defaultValues?.position || "",
-      skills: defaultValues?.skills || "",
-      hobby: defaultValues?.hobby || "",
-      freeText: defaultValues?.freeText || "",
-    },
   });
 
   const handleSubmit = async (data: MemberFormValues) => {
@@ -60,22 +51,10 @@ export const UserModalForm = ({
   };
 
   useEffect(() => {
-    if (isOpen && defaultValues) {
-      form.reset({
-        ...defaultValues,
-      });
-    } else if (isOpen) {
-      form.reset({
-        name: "",
-        photoUrl: "",
-        department: "",
-        position: "",
-        skills: "",
-        hobby: "",
-        freeText: "",
-      });
+    if (isOpen) {
+      form.reset(defaultValues);
     }
-  }, [isOpen, defaultValues, form]);
+  }, [isOpen, defaultValues]);
 
   return (
     <BaseModalForm
@@ -84,6 +63,7 @@ export const UserModalForm = ({
       onClose={onClose}
       onSubmit={form.handleSubmit(handleSubmit)}
       isSubmitting={isSubmitting}
+      form={form}
     >
       <div className="space-y-2">
         <Label htmlFor="photo">プロフィール写真</Label>

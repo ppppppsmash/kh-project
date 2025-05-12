@@ -43,20 +43,6 @@ export const TaskModalForm = ({
 
   const form = useForm<TaskFormValues>({
     resolver: zodResolver(taskFormSchema),
-    defaultValues: {
-      title: defaultValues?.title || "",
-      content: defaultValues?.content || "",
-      assignee: defaultValues?.assignee || "",
-      dueDate: defaultValues?.dueDate || new Date(),
-      startedAt: defaultValues?.startedAt || new Date(),
-      progress: defaultValues?.progress || "pending",
-      progressDetails: defaultValues?.progressDetails || "",
-      link: defaultValues?.link || "",
-      notes: defaultValues?.notes || "",
-      completedAt: defaultValues?.completedAt || null,
-      isPublic: defaultValues?.isPublic || false,
-      ...(selectedTabId && { tabId: selectedTabId }),
-    },
   });
 
   const handleSubmit = async (data: TaskFormValues) => {
@@ -90,23 +76,6 @@ export const TaskModalForm = ({
         form.reset({
           ...defaultValues,
         });
-      } else {
-        form.reset({
-          taskId: "",
-          title: "",
-          content: "",
-          assignee: "",
-          dueDate: new Date(),
-          startedAt: new Date(),
-          progress: "pending",
-          progressDetails: "",
-          link: "",
-          notes: "",
-          category: "",
-          completedAt: null,
-          isPublic: false,
-          ...(selectedTabId && { tabId: selectedTabId }),
-        });
       }
     }
   }, [isOpen, defaultValues, form, selectedTabId]);
@@ -128,6 +97,7 @@ export const TaskModalForm = ({
       onSubmit={form.handleSubmit(handleSubmit)}
       isSubmitting={isSubmitting}
       isEdit={isEdit}
+      form={form}
     >
       <div className="flex gap-x-10 items-start">
         <div className="space-y-2 w-full">

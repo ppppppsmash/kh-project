@@ -5,11 +5,11 @@ import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { BaseModalForm } from "@/components/app-modal/base-modal-form";
+import { FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Plus, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
@@ -22,11 +22,12 @@ interface QaModalFormProps {
   type: string;
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: QaFormValues) => void;
+  onSubmit: (data: QaFormValues) => Promise<void>;
   initialData?: QaFormValues | null;
 }
 
 export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: QaModalFormProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [newCategory, setNewCategory] = useState("");
   const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
   const [tempCategories, setTempCategories] = useState<string[]>([]);
@@ -42,15 +43,8 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
 
   const form = useForm<QaFormValues>({
     resolver: zodResolver(qaFormSchema),
-    defaultValues: {
-      question: initialData?.question || "",
-      answer: initialData?.answer || "",
-      category: initialData?.category || "",
-      questionBy: initialData?.questionBy || "",
-      answeredBy: initialData?.answeredBy || "",
-      isPublic: initialData?.isPublic || false,
-    },
   });
+
 
   const isEdit = !!initialData;
 
@@ -64,29 +58,29 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
   }, [isOpen]);
 
   useEffect(() => {
-    if (isOpen && initialData) {
+    if (isOpen) {
       form.reset({
-        question: initialData.question,
-        answer: initialData.answer,
-        category: initialData.category,
-        questionBy: initialData.questionBy,
-        answeredBy: initialData.answeredBy,
-        isPublic: initialData.isPublic,
-      });
-    } else {
-      form.reset({
-        question: "",
-        answer: "",
-        category: "",
-        questionBy: "",
-        answeredBy: "",
-        isPublic: false,
+        question: initialData?.question || "",
+        answer: initialData?.answer || "",
+        category: initialData?.category || "",
+        questionBy: initialData?.questionBy || "",
+        answeredBy: initialData?.answeredBy || "",
+        isPublic: initialData?.isPublic || false,
       });
     }
-  }, [isOpen, initialData, form]);
+  }, [isOpen, initialData]);
 
-  const handleSubmit = (data: QaFormValues) => {
-    onSubmit(data);
+  const handleSubmit = async (data: QaFormValues) => {
+    setIsSubmitting(true);
+    try {
+      await onSubmit(data);
+      form.reset();
+      onClose();
+    } catch (error) {
+      console.error("QAの登録に失敗しました:", error);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleAddCategory = () => {
@@ -99,149 +93,142 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>{isEdit ? "QAを編集" : "新規QA登録"}</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
-            {type === "admin" && (
-              <FormField
-                control={form.control}
-                name="questionBy"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>質問者<span className="text-red-500">*</span></FormLabel>
-                    <FormControl>
-                      <Input placeholder="お名前を入力してください" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+    <BaseModalForm
+      isOpen={isOpen}
+      onClose={onClose}
+      onSubmit={form.handleSubmit(handleSubmit)}
+      title={isEdit ? "QAを編集" : "新規QA登録"}
+      form={form}
+      isSubmitting={isSubmitting}
+    >
+      <div className="space-y-4">
+        {type === "admin" && (
+          <FormField
+            control={form.control}
+            name="questionBy"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>質問者<span className="text-red-500">*</span></FormLabel>
+                <FormControl>
+                  <Input placeholder="お名前を入力してください" {...form.register("questionBy")} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
+          />
+        )}
+        <FormField
+          control={form.control}
+          name="question"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>質問<span className="text-red-500">*</span></FormLabel>
+              <FormControl>
+                <Textarea placeholder="質問を入力してください" {...form.register("question")} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        {type === "superadmin" && (
+          <FormField
+            control={form.control}
+            name="answer"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>回答</FormLabel>
+                <FormControl>
+                  <Textarea placeholder="回答を入力してください" {...form.register("answer")} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+              )}
+            />
+          )}
+
+          <div className="flex items-start gap-x-18">
             <FormField
               control={form.control}
-              name="question"
+              name="category"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>質問<span className="text-red-500">*</span></FormLabel>
-                  <FormControl>
-                    <Textarea placeholder="質問を入力してください" {...field} />
-                  </FormControl>
+                  <FormLabel>カテゴリー<span className="text-red-500">*</span></FormLabel>
+                  <div className="space-y-2">
+                    <Select 
+                      onValueChange={(value) => {
+                        if (value === "new") {
+                          setShowNewCategoryInput(true);
+                        } else {
+                          field.onChange(value);
+                        }
+                      }} 
+                      value={field.value}
+                    >
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="カテゴリーを選択してください" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {categories.map((category) => (
+                          <SelectItem key={category} value={category}>
+                            {category}
+                          </SelectItem>
+                        ))}
+                        <SelectItem value="new" className="text-primary">
+                          <div className="flex items-center gap-2">
+                            <Plus className="h-4 w-4" />
+                            新しいカテゴリーを追加
+                          </div>
+                        </SelectItem>
+                      </SelectContent>
+                    </Select>
+                    {showNewCategoryInput && (
+                      <div className="flex gap-2">
+                        <Input
+                          placeholder="新しいカテゴリー名"
+                          value={newCategory}
+                          onChange={(e) => setNewCategory(e.target.value)}
+                        />
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="icon"
+                          onClick={() => setShowNewCategoryInput(false)}
+                        >
+                          <X className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          type="button"
+                          onClick={handleAddCategory}
+                          disabled={!newCategory}
+                        >
+                          追加
+                        </Button>
+                      </div>
+                    )}
+                  </div>
                   <FormMessage />
                 </FormItem>
               )}
             />
+
             {type === "superadmin" && (
               <FormField
                 control={form.control}
-                name="answer"
+                name="isPublic"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>回答</FormLabel>
+                    <FormLabel>公開</FormLabel>
                     <FormControl>
-                      <Textarea placeholder="回答を入力してください" {...field} />
+                      <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>
-                    <FormMessage />
                   </FormItem>
-                  )}
-                />
-              )}
-
-              <div className="flex items-start gap-x-18">
-                <FormField
-                  control={form.control}
-                  name="category"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>カテゴリー<span className="text-red-500">*</span></FormLabel>
-                      <div className="space-y-2">
-                        <Select 
-                          onValueChange={(value) => {
-                            if (value === "new") {
-                              setShowNewCategoryInput(true);
-                            } else {
-                              field.onChange(value);
-                            }
-                          }} 
-                          value={field.value}
-                        >
-                          <FormControl>
-                            <SelectTrigger>
-                              <SelectValue placeholder="カテゴリーを選択してください" />
-                            </SelectTrigger>
-                          </FormControl>
-                          <SelectContent>
-                            {categories.map((category) => (
-                              <SelectItem key={category} value={category}>
-                                {category}
-                              </SelectItem>
-                            ))}
-                            <SelectItem value="new" className="text-primary">
-                              <div className="flex items-center gap-2">
-                                <Plus className="h-4 w-4" />
-                                新しいカテゴリーを追加
-                              </div>
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                        {showNewCategoryInput && (
-                          <div className="flex gap-2">
-                            <Input
-                              placeholder="新しいカテゴリー名"
-                              value={newCategory}
-                              onChange={(e) => setNewCategory(e.target.value)}
-                            />
-                            <Button
-                              type="button"
-                              variant="outline"
-                              size="icon"
-                              onClick={() => setShowNewCategoryInput(false)}
-                            >
-                              <X className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              type="button"
-                              onClick={handleAddCategory}
-                              disabled={!newCategory}
-                            >
-                              追加
-                            </Button>
-                          </div>
-                        )}
-                      </div>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                {type === "superadmin" && (
-                  <FormField
-                    control={form.control}
-                    name="isPublic"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>公開</FormLabel>
-                        <FormControl>
-                          <Switch checked={field.value} onCheckedChange={field.onChange} />
-                        </FormControl>
-                      </FormItem>
-                    )}
-                  />
                 )}
-              </div>
-
-              <div className="flex justify-end gap-2">
-                <Button type="button" variant="outline" onClick={onClose}>
-                  キャンセル
-                </Button>
-                <Button type="submit">{isEdit ? "更新" : "登録"}</Button>
-              </div>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
+              />
+            )}
+          </div>
+        </div>
+    </BaseModalForm>
   );
 }

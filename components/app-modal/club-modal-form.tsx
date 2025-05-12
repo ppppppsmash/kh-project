@@ -13,7 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 interface ClubModalFormProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (data: Omit<ClubFormValues, "id" | "createdAt" | "updatedAt">) => Promise<void>;
+  onSubmit: (data: ClubFormValues) => Promise<void>;
   defaultValues?: Partial<ClubFormValues>;
   title?: string;
 }
@@ -30,16 +30,6 @@ export const ClubModalForm = ({
 
   const form = useForm<ClubFormValues>({
     resolver: zodResolver(clubFormSchema),
-    defaultValues: {
-      name: "",
-      description: "",
-      leader: "",
-      memberCount: "",
-      activityType: "",
-      status: "active",
-      location: "",
-      detail: "",
-    },
   });
 
   const handleSubmit = async (data: ClubFormValues) => {
@@ -65,29 +55,16 @@ export const ClubModalForm = ({
   // モーダルが開かれたときにフォームをリセット
   useEffect(() => {
     if (isOpen) {
-      if (defaultValues) {
-        form.reset({
-          name: defaultValues.name || "",
-          description: defaultValues.description || "",
-          leader: defaultValues.leader || "",
-          memberCount: defaultValues.memberCount || undefined,
-          activityType: defaultValues.activityType || "",
-          status: defaultValues.status || "active",
-          location: defaultValues.location || "",
-          detail: defaultValues.detail || "",
-        });
-      } else {
-        form.reset({
-          name: "",
-          description: "",
-          leader: "",
-          memberCount: undefined,
-          activityType: "",
-          status: "active",
-          location: "",
-          detail: "",
-        });
-      }
+      form.reset({
+        name: defaultValues?.name ?? "",
+        description: defaultValues?.description ?? "",
+        leader: defaultValues?.leader ?? "",
+        memberCount: defaultValues?.memberCount ?? undefined,
+        activityType: defaultValues?.activityType ?? "",
+        status: defaultValues?.status ?? "active",
+        location: defaultValues?.location ?? "",
+        detail: defaultValues?.detail ?? "",
+      });
     }
   }, [isOpen, defaultValues]);
 
@@ -99,6 +76,7 @@ export const ClubModalForm = ({
       title={title}
       isSubmitting={isSubmitting}
       isEdit={isEdit}
+      form={form}
     >
       <div className="space-y-2">
         <Label htmlFor="name">部活動名<span className="text-red-500">*</span></Label>
