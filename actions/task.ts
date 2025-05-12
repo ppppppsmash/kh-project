@@ -5,24 +5,27 @@ import { db } from "@/db";
 import { tasks } from "@/db/schema/tasks";
 import { eq } from "drizzle-orm";
 
-export const getTasks = async (): Promise<TaskFormValues[]> => {
-  const taskData = await db.select().from(tasks);
-
-  return taskData.map((task) => ({
-    ...task,
-    progressDetails: task.progressDetails || "",
-    category: task.category || "",
-    startedAt: task.startedAt || new Date(),
-    completedAt: task.completedAt || null,
-    createdAt: task.createdAt || new Date(),
-    updatedAt: task.updatedAt || new Date(),
-    progress: task.progress as TaskFormValues["progress"],
-  }));
+export const getTasks = async (tabId?: string): Promise<TaskFormValues[]> => {
+  if (tabId) {
+    const result = await db.select().from(tasks).where(eq(tasks.tabId, tabId));
+    return result.map((task) => ({
+      ...task,
+      progress: task.progress as TaskFormValues["progress"],
+      progressDetails: task.progressDetails || "",
+      category: task.category || "",
+      startedAt: task.startedAt || new Date(),
+      completedAt: task.completedAt || null,
+      createdAt: task.createdAt || new Date(),
+      updatedAt: task.updatedAt || new Date(),
+    }));
+  }
+  return [];
 };
 
 export const createTask = async (data: TaskFormValues) => {
   const taskData = {
     ...data,
+    tabId: data.tabId,
     link: data.link ?? "",
     notes: data.notes ?? "",
     startedAt: data.startedAt ?? new Date(),

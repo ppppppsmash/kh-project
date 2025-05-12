@@ -19,6 +19,7 @@ interface TaskModalFormProps {
   onClose: () => void;
   defaultValues?: Partial<TaskFormValues>;
   isOpen: boolean;
+  selectedTabId?: string;
 }
 
 const formatDateForInput = (date: Date | null | undefined): string => {
@@ -32,6 +33,7 @@ export const TaskModalForm = ({
   onSubmit,
   defaultValues,
   isOpen,
+  selectedTabId,
 }: TaskModalFormProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const isEdit = defaultValues ? true : false;
@@ -53,6 +55,7 @@ export const TaskModalForm = ({
       notes: defaultValues?.notes || "",
       completedAt: defaultValues?.completedAt || null,
       isPublic: defaultValues?.isPublic || false,
+      ...(selectedTabId && { tabId: selectedTabId }),
     },
   });
 
@@ -102,10 +105,11 @@ export const TaskModalForm = ({
           category: "",
           completedAt: null,
           isPublic: false,
+          ...(selectedTabId && { tabId: selectedTabId }),
         });
       }
     }
-  }, [isOpen, defaultValues, form]);
+  }, [isOpen, defaultValues, form, selectedTabId]);
 
   const handleAddCategory = () => {
     if (newCategory && !categories.includes(newCategory)) {

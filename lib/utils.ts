@@ -36,6 +36,8 @@ export const getProgressColor = (progress: TaskFormValues["progress"]) => {
       return "bg-blue-500";
     case "completed":
       return "bg-green-500";
+    default:
+      return "bg-gray-500";
   }
 };
 
@@ -48,5 +50,7 @@ export const getProgressLabel = (progress: TaskFormValues["progress"]) => {
       return "進行中";
     case "completed":
       return "完了";
+    default:
+      return "未着手";
   }
 };

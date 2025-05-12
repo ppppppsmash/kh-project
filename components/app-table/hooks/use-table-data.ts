@@ -35,12 +35,12 @@ export const useGetClubActivities = () => {
   });
 };
 
-export const useGetTasks = () => {
+export const useGetTasks = (tabId?: string) => {
   return useQuery<TaskFormValues[]>({
-    queryKey: ["tasks"],
-    queryFn: getTasks,
+    queryKey: ["tasks", tabId],
+    queryFn: () => getTasks(tabId),
   });
-};
+}
 
 export const useGetQa = () => {
   return useQuery<QaFormValues[]>({

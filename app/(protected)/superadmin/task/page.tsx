@@ -15,10 +15,12 @@ import { useSubmit } from "@/lib/submitHandler";
 import { createTask, updateTask, deleteTask } from "@/actions/task";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { TabManager } from "@/components/tab-manager";
 
 export default function TaskPage() {
   const queryClient = useQueryClient();
-  const { data: tasks, isLoading } = useGetTasks();
+  const [selectedTabId, setSelectedTabId] = useState<string | undefined>();
+  const { data: tasks, isLoading } = useGetTasks(selectedTabId);
   const [selectedTask, setSelectedTask] = useState<TaskFormValues | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const { isOpen, openModal, closeModal } = useModal();
@@ -83,6 +85,11 @@ export default function TaskPage() {
         <AddButton text="新規タスク登録" onClick={handleAdd} />
       </div>
 
+      <TabManager
+        selectedTabId={selectedTabId}
+        onTabSelect={setSelectedTabId}
+      />
+
       <AppTable
         columns={renderTask({
           onEdit: handleEdit,
@@ -130,6 +137,7 @@ export default function TaskPage() {
         onSubmit={handleSubmit}
         defaultValues={selectedTask ?? undefined}
         title={selectedTask ? "タスク編集" : "新規タスク登録"}
+        selectedTabId={selectedTabId}
       />
 
       <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
