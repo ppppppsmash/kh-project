@@ -7,6 +7,8 @@ import {
 import Image from "next/image";
 
 import { MemberFormValues } from "@/lib/validations";
+import { Badge } from "@/components/ui/badge";
+
 interface UserDetailModalProps {
   user: MemberFormValues | null;
   isOpen: boolean;
@@ -18,7 +20,7 @@ export const UserDetailModal = ({ user, isOpen, onClose }: UserDetailModalProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px]">
+      <DialogContent className="sm:max-w-[600px] h-[80svh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>ユーザー詳細</DialogTitle>
         </DialogHeader>
@@ -64,8 +66,16 @@ export const UserDetailModal = ({ user, isOpen, onClose }: UserDetailModalProps)
               <p className="text-sm">{user.hobby}</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
+              <p className="text-sm font-medium">言語</p>
+              <p className="text-sm">{user.skills.map((skill, index) => (
+                <Badge key={index} variant="outline" className="text-sm">
+                  {skill}
+                </Badge>
+              ))}</p>
+            </div>
+            <div className="grid grid-cols-2 gap-2">
               <p className="text-sm font-medium">得意な技術</p>
-              <p className="text-sm">{user.skills}</p>
+              <p className="text-sm whitespace-pre-wrap break-words">{user.skills_message}</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <p className="text-sm font-medium">自己紹介</p>

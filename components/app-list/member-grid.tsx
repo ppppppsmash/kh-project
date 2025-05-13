@@ -58,7 +58,7 @@ export const MemberGrid = ({ members, onSelectMember }: MemberGridProps) => {
   }, [members]);
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
       {members.map((member) => {
         const memberColor = memberColors[member.id || ''];
         return (
@@ -78,7 +78,7 @@ export const MemberGrid = ({ members, onSelectMember }: MemberGridProps) => {
             onClick={() => onSelectMember(member)}
           >
             <div
-              className="h-80 rounded-xl overflow-hidden relative bg-gray-100"
+              className="sm:h-80 md:h-90 lg:h-100 rounded-xl overflow-hidden relative bg-gray-100"
               style={{
                 boxShadow:
                   hoveredId === member.id
