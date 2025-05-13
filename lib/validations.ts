@@ -8,7 +8,11 @@ export const memberFormSchema = z.object({
   role: z.enum(["superadmin", "admin", "user"] as const).default("admin").optional(),
   department: z.string().optional(),
   position: z.string().optional(),
-  skills: z.string().optional(),
+  skills: z.array(z.string()).min(1).max(3).refine(
+    (skills) => skills.every(skill => skill.length <= 50),
+    { message: "各スキルは10文字以内で入力してください" }
+  ),
+  skills_message: z.string().optional(),
   hobby: z.string().optional(),
   freeText: z.string().optional(),
   photoUrl: z.string().optional(),

@@ -1,4 +1,4 @@
-import { pgTable, uuid, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, boolean, jsonb } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 import { relations } from "drizzle-orm";
 import { userActivity } from "../user_activity";
@@ -16,7 +16,8 @@ export const users = pgTable("users", {
   department: varchar("department", { length: 255 }),
   position: varchar("position", { length: 255 }),
   hobby: varchar("hobby", { length: 255 }),
-  skills: varchar("skills", { length: 255 }),
+  skills: varchar("skills", { length: 255 }).array().default([]),
+  skills_message: varchar("skills_message", { length: 255 }).default(""),
   freeText: varchar("free_text", { length: 255 }),
   photoUrl: varchar("photo_url", { length: 255 }),
   isActive: boolean("is_active").default(true),

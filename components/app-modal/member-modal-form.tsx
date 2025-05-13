@@ -116,14 +116,34 @@ export const UserModalForm = ({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="skills">得意な技術・スキル</Label>
-        <Textarea
-          id="skills"
-          {...form.register("skills")}
-          placeholder="得意な技術やスキルを入力"
-        />
+        <Label htmlFor="skills">言語（最大3つ）</Label>
+        <div className="space-y-2 flex items-center gap-2">
+          {[0, 1, 2].map((index) => (
+            <div key={index} className="flex items-center w-full gap-2">
+              <Input
+                id={`skills.${index}`}
+                {...form.register(`skills.${index}`)}
+                placeholder={`スキル${index + 1}を入力`}
+                maxLength={50}
+              />
+            </div>
+          ))}
+        </div>
+        {form.formState.errors.skills && (
+          <p className="text-sm text-destructive">
+            {form.formState.errors.skills.message}
+          </p>
+        )}
       </div>
 
+      <div className="space-y-2">
+        <Label htmlFor="skills_message">得意な技術・スキル</Label>
+        <Textarea
+          id="skills_message"
+          {...form.register("skills_message")}
+          placeholder="得意な技術・スキルを入力"
+        />
+      </div>
       <div className="space-y-2">
         <Label htmlFor="hobby">趣味・特技</Label>
         <Textarea

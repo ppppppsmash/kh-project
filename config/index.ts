@@ -34,7 +34,7 @@ export const navConfig = {
           url: "/superadmin/member/intro",
         },
         {
-          title: "自己紹介一覧",
+          title: "メンバー管理",
           url: "/superadmin/member/member-list",
         },
       ],

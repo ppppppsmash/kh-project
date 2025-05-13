@@ -28,7 +28,7 @@ export default function MemberListPage() {
   return (
     <div className="mx-auto">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold">メンバー一覧</h2>
+        <h2 className="text-2xl font-bold">メンバー管理</h2>
       </div>
       <div className="space-y-8">
         <Button variant="outline">

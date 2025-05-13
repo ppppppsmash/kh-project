@@ -4,7 +4,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import Image from "next/image";
 import { formatDate } from "@/lib/utils";
 import type { MemberFormValues } from "@/lib/validations";
-import { Building2, Briefcase, Heart, Code2, MessageSquare, Calendar, Mail } from "lucide-react";
+import { Building2, Briefcase, Heart, Code2, MessageSquare, Calendar, Mail, BicepsFlexed } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 
 interface UserDetailProps {
   user?: MemberFormValues;
@@ -76,14 +77,28 @@ export const UserDetail = ({ user }: UserDetailProps) => {
                 </p>
               </div>
 
-              {/* スキル */}
               <div className="space-y-2">
                 <div className="flex items-center gap-2 text-gray-600">
                   <Code2 className="w-5 h-5" />
+                  <h3 className="font-medium">言語</h3>
+                </div>
+                <div className="flex flex-wrap gap-x-4">
+                  {user?.skills.map((skill, index) => (
+                    <Badge key={index} variant="outline" className="text-sm">
+                      {skill}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              {/* スキル */}
+              <div className="space-y-2">
+                <div className="flex items-center gap-2 text-gray-600">
+                  <BicepsFlexed className="w-5 h-5" />
                   <h3 className="font-medium">得意な技術・スキル</h3>
                 </div>
                 <p className="text-lg whitespace-pre-line bg-white p-4 rounded-lg shadow-sm">
-                  {user?.skills || "未設定"}
+                  {user?.skills_message || "未設定"}
                 </p>
               </div>
 
