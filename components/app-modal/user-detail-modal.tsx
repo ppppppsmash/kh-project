@@ -63,23 +63,23 @@ export const UserDetailModal = ({ user, isOpen, onClose }: UserDetailModalProps)
               </div>
             <div className="grid grid-cols-2 gap-2">
               <p className="text-sm font-medium">趣味</p>
-              <p className="text-sm">{user.hobby}</p>
+              <p className="text-sm">{user?.hobby || "未設定"}</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <p className="text-sm font-medium">言語</p>
-              <p className="text-sm">{user.skills.map((skill, index) => (
+              <p className="text-sm">{user?.skills?.map((skill, index) => (
                 <Badge key={index} variant="outline" className="text-sm">
                   {skill}
                 </Badge>
-              ))}</p>
+              )) || "未設定"}</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <p className="text-sm font-medium">得意な技術</p>
-              <p className="text-sm whitespace-pre-wrap break-words">{user.skills_message}</p>
+              <p className="text-sm whitespace-pre-wrap break-words">{user?.skills_message || "未設定"}</p>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <p className="text-sm font-medium">自己紹介</p>
-              <p className="text-sm">{user.freeText}</p>
+              <p className="text-sm">{user?.freeText || "未設定"}</p>
             </div>
           </div>
         </div>

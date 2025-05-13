@@ -14,7 +14,7 @@ export const renderMemberIntroCard = (): TableColumn<MemberFormValues>[] => [
           <Image
             src={value}
             alt="プロフィール写真"
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-sm"
             width={50}
             height={50}
           />
@@ -43,23 +43,23 @@ export const renderMemberIntroCard = (): TableColumn<MemberFormValues>[] => [
     render: (value: any) => <span>{value}</span>,
   },
   {
-    key: "hobby",
-    title: "趣味・特技",
-    sortable: false,
-    render: (value: any) => <span>{value}</span>,
-  },
-  {
-    key: "skills",
+    key: "skills_message",
     title: "得意な技術・スキル",
     sortable: false,
     render: (value: any) => <span>{value}</span>,
   },
-  {
-    key: "freeText",
-    title: "自由記載欄",
-    sortable: false,
-    render: (value: any) => <span className="truncate">{value}</span>,
-  },
+  // {
+  //   key: "hobby",
+  //   title: "趣味・特技",
+  //   sortable: false,
+  //   render: (value: any) => <span>{value}</span>,
+  // },
+  // {
+  //   key: "freeText",
+  //   title: "自由記載欄",
+  //   sortable: false,
+  //   render: (value: any) => <span className="truncate">{value}</span>,
+  // },
   {
     key: "createdAt",
     title: "登録日",
