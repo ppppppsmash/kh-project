@@ -79,16 +79,16 @@ export const MemberGrid = ({ members, onSelectMember }: MemberGridProps) => {
                 animate={{ y: hoveredId === member.id ? -10 : 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h2 className="text-2xl font-bold text-white mb-1">{member.name}</h2>
-                <p className="text-white/80 text-xs">{member.department}</p>
-                <p className="text-white/80 text-xs">{member.position}</p>
+                <h2 className="text-2xl font-bold text-white mb-1">{member?.name}</h2>
+                <p className="text-white/80 text-xs">{member?.department}</p>
+                <p className="text-white/80 text-xs">{member?.position}</p>
                 <motion.div
                   className="flex flex-wrap gap-2 mt-3"
                   initial={false}
                   animate={{ opacity: hoveredId === member.id ? 1 : 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  {member.skills.map((skill, index) => (
+                  {member?.skills?.map((skill, index) => (
                     <Badge
                       key={index}
                       variant="outline"
@@ -97,7 +97,9 @@ export const MemberGrid = ({ members, onSelectMember }: MemberGridProps) => {
                   >
                       {skill}
                     </Badge>
-                  ))}
+                  )) || (
+                    <span className="text-muted-foreground text-xs">未設定</span>
+                  )}
                 </motion.div>
               </motion.div>
 

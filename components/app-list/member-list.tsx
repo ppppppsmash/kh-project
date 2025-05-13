@@ -92,13 +92,13 @@ export default function MemberListView({ members, onSelectMember }: MemberListVi
                 {/* メンバー情報 */}
                 <div className="flex-grow">
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold">{member.name}</h3>
+                    <h3 className="text-lg font-semibold">{member?.name}</h3>
                   </div>
-                  <p className="text-muted-foreground">{member.department}</p>
-                  <p className="text-muted-foreground">{member.position}</p>
+                  <p className="text-muted-foreground">{member?.department}</p>
+                  <p className="text-muted-foreground">{member?.position}</p>
 
                   <div className="mt-2 flex flex-wrap gap-2">
-                    {member.skills.map((skill, skillIndex) => (
+                    {member?.skills?.map((skill, skillIndex) => (
                       <Badge
                         key={skillIndex}
                         variant="outline"
@@ -110,7 +110,9 @@ export default function MemberListView({ members, onSelectMember }: MemberListVi
                       >
                         {skill}
                       </Badge>
-                    ))}
+                    )) || (
+                      <span className="text-muted-foreground text-xs">未設定</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -125,7 +127,7 @@ export default function MemberListView({ members, onSelectMember }: MemberListVi
                 }}
                 transition={{ duration: 0.3 }}
               >
-                {member.freeText}
+                {member?.freeText}
               </motion.div>
             </div>
           </motion.div>
