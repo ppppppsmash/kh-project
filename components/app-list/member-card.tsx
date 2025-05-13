@@ -23,12 +23,12 @@ export default function MemberCard({ member }: MemberCardProps) {
         <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent" />
       </div>
 
-      <CardContent className="pt-6 pb-8 relative">
-        <div className="absolute -top-16 left-6 w-24 h-24 rounded-full overflow-hidden border-4 border-background">
+      <CardContent className="pt-6 relative">
+        {/* <div className="absolute -top-16 left-6 w-24 h-24 rounded-full overflow-hidden border-4 border-background">
           <img src={member.photoUrl || "/placeholder.svg"} alt={member.name} className="w-full h-full object-cover" />
-        </div>
+        </div> */}
 
-        <div className="ml-32 mb-6">
+        <div className="mb-6">
           <h2 className="text-2xl font-bold">{member.name}</h2>
           <p className="text-muted-foreground text-xs">{member.department}</p>
           <p className="text-muted-foreground text-xs">{member.position}</p>
@@ -36,31 +36,35 @@ export default function MemberCard({ member }: MemberCardProps) {
 
         <div className="space-y-4">
           <div>
-            <h3 className="text-lg font-semibold mb-2">自己紹介</h3>
-            <p className="text-muted-foreground">{member.freeText}</p>
+            <h3 className="text-lg font-semibold mb-2">言語</h3>
+            <p className="text-muted-foreground">
+              {member.skills.map((skill, index) => (
+                <Badge
+                  key={index}
+                  variant="outline"
+                  className="px-3 py-1 mr-4"
+                  style={{ borderColor: getMemberColor(member.id), color: getMemberColor(member.id) }}
+                >
+                  {skill}
+                </Badge>
+              ))}
+            </p>
           </div>
-
           <div>
             <h3 className="text-lg font-semibold mb-2">得意な技術・スキル</h3>
             <div className="flex flex-wrap gap-2">
-              <Badge
-                variant="outline"
-                className="px-3 py-1"
-                style={{ borderColor: getMemberColor(member.id), color: getMemberColor(member.id) }}
-              >
-                {member.skills}
-              </Badge>
+              {member.skills_message || "未設定"}
             </div>
           </div>
 
           <div>
             <h3 className="text-lg font-semibold mb-2">趣味・特技</h3>
-            <p className="text-muted-foreground">{member.hobby}</p>
+            <p className="text-muted-foreground">{member.hobby || "未設定"}</p>
           </div>
 
           <div>
             <h3 className="text-lg font-semibold mb-2">自由記載欄</h3>
-            <p className="text-muted-foreground">{member.freeText}</p>
+            <p className="text-muted-foreground">{member.freeText || "未設定"}</p>
           </div>
 
           <motion.div

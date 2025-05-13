@@ -3,7 +3,7 @@
 import { useState, useMemo } from "react";
 import { motion } from "motion/react";
 import type { MemberFormValues } from "@/lib/validations";
-
+import { Badge } from "@/components/ui/badge";
 // プリセットカラーの配列
 const PRESET_COLORS = [
   "#FF6B6B", // 赤
@@ -115,12 +115,16 @@ export const MemberGrid = ({ members, onSelectMember }: MemberGridProps) => {
                   animate={{ opacity: hoveredId === member.id ? 1 : 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <span
-                    className="px-2 py-1 rounded-full text-xs font-medium"
-                    style={{ backgroundColor: `${memberColor}90`, color: "white" }}
+                  {member.skills.map((skill, index) => (
+                    <Badge
+                      key={index}
+                      variant="outline"
+                      className="px-2 py-1 text-xs font-medium"
+                      style={{ backgroundColor: `${memberColor}90`, color: "white" }}
                   >
-                    {member.skills}
-                  </span>
+                      {skill}
+                    </Badge>
+                  ))}
                 </motion.div>
               </motion.div>
 
