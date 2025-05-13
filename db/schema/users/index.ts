@@ -1,7 +1,9 @@
 import { pgTable, uuid, varchar, timestamp, boolean } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 import { relations } from "drizzle-orm";
-import { userActivity } from "../user-activity";
+import { userActivity } from "../user_activity";
+import { leaderTeams } from "../leader_teams";
+import { managerTeams } from "../manager_teams";
 
 export const users = pgTable("users", {
 	id: uuid("id").primaryKey().$defaultFn(uuidv7),
@@ -24,4 +26,6 @@ export const users = pgTable("users", {
 
 export const userRelations = relations(users, ({ many }) => ({
   activities: many(userActivity), // 1:n
+  leaderTeams: many(leaderTeams, { relationName: "leader_teams" }), // 1:n
+  managerTeams: many(managerTeams, { relationName: "manager_teams" }), // 1:n
 }));

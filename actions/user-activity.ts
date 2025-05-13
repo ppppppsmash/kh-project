@@ -1,7 +1,7 @@
 "use server";
 
 import { db } from "@/db";
-import { userActivity } from "@/db/schema/user-activity";
+import { userActivity } from "@/db/schema/user_activity";
 import { desc } from "drizzle-orm";
 import { cache } from "react";
 import type { UserActivityFormValues } from "@/lib/validations";
