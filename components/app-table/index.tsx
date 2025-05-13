@@ -19,6 +19,7 @@ import { getTotalPages, getPaginated } from "@/lib/utils";
 import { ClubActivityTableSkeleton } from "@/components/app-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AddButton } from "@/components/add-button";
+import { useTableStore, ITEMS_PER_PAGE_OPTIONS } from "@/lib/store/table-store";
 
 export type SortConfig<T> = {
   key: keyof T;
@@ -82,7 +83,7 @@ export function AppTable<T>({
   const [statusFilter, setStatusFilter] = useState<string>("すべて");
   const [sortConfig, setSortConfig] = useState<SortConfig<T> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
+  const { itemsPerPage, setItemsPerPage } = useTableStore();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -173,6 +174,11 @@ export function AppTable<T>({
   const totalPages = getTotalPages(filteredData, itemsPerPage);
   const paginatedData = getPaginated(filteredData, currentPage, itemsPerPage);
 
+  // 表示数が変更されたときにページを1に戻す
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [itemsPerPage]);
+
   if (loading) {
     return (
       <ClubActivityTableSkeleton />
@@ -234,15 +240,30 @@ export function AppTable<T>({
                 )}
               </div>
             )}
+
+            <Select value={String(itemsPerPage)} onValueChange={(value) => setItemsPerPage(Number(value))}>
+              <SelectTrigger className="w-[120px]">
+                <SelectValue placeholder="表示件数" />
+              </SelectTrigger>
+              <SelectContent>
+                {ITEMS_PER_PAGE_OPTIONS.map((option) => (
+                  <SelectItem key={option} value={String(option)}>
+                    {option}件
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
           </div>
 
-          {addButton && (
-            <AddButton
-              text={addButton.text}
-              onClick={addButton.onClick}
-              className={addButton.className}
-            />
-          )}
+          <div className="flex items-center gap-2">
+            {addButton && (
+              <AddButton
+                text={addButton.text}
+                onClick={addButton.onClick}
+                className={addButton.className}
+              />
+            )}
+          </div>
         </div>
       )}
 

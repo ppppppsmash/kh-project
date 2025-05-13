@@ -4,7 +4,6 @@ import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useModal } from "@/hooks/use-modal";
 import { TaskFormValues } from '@/lib/validations';
-import { AddButton } from "@/components/add-button";
 import { AppTable } from "@/components/app-table";
 import { renderTask, filterTask, getTaskStatusFilters } from "@/components/app-table/render/TaskItem";
 import { useGetTasks, useGetTabs } from "@/components/app-table/hooks/use-table-data";
