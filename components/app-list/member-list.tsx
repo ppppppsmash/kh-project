@@ -2,10 +2,8 @@
 
 import { useState, useMemo } from "react";
 import { motion } from "motion/react";
-import { ChevronRight } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import type { MemberFormValues } from "@/lib/validations";
-import { PRESET_COLORS } from "@/app/adixi-public/member/page";
 import { getMemberColor } from "./member-grid";
 
 interface MemberListViewProps {

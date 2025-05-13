@@ -4,7 +4,7 @@ import { useState, useMemo } from "react";
 import { motion } from "motion/react";
 import type { MemberFormValues } from "@/lib/validations";
 import { Badge } from "@/components/ui/badge";
-import { PRESET_COLORS } from "@/app/adixi-public/member/page";
+import { PRESET_COLORS } from "@/config";
 
 interface MemberGridProps {
   members: MemberFormValues[];
