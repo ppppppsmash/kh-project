@@ -4,34 +4,7 @@ import { useState, useMemo } from "react";
 import { motion } from "motion/react";
 import type { MemberFormValues } from "@/lib/validations";
 import { Badge } from "@/components/ui/badge";
-// プリセットカラーの配列
-const PRESET_COLORS = [
-  "#FF6B6B", // 赤
-  "#4ECDC4", // ターコイズ
-  "#45B7D1", // ブルー
-  "#96CEB4", // ミント
-  "#FFEEAD", // イエロー
-  "#D4A5A5", // ピンク
-  "#9B59B6", // パープル
-  "#3498DB", // ライトブルー
-  "#E67E22", // オレンジ
-  "#2ECC71", // グリーン
-  "#1ABC9C", // ターコイズグリーン
-  "#F1C40F", // イエロー
-  "#E74C3C", // レッド
-  "#34495E", // ダークブルー
-  "#16A085", // ダークターコイズ
-  "#808080", // グレー
-  "#FFD700", // 金
-  "#C0C0C0", // シルバー
-  "#800080", // パープル
-  "#008000", // グリーン
-  "#000080", // ネイビーブルー
-  "#800000", // マルーン
-  "#008080", // ティール
-  "#4B0082", // インディゴ
-  "#FF4500", // オレンジレッド
-];
+import { PRESET_COLORS } from "@/app/adixi-public/member/page";
 
 interface MemberGridProps {
   members: MemberFormValues[];
