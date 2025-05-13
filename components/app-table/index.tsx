@@ -18,6 +18,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { getTotalPages, getPaginated } from "@/lib/utils";
 import { ClubActivityTableSkeleton } from "@/components/app-skeleton";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AddButton } from "@/components/add-button";
 
 export type SortConfig<T> = {
   key: keyof T;
@@ -58,6 +59,11 @@ interface TableProps<T> {
   searchableKeys?: (keyof T)[];
   onRowClick?: (row: T) => void;
   onFilter?: (data: T[], searchQuery: string, statusFilter: string) => T[];
+  addButton?: {
+    text: string;
+    onClick: () => void;
+    className?: string;
+  };
 }
 
 export function AppTable<T>({
@@ -68,6 +74,7 @@ export function AppTable<T>({
   searchableKeys = [],
   onRowClick,
   onFilter,
+  addButton,
 }: TableProps<T>) {
   const [reload, setReload] = useState(false);
   const [filteredData, setFilteredData] = useState<T[]>(data);
@@ -175,56 +182,66 @@ export function AppTable<T>({
   return (
     <div className="space-y-4">
       {toolBar && (
-        <div className="flex items-center gap-x-4">
-          {toolBar?.researchBarPlaceholder && (
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-              <div className="relative flex-1">
-                <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                <Input
-                  placeholder={toolBar.researchBarPlaceholder}
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-8"
-                />
-                {searchQuery && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="absolute right-0 top-0 h-9 w-9"
-                    onClick={() => setSearchQuery("")}
-                  >
-                    <X className="h-4 w-4" />
+        <div className="flex items-center justify-between gap-x-4">
+          <div className="flex items-center gap-x-4">
+            {toolBar?.researchBarPlaceholder && (
+              <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                <div className="relative flex-1">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    placeholder={toolBar.researchBarPlaceholder}
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="pl-8"
+                  />
+                  {searchQuery && (
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="absolute right-0 top-0 h-9 w-9"
+                      onClick={() => setSearchQuery("")}
+                    >
+                      <X className="h-4 w-4" />
+                    </Button>
+                  )}
+                </div>
+              </div>
+            )}
+            {toolBar?.researchStatusFilter && (
+              <div className="flex items-center gap-2">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger className="w-[180px]">
+                    <div className="flex items-center gap-2">
+                      <Filter className="h-4 w-4" />
+                      <SelectValue placeholder="ステータスでフィルター" />
+                    </div>
+                  </SelectTrigger>
+                  <SelectContent>
+                    {toolBar.researchStatusFilter?.map((status) => (
+                      <SelectItem key={status} value={status}>{status}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+                {(searchQuery || statusFilter !== "すべて" || sortConfig) && (
+                  <Button variant="outline" size="sm" onClick={() => {
+                    setSearchQuery("");
+                    setStatusFilter("すべて");
+                    setSortConfig(null);
+                  }}>
+                    <X className="h-3.5 w-3.5" />
+                    リセット
                   </Button>
                 )}
               </div>
-            </div>
-          )}
-          {toolBar?.researchStatusFilter && (
-            <div className="flex items-center gap-2">
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px]">
-                  <div className="flex items-center gap-2">
-                    <Filter className="h-4 w-4" />
-                    <SelectValue placeholder="ステータスでフィルター" />
-                  </div>
-                </SelectTrigger>
-                <SelectContent>
-                  {toolBar.researchStatusFilter?.map((status) => (
-                    <SelectItem key={status} value={status}>{status}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              {(searchQuery || statusFilter !== "すべて" || sortConfig) && (
-                <Button variant="outline" size="sm" onClick={() => {
-                  setSearchQuery("");
-                  setStatusFilter("すべて");
-                  setSortConfig(null);
-                }}>
-                  <X className="h-3.5 w-3.5" />
-                  リセット
-                </Button>
-              )}
-            </div>
+            )}
+          </div>
+
+          {addButton && (
+            <AddButton
+              text={addButton.text}
+              onClick={addButton.onClick}
+              className={addButton.className}
+            />
           )}
         </div>
       )}

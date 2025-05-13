@@ -11,6 +11,7 @@ import { getProgressLabel, getProgressColor } from "@/lib/utils";
 type TaskColumnOptions = {
   onEdit?: (row: TaskFormValues, e: React.MouseEvent) => void;
   onDelete?: (row: TaskFormValues, e: React.MouseEvent) => void;
+  onAdd?: () => void;
 };
 
 // タスクのフィルター処理
@@ -57,6 +58,7 @@ export const getTaskStatusFilters = () => ["すべて", "未着手", "進行中"
 export const renderTask = ({
   onEdit,
   onDelete,
+  onAdd,
 }: TaskColumnOptions): TableColumn<TaskFormValues>[] => [
   {
     key: "taskId",
@@ -126,12 +128,13 @@ export const renderTask = ({
   //   ),
   // },
 
-  ...createTaskColumns({ onEdit, onDelete }),
+  ...createTaskColumns({ onEdit, onDelete, onAdd }),
 ];
 
 export const createTaskColumns = ({
   onEdit,
   onDelete,
+  onAdd,
 }: TaskColumnOptions): TableColumn<TaskFormValues>[] => [
   {
     key: "action",

@@ -139,11 +139,11 @@ export default function TaskPage() {
         tabs={tabs ?? []}
       />
 
-      <AddButton className="mb-2" text="新規タスク登録" onClick={handleAdd} />
       <AppTable
         columns={renderTask({
           onEdit: handleEdit,
           onDelete: handleDelete,
+          onAdd: handleAdd,
         })}
         data={tasks ?? []}
         loading={isLoading}
@@ -156,6 +156,11 @@ export default function TaskPage() {
         onRowClick={(row: TaskFormValues) => {
           setSelectedTask(row);
           setIsDetailOpen(true);
+        }}
+        addButton={{
+          text: "新規タスク登録",
+          onClick: handleAdd,
+          className: "",
         }}
       />
 
