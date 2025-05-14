@@ -78,7 +78,6 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
   const handleSubmit = async (data: QaFormValues) => {
     setIsSubmitting(true);
     try {
-      console.log(data);
       await onSubmit(data);
       form.reset();
       onClose();
@@ -97,8 +96,6 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
       setShowNewCategoryInput(false);
     }
   };
-
-  console.log(form.getValues("startedAt"));
 
   return (
     <BaseModalForm
@@ -243,21 +240,6 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
                 </FormItem>
               )}
             />
-
-            {type === "superadmin" && (
-              <FormField
-                control={form.control}
-                name="isPublic"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>公開<span className="text-muted-foreground text-xs">(マネージャー権限表示のみ)</span></FormLabel>
-                    <FormControl>
-                      <Switch checked={field.value} onCheckedChange={field.onChange} />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-            )}
           </div>
         </div>
     </BaseModalForm>

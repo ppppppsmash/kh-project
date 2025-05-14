@@ -61,10 +61,10 @@ export default function QAPage() {
   }, [qaItems]);
 
   // 回答済みの質問のみをフィルタリング
-  const answeredQAItems = qaItems.filter((item) => item.answer && item.isPublic)
+  //const answeredQAItems = qaItems.filter((item) => item.isPublic)
 
   // フィルタリングとページネーション
-  const filteredQA = answeredQAItems.filter((item) => {
+  const filteredQA = qaItems.filter((item) => {
     const matchesSearch =
       item.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (item.answer && item.answer.toLowerCase().includes(searchTerm.toLowerCase())) ||
