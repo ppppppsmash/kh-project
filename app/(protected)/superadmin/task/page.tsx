@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { TabManager } from "@/components/app-tab/tab-manager";
 import { TabFormValues } from "@/lib/validations";
 import { createTab, updateTab, deleteTab } from "@/actions/tab";
+import { useTaskTableSort } from "@/lib/store/task-store";
 
 export default function TaskPage() {
   const queryClient = useQueryClient();
@@ -27,7 +28,7 @@ export default function TaskPage() {
   const { isOpen, openModal, closeModal } = useModal();
   const [currentData, setCurrentData] = useState<TaskFormValues | null>(null);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-
+  const { sort, setSort } = useTaskTableSort();
   const { data: tabs, isLoading: isTabsLoading } = useGetTabs();
 
   useEffect(() => {
@@ -139,6 +140,8 @@ export default function TaskPage() {
       />
 
       <AppTable
+        sort={sort}
+        onSortChange={setSort}
         columns={renderTask({
           onEdit: handleEdit,
           onDelete: handleDelete,

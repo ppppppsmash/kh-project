@@ -65,6 +65,8 @@ interface TableProps<T> {
     onClick: () => void;
     className?: string;
   };
+  sort?: { key: string; order: "asc" | "desc" };
+  onSortChange?: (sort: { key: string; order: "asc" | "desc" }) => void;
 }
 
 export function AppTable<T>({
@@ -76,14 +78,27 @@ export function AppTable<T>({
   onRowClick,
   onFilter,
   addButton,
+  sort,
+  onSortChange,
 }: TableProps<T>) {
   const [reload, setReload] = useState(false);
   const [filteredData, setFilteredData] = useState<T[]>(data);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<string>("すべて");
-  const [sortConfig, setSortConfig] = useState<SortConfig<T> | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const { itemsPerPage, setItemsPerPage } = useTableStore();
+
+  // sort, onSortChangeがpropsで渡ってきたらそれを使う
+  // そうでなければuseStateでローカル管理
+  const [localSort, setLocalSort] = useState({ key: "taskId", order: "asc" });
+  const currentSort = sort ?? localSort;
+  const handleSortChange = (newSort: { key: string; order: "asc" | "desc" }) => {
+    if (onSortChange) {
+      onSortChange(newSort);
+    } else {
+      setLocalSort(newSort);
+    }
+  };
 
   useEffect(() => {
     const fetchData = async () => {
@@ -138,20 +153,20 @@ export function AppTable<T>({
     }
 
     // ソート
-    if (sortConfig) {
+    if (currentSort) {
       result.sort((a, b) => {
-        const aValue = a[sortConfig.key as keyof T];
-        const bValue = b[sortConfig.key as keyof T];
+        const aValue = a[currentSort.key as keyof T];
+        const bValue = b[currentSort.key as keyof T];
     
         // undefined/null を考慮
         if (aValue == null) return 1;
         if (bValue == null) return -1;
     
         if (aValue < bValue) {
-          return sortConfig.direction === "asc" ? -1 : 1;
+          return currentSort.order === "asc" ? -1 : 1;
         }
         if (aValue > bValue) {
-          return sortConfig.direction === "asc" ? 1 : -1;
+          return currentSort.order === "asc" ? 1 : -1;
         }
         return 0;
       });
@@ -159,16 +174,7 @@ export function AppTable<T>({
 
     setFilteredData(result);
     setCurrentPage(1);
-  }, [data, searchQuery, statusFilter, sortConfig, onFilter, searchableKeys]);
-
-  // ソート処理
-  const handleSort = (key: keyof T) => {
-    let direction: "asc" | "desc" = "asc";
-    if (sortConfig && sortConfig.key === key && sortConfig.direction === "asc") {
-      direction = "desc";
-    }
-    setSortConfig({ key, direction });
-  };
+  }, [data, searchQuery, statusFilter, currentSort, onFilter, searchableKeys]);
 
   // ページネーション
   const totalPages = getTotalPages(filteredData, itemsPerPage);
@@ -228,11 +234,11 @@ export function AppTable<T>({
                     ))}
                   </SelectContent>
                 </Select>
-                {(searchQuery || statusFilter !== "すべて" || sortConfig) && (
+                {(searchQuery || statusFilter !== "すべて" || currentSort) && (
                   <Button variant="outline" size="sm" onClick={() => {
                     setSearchQuery("");
                     setStatusFilter("すべて");
-                    setSortConfig(null);
+                    handleSortChange({ key: "taskId", order: "asc" });
                   }}>
                     <X className="h-3.5 w-3.5" />
                     リセット
@@ -271,9 +277,9 @@ export function AppTable<T>({
         <TableHeader>
           <TableRow>
             {columns.map((column) => {
-              const isSorted = sortConfig?.key === column.key;
+              const isSorted = currentSort?.key === column.key;
               const sortIcon = isSorted ? (
-                sortConfig.direction === "asc" ? (
+                currentSort.order === "asc" ? (
                   <ChevronUp className="ml-1 h-4 w-4" />
                 ) : (
                   <ChevronDown className="ml-1 h-4 w-4" />
@@ -295,7 +301,7 @@ export function AppTable<T>({
                 <TableHead
                   key={column.key as string}
                   className={className}
-                  onClick={column.sortable ? () => handleSort(column.key as keyof T) : undefined}
+                  onClick={column.sortable ? () => handleSortChange({ key: column.key as string, order: currentSort.order === "asc" ? "desc" : "asc" }) : undefined}
                 >
                   {sortIcon ? (
                     <div className="flex items-center">
