@@ -3,7 +3,7 @@
 import { TaskFormValues } from "@/lib/validations";
 import { db } from "@/db";
 import { tasks } from "@/db/schema/tasks";
-import { eq } from "drizzle-orm";
+import { eq, desc } from "drizzle-orm";
 
 export const getTasks = async (tabId?: string): Promise<TaskFormValues[]> => {
   if (tabId) {
@@ -23,14 +23,25 @@ export const getTasks = async (tabId?: string): Promise<TaskFormValues[]> => {
 };
 
 export const createTask = async (data: TaskFormValues) => {
+  const lastTaskRecord = await db.select({ taskId: tasks.taskId }).from(tasks).orderBy(desc(tasks.taskId)).limit(1);
+  let taskId = "T001";
+  if (lastTaskRecord.length > 0 && lastTaskRecord[0].taskId) {
+    const match = lastTaskRecord[0].taskId.match(/T(\d+)/);
+    if (match) {
+      const nextNumber = parseInt(match[1], 10) + 1;
+      taskId = `T${nextNumber.toString().padStart(3, "0")}`;
+    }
+  }
+
   const taskData = {
     ...data,
+    taskId,
     tabId: data.tabId,
     link: data.link ?? "",
     notes: data.notes ?? "",
     startedAt: data.startedAt ?? new Date(),
-    createdAt: null,
-    updatedAt: null,
+    createdAt: new Date(),
+    updatedAt: new Date(),
   }
   const newTask = await db.insert(tasks).values(taskData).returning();
 

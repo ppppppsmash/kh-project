@@ -96,8 +96,6 @@ export const TaskModalForm = ({
     }
   };
 
-  console.log(form.formState.errors);
-
   return (
     <BaseModalForm
       title={title}
@@ -109,17 +107,6 @@ export const TaskModalForm = ({
       form={form}
     >
       <div className="flex gap-x-10 items-start">
-        <div className="space-y-2 w-full">
-          <Label htmlFor="taskId">タスクID<span className="text-red-500">*</span></Label>
-          <Input
-            id="taskId"
-            {...form.register("taskId", { required: "タスクIDは必須です" })}
-          />
-          {form.formState.errors.taskId && (
-            <p className="text-sm text-red-500">{form.formState.errors.taskId.message}</p>
-          )}
-        </div>
-
         <div className="space-y-2 w-full">
           <Label htmlFor="title">項目名<span className="text-red-500">*</span></Label>
           <Input

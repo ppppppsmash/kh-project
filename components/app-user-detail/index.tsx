@@ -82,15 +82,19 @@ export const UserDetail = ({ user }: UserDetailProps) => {
                   <Code2 className="w-5 h-5" />
                   <h3 className="font-medium">言語</h3>
                 </div>
-                <div className="flex flex-wrap gap-x-4">
-                  {user?.skills?.map((skill, index) => (
-                    <Badge key={index} variant="outline" className="text-sm">
-                      {skill}
-                    </Badge>
-                  )) || (
+                <p className="flex flex-wrap gap-x-4">
+                  {user?.skills && user.skills.filter(skill => skill && skill.trim() !== "").length > 0 ? (
+                    user.skills
+                      .filter(skill => skill && skill.trim() !== "")
+                      .map((skill, index) => (
+                        <Badge key={index} variant="outline" className="text-sm">
+                          {skill}
+                        </Badge>
+                      ))
+                  ) : (
                     <span className="text-muted-foreground text-xs">未設定</span>
                   )}
-                </div>
+                </p>
               </div>
 
               {/* スキル */}

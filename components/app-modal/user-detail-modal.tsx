@@ -67,11 +67,19 @@ export const UserDetailModal = ({ user, isOpen, onClose }: UserDetailModalProps)
             </div>
             <div className="grid grid-cols-2 gap-2">
               <p className="text-sm font-medium">言語</p>
-              <p className="text-sm">{user?.skills?.map((skill, index) => (
-                <Badge key={index} variant="outline" className="text-sm">
-                  {skill}
-                </Badge>
-              )) || "未設定"}</p>
+              <p className="flex flex-wrap gap-x-4">
+                {user?.skills && user.skills.filter(skill => skill && skill.trim() !== "").length > 0 ? (
+                  user.skills
+                    .filter(skill => skill && skill.trim() !== "")
+                    .map((skill, index) => (
+                      <Badge key={index} variant="outline" className="text-sm">
+                        {skill}
+                      </Badge>
+                    ))
+                ) : (
+                  <span className="text-muted-foreground text-xs">未設定</span>
+                )}
+              </p>
             </div>
             <div className="grid grid-cols-2 gap-2">
               <p className="text-sm font-medium">得意な技術</p>

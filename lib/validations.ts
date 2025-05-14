@@ -25,7 +25,7 @@ export type MemberFormValues = z.infer<typeof memberFormSchema>;
 export const taskFormSchema = z.object({
   id: z.string().optional(),
   tabId: z.string(),
-  taskId: z.string().min(1, "タスクIDは必須です"),
+  taskId: z.string().optional(),
   title: z.string().min(1, "項目名は必須です"),
   content: z.string().min(1, "内容は必須です"),
   assignee: z.string().min(1, "担当者は必須です"),
