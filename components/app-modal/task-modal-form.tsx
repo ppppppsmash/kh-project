@@ -68,11 +68,21 @@ export const TaskModalForm = ({
 
   useEffect(() => {
     if (isOpen) {
-      if (defaultValues) {
-        form.reset({
-          ...defaultValues,
-        });
-      }
+      form.reset({
+        taskId: defaultValues?.taskId || "",
+        title: defaultValues?.title || "",
+        content: defaultValues?.content || "",
+        assignee: defaultValues?.assignee || "",
+        startedAt: defaultValues?.startedAt || new Date(),
+        dueDate: defaultValues?.dueDate || undefined,
+        completedAt: defaultValues?.completedAt || undefined,
+        progress: defaultValues?.progress || "pending",
+        category: defaultValues?.category || "",
+        isPublic: defaultValues?.isPublic || false,
+        progressDetails: defaultValues?.progressDetails || "",
+        link: defaultValues?.link || "",
+        notes: defaultValues?.notes || "",
+      })
     }
   }, [isOpen, defaultValues, form, selectedTabId]);
 
