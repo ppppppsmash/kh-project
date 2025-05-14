@@ -20,11 +20,11 @@ export const UserDetailModal = ({ user, isOpen, onClose }: UserDetailModalProps)
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[600px] h-[80svh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>ユーザー詳細</DialogTitle>
+      <DialogContent className="sm:max-w-[600px] h-[80svh] overflow-hidden flex flex-col">
+        <DialogHeader className="sticky top-0 bg-background pb-4 border-b">
+          <DialogTitle>メンバー詳細</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
+        <div className="grid gap-4 py-4 overflow-y-auto">
           <div className="flex items-start gap-4">
             {user.photoUrl && user.name ? (
               <Image

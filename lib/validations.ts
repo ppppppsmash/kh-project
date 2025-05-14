@@ -67,6 +67,7 @@ export const qaFormSchema = z.object({
   questionBy: z.string().optional(),
   answeredBy: z.string().optional(),
   isPublic: z.boolean().default(false).optional(),
+  startedAt: z.date().optional(),
   createdAt: z.date().optional(),
   updatedAt: z.date().optional(),
 });

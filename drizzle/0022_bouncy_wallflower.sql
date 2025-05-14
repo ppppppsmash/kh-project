@@ -1,0 +1,1 @@
+ALTER TABLE "qa" ADD COLUMN "started_at" timestamp;

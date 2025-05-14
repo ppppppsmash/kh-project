@@ -10,6 +10,7 @@ export const qa = pgTable("qa", {
   questionBy: varchar("question_by", { length: 255 }),
   answeredBy: varchar("answered_by", { length: 255 }),
   isPublic: boolean("is_public").default(false),
+  startedAt: timestamp("started_at"),
   createdAt: timestamp("created_at").defaultNow(),
   updatedAt: timestamp("updated_at").defaultNow().$onUpdate(() => new Date()),
 });

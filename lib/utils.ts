@@ -14,6 +14,12 @@ export const formatDate = (date: Date, formatString: string) => {
   return format(date, formatString, { locale: ja });
 };
 
+// 日付フォーマット(YYYY-MM-DD) for Input
+export const formatDateForInput = (date: Date | null | undefined): string => {
+  if (!date) return "";
+  return date.toISOString().split("T")[0];
+};
+
 // テーブルページ総数
 export const getTotalPages = <T>(filtered: T[], itemsPerPage: number) => {
   return Math.ceil(filtered.length / itemsPerPage);
