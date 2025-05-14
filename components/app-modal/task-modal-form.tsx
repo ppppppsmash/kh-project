@@ -69,6 +69,7 @@ export const TaskModalForm = ({
   useEffect(() => {
     if (isOpen) {
       form.reset({
+        tabId: selectedTabId || defaultValues?.tabId || "",
         taskId: defaultValues?.taskId || "",
         title: defaultValues?.title || "",
         content: defaultValues?.content || "",
@@ -94,6 +95,8 @@ export const TaskModalForm = ({
       setShowNewCategoryInput(false);
     }
   };
+
+  console.log(form.formState.errors);
 
   return (
     <BaseModalForm
