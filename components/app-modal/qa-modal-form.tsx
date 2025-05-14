@@ -14,6 +14,7 @@ import { Switch } from "@/components/ui/switch";
 import { Plus, X } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getQA } from "@/actions/qa";
+import { formatDateForInput } from "@/lib/utils";
 
 // 固定のカテゴリーリスト
 const defaultCategories = ["現場", "経費", "福利厚生", "休暇", "週報", "その他"];
@@ -43,6 +44,9 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
 
   const form = useForm<QaFormValues>({
     resolver: zodResolver(qaFormSchema),
+    defaultValues: {
+      startedAt: initialData?.startedAt || new Date(),
+    },
   });
 
 
@@ -66,6 +70,7 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
         questionBy: initialData?.questionBy || "",
         answeredBy: initialData?.answeredBy || "",
         isPublic: initialData?.isPublic || false,
+        startedAt: initialData?.startedAt || new Date(),
       });
     }
   }, [isOpen, initialData]);
@@ -73,6 +78,7 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
   const handleSubmit = async (data: QaFormValues) => {
     setIsSubmitting(true);
     try {
+      console.log(data);
       await onSubmit(data);
       form.reset();
       onClose();
@@ -92,6 +98,8 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
     }
   };
 
+  console.log(form.getValues("startedAt"));
+
   return (
     <BaseModalForm
       isOpen={isOpen}
@@ -100,8 +108,31 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
       title={isEdit ? "QAを編集" : "新規QA登録"}
       form={form}
       isSubmitting={isSubmitting}
+      isEdit={isEdit}
     >
       <div className="space-y-4">
+        <FormField
+          control={form.control}
+          name="startedAt"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>起票日</FormLabel>
+              <FormControl>
+                <Input
+                  id="startedAt"
+                  type="date"
+                  className="w-[140px]"
+                  value={field.value ? formatDateForInput(field.value) : ""}
+                  onChange={(e) => {
+                    const date = e.target.value ? new Date(e.target.value) : new Date();
+                    field.onChange(date);
+                  }}
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {type === "admin" && (
           <FormField
             control={form.control}
@@ -136,7 +167,7 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
             name="answer"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>回答</FormLabel>
+                <FormLabel>回答<span className="text-muted-foreground text-xs">(マネージャー権限表示のみ)</span></FormLabel>
                 <FormControl>
                   <Textarea placeholder="回答を入力してください" {...form.register("answer")} />
                 </FormControl>
@@ -219,7 +250,7 @@ export function QaModalForm({ type, isOpen, onClose, onSubmit, initialData }: Qa
                 name="isPublic"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>公開</FormLabel>
+                    <FormLabel>公開<span className="text-muted-foreground text-xs">(マネージャー権限表示のみ)</span></FormLabel>
                     <FormControl>
                       <Switch checked={field.value} onCheckedChange={field.onChange} />
                     </FormControl>

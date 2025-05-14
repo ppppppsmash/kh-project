@@ -12,6 +12,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Button } from "@/components/ui/button";
+import { formatDateForInput } from "@/lib/utils";
 
 interface TaskModalFormProps {
   title?: string;
@@ -21,11 +22,6 @@ interface TaskModalFormProps {
   isOpen: boolean;
   selectedTabId?: string;
 }
-
-const formatDateForInput = (date: Date | null | undefined): string => {
-  if (!date) return "";
-  return date.toISOString().split("T")[0];
-};
 
 export const TaskModalForm = ({
   title = "タスク登録",

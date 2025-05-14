@@ -13,6 +13,7 @@ export const getQA = async (): Promise<QaFormValues[]> => {
     isPublic: q.isPublic ?? false,
     questionBy: q.questionBy ?? undefined,
     answeredBy: q.answeredBy ?? undefined,
+    startedAt: q.startedAt ?? new Date(),
     createdAt: q.createdAt ?? new Date(),
     updatedAt: q.updatedAt ?? new Date(),
   }));
@@ -50,6 +51,7 @@ export const createQA = async (data: QaFormValues) => {
     isPublic: data.isPublic,
     questionBy: data.questionBy ? data.questionBy : currentUser ?? null,
     answeredBy: data.answer ? currentUser : null,
+    startedAt: data.startedAt ?? new Date(),
   };
 
   const inserted = await db.insert(qa).values(insertData).returning();

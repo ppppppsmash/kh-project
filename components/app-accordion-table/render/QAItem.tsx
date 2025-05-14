@@ -46,7 +46,7 @@ export const renderQa = ({
       <TooltipProvider>
         <Tooltip>
           <TooltipTrigger asChild>
-            <p className="font-medium truncate w-[500px]">{item.question}</p>
+            <p className="font-medium truncate w-[300px] max-w-[500px]">{item.question}</p>
           </TooltipTrigger>
           <TooltipContent>
             <p>{item.question}</p>
@@ -63,7 +63,7 @@ export const renderQa = ({
   {
     key: "date",
     label: "日付",
-    render: (item) => <span className="text-xs text-muted-foreground">{item.createdAt && formatDate(item.createdAt, "yyyy-MM-dd")}</span>,
+    render: (item) => <span className="text-xs text-muted-foreground">{item?.startedAt && `起票日: ${formatDate(item?.startedAt, "yyyy-MM-dd")}`}</span>,
   },
   {
     key: "questionBy",

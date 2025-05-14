@@ -65,23 +65,9 @@ export default function AdminQAPage() {
   const { handleSubmit } = useSubmit<QaFormValues>({
     action: async (data) => {
       if (currentData?.id) {
-        await updateQA(currentData.id, {
-          question: data.question,
-          answer: data.answer || '',
-          category: data.category,
-          questionBy: data.questionBy,
-          answeredBy: data.answeredBy,
-          isPublic: data.isPublic,
-        });
+        await updateQA(currentData.id, data);
       } else {
-        await createQA({
-          question: data.question,
-          answer: data.answer || '',
-          category: data.category,
-          questionBy: data.questionBy,
-          answeredBy: data.answeredBy,
-          isPublic: data.isPublic,
-        });
+        await createQA(data);
       }
     },
     onSuccess: () => {
@@ -101,7 +87,7 @@ export default function AdminQAPage() {
   };
 
   return (
-    <div className="container mx-auto">
+    <div className="mx-auto">
       <div className="mb-8 flex items-center justify-between">
         <h1 className="text-3xl font-bold">QA管理</h1>
         <AddButton text="新規QA登録" onClick={handleAdd} />
@@ -130,8 +116,10 @@ export default function AdminQAPage() {
           id: item.id || '',
           answer: item.answer || '',
           isPublic: item.isPublic ?? false,
+          startedAt: item.startedAt ?? new Date(),
           createdAt: item.createdAt ?? new Date(),
-          updatedAt: item.updatedAt ?? new Date()
+          updatedAt: item.updatedAt ?? new Date(),
+          
         }))}
         columns={renderQa({
           onEdit: handleEdit,
