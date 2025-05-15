@@ -54,11 +54,6 @@ export const AppHeader = () => {
 										index === breadcrumbs.length - 1 ? "" : "hidden md:block"
 									}
 								>
-									{/* {index === breadcrumbs.length - 1 ? (
-                    <BreadcrumbPage>{crumb.title}</BreadcrumbPage>
-                  ) : (
-                    <BreadcrumbLink href={crumb.url}>{crumb.title}</BreadcrumbLink>
-                  )} */}
 									<BreadcrumbPage>{crumb.title}</BreadcrumbPage>
 								</BreadcrumbItem>
 								{index !== breadcrumbs.length - 1 && (

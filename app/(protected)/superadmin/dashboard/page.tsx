@@ -19,6 +19,7 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
+import { AuroraText } from "@/components/animation-ui/aurora-text";
 
 export default function DashboardPage() {
 	const { data: session } = useSession();
@@ -34,7 +35,9 @@ export default function DashboardPage() {
 		return (
 			<div className="space-y-8">
 				<div className="flex justify-between items-center mb-6">
-					<h2 className="text-2xl font-bold">ダッシュボード</h2>
+					<h2 className="text-3xl font-bold">
+						<AuroraText>ダッシュボード</AuroraText>
+					</h2>
 					<div className="text-sm text-muted-foreground">
 						<Skeleton className="w-24 h-4" />
 						<Skeleton className="w-24 h-4" />
@@ -56,7 +59,9 @@ export default function DashboardPage() {
 	return (
 		<div className="space-y-8">
 			<div className="flex justify-between items-center mb-6">
-				<h2 className="text-2xl font-bold">ダッシュボード</h2>
+				<h2 className="text-3xl font-bold">
+					<AuroraText>ダッシュボード</AuroraText>
+				</h2>
 				<div className="text-sm text-muted-foreground">
 					ようこそ、{session?.user?.name}さん
 				</div>

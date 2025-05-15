@@ -13,6 +13,7 @@ import type { MemberFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
 import { FilePenLine } from "lucide-react";
 import Link from "next/link";
+import { AuroraText } from "@/components/animation-ui/aurora-text";
 
 export default function UserPage() {
 	const queryClient = useQueryClient();
@@ -42,7 +43,9 @@ export default function UserPage() {
 	return (
 		<div className="mx-auto">
 			<div className="flex justify-between items-center mb-6">
-				<h2 className="text-2xl font-bold">自己紹介</h2>
+				<h2 className="text-3xl font-bold">
+					<AuroraText>自己紹介</AuroraText>
+				</h2>
 				<EditButton text="編集" onClick={handleEdit} />
 			</div>
 			<div className="space-y-8">

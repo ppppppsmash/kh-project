@@ -26,6 +26,7 @@ import type { ClubFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { AuroraText } from "@/components/animation-ui/aurora-text";
 
 export default function ClubActivityPage() {
 	const queryClient = useQueryClient();
@@ -90,7 +91,9 @@ export default function ClubActivityPage() {
 	return (
 		<div className="mx-auto">
 			<div className="flex justify-between items-center mb-6">
-				<h2 className="text-2xl font-bold">部活動</h2>
+				<h2 className="text-3xl font-bold">
+					<AuroraText>部活動</AuroraText>
+				</h2>
 				<AddButton text="新規部活動登録" onClick={handleAdd} />
 			</div>
 

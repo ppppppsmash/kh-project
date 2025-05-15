@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo, useState } from "react";
 import { createQA, deleteQA, updateQA } from "@/actions/qa";
 import { AddButton } from "@/components/add-button";
 import { AccordionTable } from "@/components/app-accordion-table";
@@ -23,7 +24,7 @@ import { IconExternalLink } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { AuroraText } from "@/components/animation-ui/aurora-text";
 // 固定のカテゴリーリスト
 const defaultCategories = [
 	"現場",
@@ -107,7 +108,9 @@ export default function AdminQAPage() {
 	return (
 		<div className="mx-auto">
 			<div className="mb-8 flex items-center justify-between">
-				<h1 className="text-3xl font-bold">QA管理</h1>
+				<h2 className="text-3xl font-bold">
+					<AuroraText>QA管理</AuroraText>
+				</h2>
 				<AddButton text="新規QA登録" onClick={handleAdd} />
 			</div>
 

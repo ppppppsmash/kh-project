@@ -32,7 +32,7 @@ import type { TaskFormValues } from "@/lib/validations";
 import type { TabFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
-
+import { AuroraText } from "@/components/animation-ui/aurora-text";
 export default function TaskPage() {
 	const queryClient = useQueryClient();
 	const [selectedTabId, setSelectedTabId] = useState<string | undefined>();
@@ -150,7 +150,9 @@ export default function TaskPage() {
 	return (
 		<div className="mx-auto">
 			<div className="flex justify-between items-center mb-8">
-				<h2 className="text-2xl font-bold">タスク管理</h2>
+				<h2 className="text-3xl font-bold">
+					<AuroraText>タスク管理</AuroraText>
+				</h2>
 			</div>
 
 			<TabManager

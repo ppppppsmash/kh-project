@@ -9,6 +9,7 @@ import type { MemberFormValues } from "@/lib/validations";
 import { FilePenLine } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
+import { AuroraText } from "@/components/animation-ui/aurora-text";
 
 export default function MemberListPage() {
 	const { data: users, isLoading } = useGetUserList();
@@ -30,7 +31,9 @@ export default function MemberListPage() {
 	return (
 		<div className="mx-auto">
 			<div className="flex justify-between items-center mb-6">
-				<h2 className="text-2xl font-bold">メンバー管理</h2>
+				<h2 className="text-3xl font-bold">
+					<AuroraText>メンバー管理</AuroraText>
+				</h2>
 			</div>
 			<div className="space-y-8">
 				<Button variant="outline">
