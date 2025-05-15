@@ -1,24 +1,24 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate } from "@/lib/utils";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { formatDate } from "@/lib/utils";
 
 type Props = {
-  params: Promise<{ id: string }>;
+	params: Promise<{ id: string }>;
 };
 
 export default async function IntroCardPage({ params }: Props) {
-  const { id } = await params;
-  //const member = await getIntroCardById(id);
+	const { id } = await params;
+	//const member = await getIntroCardById(id);
 
-    // if (!member) {
-    //   notFound();
-    // }
+	// if (!member) {
+	//   notFound();
+	// }
 
-  return (
-    <div className="max-w-2xl mx-auto p-6">
-      <Card>
-        {/* <CardHeader>
+	return (
+		<div className="max-w-2xl mx-auto p-6">
+			<Card>
+				{/* <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">
             {member.name} 自己紹介
           </CardTitle>
@@ -73,7 +73,7 @@ export default async function IntroCardPage({ params }: Props) {
             登録日: {formatDate(member.createdAt ?? new Date(), "yyyy/MM/dd HH:mm")}
           </div>
         </CardContent> */}
-      </Card>
-    </div>
-  );
+			</Card>
+		</div>
+	);
 }

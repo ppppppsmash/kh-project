@@ -1,28 +1,28 @@
+import { BackButton } from "@/components/back-button";
 // import { getIntroCardById } from "@/actions/intro-card";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { formatDate } from "@/lib/utils";
 import Image from "next/image";
 import { notFound } from "next/navigation";
-import { formatDate } from "@/lib/utils";
-import { BackButton } from "@/components/back-button";
 type Props = {
-  params: Promise<{ id: string }>;
+	params: Promise<{ id: string }>;
 };
 
 export default async function IntroCardPage({ params }: Props) {
-  const { id } = await params;
-  // const member = await getIntroCardById(id);
+	const { id } = await params;
+	// const member = await getIntroCardById(id);
 
-  // if (!member) {
-  //   notFound();
-  // }
+	// if (!member) {
+	//   notFound();
+	// }
 
-  return (
-    <div className="flex flex-col gap-4">
-      <BackButton />
-    
-      <div className="w-full mx-auto">
-        <Card>
-          {/* <CardHeader>
+	return (
+		<div className="flex flex-col gap-4">
+			<BackButton />
+
+			<div className="w-full mx-auto">
+				<Card>
+					{/* <CardHeader>
             <CardTitle className="text-2xl font-bold text-center">
               {member.name} 自己紹介
             </CardTitle>
@@ -76,8 +76,8 @@ export default async function IntroCardPage({ params }: Props) {
               登録日: {formatDate(member.createdAt ?? new Date(), "yyyy/MM/dd HH:mm")}
             </div>
           </CardContent> */}
-        </Card>
-      </div>
-    </div>
-  );
-} 
+				</Card>
+			</div>
+		</div>
+	);
+}
