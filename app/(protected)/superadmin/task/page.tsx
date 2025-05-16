@@ -1,15 +1,11 @@
 "use client";
 
-import { createTab, deleteTab, updateTab } from "@/actions/tab";
 import { createTask, deleteTask, updateTask } from "@/actions/task";
 import { TaskModalForm } from "@/components/app-modal/task-modal-form";
 import { TaskDetailSheet } from "@/components/app-sheet/task-detail-sheet";
-import { TabManager } from "@/components/app-tab/tab-manager";
+// import { TagManager } from "@/components/app-tab/tab-manager";
 import { AppTable } from "@/components/app-table";
-import {
-	useGetTabs,
-	useGetTasks,
-} from "@/components/app-table/hooks/use-table-data";
+import { useGetTasks } from "@/components/app-table/hooks/use-table-data";
 import {
 	filterTask,
 	getTaskStatusFilters,
@@ -29,27 +25,19 @@ import { useModal } from "@/hooks/use-modal";
 import { useTaskTableSort } from "@/lib/store/task-store";
 import { useSubmit } from "@/lib/submitHandler";
 import type { TaskFormValues } from "@/lib/validations";
-import type { TabFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { AuroraText } from "@/components/animation-ui/aurora-text";
+
 export default function TaskPage() {
 	const queryClient = useQueryClient();
-	const [selectedTabId, setSelectedTabId] = useState<string | undefined>();
-	const { data: tasks, isLoading } = useGetTasks(selectedTabId);
+	const { data: tasks, isLoading } = useGetTasks();
 	const [selectedTask, setSelectedTask] = useState<TaskFormValues | null>(null);
 	const [isDetailOpen, setIsDetailOpen] = useState(false);
 	const { isOpen, openModal, closeModal } = useModal();
 	const [currentData, setCurrentData] = useState<TaskFormValues | null>(null);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const { sort, setSort } = useTaskTableSort();
-	const { data: tabs, isLoading: isTabsLoading } = useGetTabs();
-
-	useEffect(() => {
-		if (tabs && tabs.length > 0 && !selectedTabId) {
-			setSelectedTabId(tabs[0].id);
-		}
-	}, [tabs, selectedTabId]);
 
 	const { handleSubmit } = useSubmit<TaskFormValues>({
 		action: async (data) => {
@@ -100,45 +88,6 @@ export default function TaskPage() {
 		}
 	};
 
-	// タブの作成、更新、削除
-	const handleCreateTab = async (data: TabFormValues) => {
-		try {
-			await createTab(data.name);
-			CustomToast.success("タブを作成しました");
-			queryClient.invalidateQueries({ queryKey: ["tabs"] });
-		} catch (error) {
-			CustomToast.error("タブの作成に失敗しました");
-		}
-	};
-
-	const handleUpdateTab = async (data: TabFormValues) => {
-		try {
-			if (data.id) {
-				await updateTab(data.id, data.name);
-				CustomToast.success("タブを更新しました");
-				queryClient.invalidateQueries({ queryKey: ["tabs"] });
-			}
-		} catch (error) {
-			CustomToast.error("タブの更新に失敗しました");
-		}
-	};
-
-	const handleDeleteTab = async (
-		data: TabFormValues,
-		options: { moveTasksToTabId?: string; deleteTasks?: boolean },
-	) => {
-		try {
-			if (data.id) {
-				await deleteTab(data.id, options);
-				CustomToast.success("タブを削除しました");
-				queryClient.invalidateQueries({ queryKey: ["tabs"] });
-				queryClient.invalidateQueries({ queryKey: ["tasks"] });
-			}
-		} catch (error) {
-			CustomToast.error("タブの削除に失敗しました");
-		}
-	};
-
 	const handleAdd = () => {
 		// Sheetを開く前にselectedTaskとcurrentDataをリセット
 		setSelectedTask(null);
@@ -154,15 +103,6 @@ export default function TaskPage() {
 					<AuroraText>タスク管理</AuroraText>
 				</h2>
 			</div>
-
-			<TabManager
-				selectedTabId={selectedTabId}
-				onTabSelect={setSelectedTabId}
-				onTabCreate={handleCreateTab}
-				onTabUpdate={handleUpdateTab}
-				onTabDelete={handleDeleteTab}
-				tabs={tabs ?? []}
-			/>
 
 			<AppTable
 				sort={sort}
@@ -219,7 +159,6 @@ export default function TaskPage() {
 				onSubmit={handleSubmit}
 				defaultValues={selectedTask ?? undefined}
 				title={selectedTask ? "タスク編集" : "新規タスク登録"}
-				selectedTabId={selectedTabId}
 			/>
 
 			<Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>

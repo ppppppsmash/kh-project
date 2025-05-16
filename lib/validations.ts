@@ -30,7 +30,7 @@ export type MemberFormValues = z.infer<typeof memberFormSchema>;
 
 export const taskFormSchema = z.object({
 	id: z.string().optional(),
-	tabId: z.string(),
+	tagId: z.string().optional(),
 	taskId: z.string().optional(),
 	title: z.string().min(1, "項目名は必須です"),
 	content: z.string().min(1, "内容は必須です"),
@@ -92,10 +92,10 @@ export const userActivityFormSchema = z.object({
 });
 export type UserActivityFormValues = z.infer<typeof userActivityFormSchema>;
 
-export const tabFormSchema = z.object({
+export const tagFormSchema = z.object({
 	id: z.string().optional(),
-	name: z.string().min(1, "タブ名は必須です"),
+	name: z.string().min(1, "タグ名は必須です"),
 	createdAt: z.date().optional(),
 	updatedAt: z.date().optional(),
 });
-export type TabFormValues = z.infer<typeof tabFormSchema>;
+export type TagFormValues = z.infer<typeof tagFormSchema>;

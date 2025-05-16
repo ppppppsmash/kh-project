@@ -5,9 +5,9 @@ import { tasks } from "@/db/schema/tasks";
 import type { TaskFormValues } from "@/lib/validations";
 import { desc, eq } from "drizzle-orm";
 
-export const getTasks = async (tabId?: string): Promise<TaskFormValues[]> => {
-	if (tabId) {
-		const result = await db.select().from(tasks).where(eq(tasks.tabId, tabId));
+export const getTasks = async (): Promise<TaskFormValues[]> => {
+	const result = await db.select().from(tasks);
+
 		return result.map((task) => ({
 			...task,
 			progress: task.progress as TaskFormValues["progress"],
@@ -18,8 +18,6 @@ export const getTasks = async (tabId?: string): Promise<TaskFormValues[]> => {
 			createdAt: task.createdAt || new Date(),
 			updatedAt: task.updatedAt || new Date(),
 		}));
-	}
-	return [];
 };
 
 export const createTask = async (data: TaskFormValues) => {
@@ -40,7 +38,6 @@ export const createTask = async (data: TaskFormValues) => {
 	const taskData = {
 		...data,
 		taskId,
-		tabId: data.tabId,
 		link: data.link ?? "",
 		notes: data.notes ?? "",
 		startedAt: data.startedAt ?? new Date(),

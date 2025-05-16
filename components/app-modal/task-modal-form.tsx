@@ -26,7 +26,7 @@ interface TaskModalFormProps {
 	onClose: () => void;
 	defaultValues?: Partial<TaskFormValues>;
 	isOpen: boolean;
-	selectedTabId?: string;
+	selectedTagId?: string;
 }
 
 export const TaskModalForm = ({
@@ -35,7 +35,7 @@ export const TaskModalForm = ({
 	onSubmit,
 	defaultValues,
 	isOpen,
-	selectedTabId,
+	selectedTagId,
 }: TaskModalFormProps) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const isEdit = !!defaultValues;
@@ -72,10 +72,12 @@ export const TaskModalForm = ({
 		}
 	};
 
+	console.log(form.formState.errors);
+
 	useEffect(() => {
 		if (isOpen) {
 			form.reset({
-				tabId: selectedTabId || defaultValues?.tabId || "",
+				tagId: selectedTagId || defaultValues?.tagId || "",
 				taskId: defaultValues?.taskId || "",
 				title: defaultValues?.title || "",
 				content: defaultValues?.content || "",
@@ -91,7 +93,7 @@ export const TaskModalForm = ({
 				notes: defaultValues?.notes || "",
 			});
 		}
-	}, [isOpen, defaultValues, form, selectedTabId]);
+	}, [isOpen, defaultValues, form, selectedTagId]);
 
 	const handleAddCategory = () => {
 		if (newCategory && !categories.includes(newCategory)) {
@@ -101,6 +103,8 @@ export const TaskModalForm = ({
 			setShowNewCategoryInput(false);
 		}
 	};
+
+	//console.log(form.formState);
 
 	return (
 		<BaseModalForm
@@ -127,6 +131,20 @@ export const TaskModalForm = ({
 						</p>
 					)}
 				</div>
+				{/* <div className="space-y-2 w-full">
+					<Label htmlFor="tagId">タグ</Label>
+					<Select
+						id="tagId"
+						{...form.register("tagId")}
+					>
+						<SelectTrigger>
+							<SelectValue placeholder="タグを選択してください" />
+						</SelectTrigger>
+						<SelectContent>
+							<SelectItem value="new">新しいタグ</SelectItem>
+						</SelectContent>
+					</Select>
+				</div> */}
 			</div>
 
 			<div className="space-y-2">

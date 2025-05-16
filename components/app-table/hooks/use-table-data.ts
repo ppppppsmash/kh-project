@@ -1,6 +1,6 @@
 import { getClubActivity } from "@/actions/club-activity";
 import { getQA } from "@/actions/qa";
-import { getTabs } from "@/actions/tab";
+// import { getTags } from "@/actions/tag";
 import { getTasks } from "@/actions/task";
 import { getUserInfo, getUserList } from "@/actions/user";
 import { getUserActivity } from "@/actions/user-activity";
@@ -8,7 +8,7 @@ import type {
 	ClubFormValues,
 	MemberFormValues,
 	QaFormValues,
-	TabFormValues,
+	TagFormValues,
 	TaskFormValues,
 } from "@/lib/validations";
 import type { UserActivityFormValues } from "@/lib/validations";
@@ -42,17 +42,17 @@ export const useGetClubActivities = () => {
 	});
 };
 
-export const useGetTabs = () => {
-	return useQuery<TabFormValues[]>({
-		queryKey: ["tabs"],
-		queryFn: getTabs,
-	});
-};
+// export const useGetTags = () => {
+// 	return useQuery<TagFormValues[]>({
+// 		queryKey: ["tags"],
+// 		queryFn: getTags,
+// 	});
+// };
 
-export const useGetTasks = (tabId?: string) => {
+export const useGetTasks = () => {
 	return useQuery<TaskFormValues[]>({
-		queryKey: ["tasks", tabId],
-		queryFn: () => getTasks(tabId),
+		queryKey: ["tasks"],
+		queryFn: getTasks,
 	});
 };
 

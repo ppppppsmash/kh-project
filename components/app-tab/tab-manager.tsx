@@ -15,68 +15,68 @@ import {
 	DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
-import type { TabFormValues } from "@/lib/validations";
+import type { TagFormValues } from "@/lib/validations";
 import { MoreVertical } from "lucide-react";
 import { useState } from "react";
 
-interface TabManagerProps {
-	onTabSelect: (tabId: string) => void;
-	selectedTabId?: string;
-	onTabCreate: (data: TabFormValues) => Promise<void>;
-	onTabUpdate: (data: TabFormValues) => Promise<void>;
-	onTabDelete: (
-		data: TabFormValues,
-		options: { moveTasksToTabId?: string; deleteTasks?: boolean },
+interface TagManagerProps {
+	onTagSelect: (tagId: string) => void;
+	selectedTagId?: string;
+	onTagCreate: (data: TagFormValues) => Promise<void>;
+	onTagUpdate: (data: TagFormValues) => Promise<void>;
+	onTagDelete: (
+		data: TagFormValues,
+		options: { moveTasksToTagId?: string; deleteTasks?: boolean },
 	) => Promise<void>;
-	tabs: TabFormValues[];
+	tags: TagFormValues[];
 }
 
-export function TabManager({
-	onTabSelect,
-	selectedTabId,
-	onTabCreate,
-	onTabUpdate,
-	onTabDelete,
-	tabs,
-}: TabManagerProps) {
+export function TagManager({
+	onTagSelect,
+	selectedTagId,
+	onTagCreate,
+	onTagUpdate,
+	onTagDelete,
+	tags,
+}: TagManagerProps) {
 	const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 	const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 	const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
-	const [currentTab, setCurrentTab] = useState<TabFormValues | null>(null);
-	const [newTabName, setNewTabName] = useState("");
-	const [moveToTabId, setMoveToTabId] = useState("");
+	const [currentTag, setCurrentTag] = useState<TagFormValues | null>(null);
+	const [newTagName, setNewTagName] = useState("");
+	const [moveToTagId, setMoveToTagId] = useState("");
 
 	return (
 		<div className="flex flex-col space-y-4 mb-4">
 			<div className="flex justify-between items-center">
-				<h3 className="text-lg font-medium">タブ一覧</h3>
-				<Button onClick={() => setIsAddModalOpen(true)}>新規タブを追加</Button>
+				<h3 className="text-lg font-medium">タグ一覧</h3>
+				<Button onClick={() => setIsAddModalOpen(true)}>新規タグを追加</Button>
 			</div>
 
 			<div className="flex flex-wrap gap-2">
-				{tabs.map((tab) => (
+				{tags.map((tag) => (
 					<div
-						key={tab.id}
+						key={tag.id}
 						className={`group flex items-center gap-2 p-2 rounded-lg border ${
-							selectedTabId === tab.id
+							selectedTagId === tag.id
 								? "border-primary bg-primary/5"
 								: "border-border"
 						}`}
 					>
 						<div
 							className={`flex-1 text-center cursor-pointer ${
-								selectedTabId === tab.id ? "font-medium" : ""
+								selectedTagId === tag.id ? "font-medium" : ""
 							}`}
-							onClick={() => onTabSelect(tab.id ?? "")}
+							onClick={() => onTagSelect(tag.id ?? "")}
 							onKeyDown={(e) => {
 								if (e.key === "Enter" || e.key === " ") {
 									e.stopPropagation();
 								}
 							}}
 						>
-							{tab.name}
+							{tag.name}
 						</div>
-						{selectedTabId === tab.id && (
+						{selectedTagId === tag.id && (
 							<div className="transition-opacity">
 								<DropdownMenu>
 									<DropdownMenuTrigger asChild>
@@ -93,8 +93,8 @@ export function TabManager({
 										<DropdownMenuItem
 											onClick={(e) => {
 												e.stopPropagation();
-												setCurrentTab(tab);
-												setNewTabName(tab.name);
+												setCurrentTag(tag);
+												setNewTagName(tag.name);
 												setIsEditModalOpen(true);
 											}}
 										>
@@ -103,7 +103,7 @@ export function TabManager({
 										<DropdownMenuItem
 											onClick={(e) => {
 												e.stopPropagation();
-												setCurrentTab(tab);
+												setCurrentTag(tag);
 												setIsDeleteModalOpen(true);
 											}}
 											className="text-destructive"
@@ -122,20 +122,20 @@ export function TabManager({
 			<Dialog open={isAddModalOpen} onOpenChange={setIsAddModalOpen}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>新規タブを作成</DialogTitle>
+						<DialogTitle>新規タグを作成</DialogTitle>
 					</DialogHeader>
 					<form
 						onSubmit={async (e) => {
 							e.preventDefault();
-							await onTabCreate({ name: newTabName });
-							setNewTabName("");
+							await onTagCreate({ name: newTagName });
+							setNewTagName("");
 							setIsAddModalOpen(false);
 						}}
 					>
 						<Input
-							value={newTabName}
-							onChange={(e) => setNewTabName(e.target.value)}
-							placeholder="タブ名を入力"
+							value={newTagName}
+							onChange={(e) => setNewTagName(e.target.value)}
+							placeholder="タグ名を入力"
 							className="mb-4"
 						/>
 						<DialogFooter>
@@ -149,22 +149,22 @@ export function TabManager({
 			<Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
 				<DialogContent>
 					<DialogHeader>
-						<DialogTitle>タブを編集</DialogTitle>
+						<DialogTitle>タグを編集</DialogTitle>
 					</DialogHeader>
 					<form
 						onSubmit={async (e) => {
 							e.preventDefault();
-							if (currentTab) {
-								await onTabUpdate({ ...currentTab, name: newTabName });
-								setNewTabName("");
+							if (currentTag) {
+								await onTagUpdate({ ...currentTag, name: newTagName });
+								setNewTagName("");
 								setIsEditModalOpen(false);
 							}
 						}}
 					>
 						<Input
-							value={newTabName}
-							onChange={(e) => setNewTabName(e.target.value)}
-							placeholder="タブ名を入力"
+							value={newTagName}
+							onChange={(e) => setNewTagName(e.target.value)}
+							placeholder="タグ名を入力"
 							className="mb-4"
 						/>
 						<DialogFooter>
@@ -194,18 +194,18 @@ export function TabManager({
 									defaultChecked
 									className="h-4 w-4"
 								/>
-								<label htmlFor="moveTasks">タスクを別のタブに移動</label>
+								<label htmlFor="moveTasks">タスクを別のタグに移動</label>
 							</div>
 							<select
 								className="w-full p-2 border rounded-md"
-								onChange={(e) => setMoveToTabId(e.target.value)}
+								onChange={(e) => setMoveToTagId(e.target.value)}
 							>
-								<option value="">移動先のタブを選択</option>
-								{tabs
-									.filter((tab) => tab.id !== currentTab?.id)
-									.map((tab) => (
-										<option key={tab.id} value={tab.id}>
-											{tab.name}
+								<option value="">移動先のタグを選択</option>
+								{tags
+									.filter((tag: TagFormValues) => tag.id !== currentTag?.id)
+									.map((tag: TagFormValues) => (
+										<option key={tag.id} value={tag.id}>
+											{tag.name}
 										</option>
 									))}
 							</select>
@@ -231,16 +231,16 @@ export function TabManager({
 						<Button
 							variant="destructive"
 							onClick={async () => {
-								if (currentTab) {
+								if (currentTag) {
 									const taskAction = document.querySelector(
 										'input[name="taskAction"]:checked',
 									) as HTMLInputElement;
 									const options = {
-										moveTasksToTabId:
-											taskAction?.value === "move" ? moveToTabId : undefined,
+										moveTasksToTagId:
+											taskAction?.value === "move" ? moveToTagId : undefined,
 										deleteTasks: taskAction?.value === "delete",
 									};
-									await onTabDelete(currentTab, options);
+									await onTagDelete(currentTag, options);
 									setIsDeleteModalOpen(false);
 								}
 							}}
