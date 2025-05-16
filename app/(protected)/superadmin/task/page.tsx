@@ -27,6 +27,7 @@ import type { TaskFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { AuroraText } from "@/components/animation-ui/aurora-text";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export default function TaskPage() {
 	const queryClient = useQueryClient();
@@ -37,6 +38,7 @@ export default function TaskPage() {
 	const [currentData, setCurrentData] = useState<TaskFormValues | null>(null);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const { sort, setSort } = useTaskTableSort();
+	const [activeTab, setActiveTab] = useState("active");
 
 	const { handleSubmit } = useSubmit<TaskFormValues>({
 		action: async (data) => {
@@ -103,32 +105,65 @@ export default function TaskPage() {
 				</h2>
 			</div>
 
-			<AppTable
-				sort={sort}
-				onSortChange={setSort}
-				columns={renderTask({
-					onEdit: handleEdit,
-					onDelete: handleDelete,
-					onAdd: handleAdd,
-				})}
-				data={tasks ?? []}
-				loading={isLoading}
-				searchableKeys={["taskId", "title", "assignee", "dueDate"]}
-				toolBar={{
-					researchBarPlaceholder: "タスク検索",
-					researchStatusFilter: getTaskStatusFilters(),
-				}}
-				onFilter={filterTask}
-				onRowClick={(row: TaskFormValues) => {
-					setSelectedTask(row);
-					setIsDetailOpen(true);
-				}}
-				addButton={{
-					text: "新規タスク登録",
-					onClick: handleAdd,
-					className: "",
-				}}
-			/>
+			<Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+				<TabsList>
+					<TabsTrigger value="active">未完了のタスク</TabsTrigger>
+					<TabsTrigger value="completed">完了したタスク</TabsTrigger>
+				</TabsList>
+
+				<TabsContent value="active">
+					<AppTable
+						sort={sort}
+						onSortChange={setSort}
+						columns={renderTask({
+							onEdit: handleEdit,
+							onDelete: handleDelete,
+							onAdd: handleAdd,
+						})}
+						data={tasks?.filter(task => task.progress !== "completed") ?? []}
+						loading={isLoading}
+						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+						toolBar={{
+							researchBarPlaceholder: "タスク検索",
+							researchStatusFilter: getTaskStatusFilters().filter(status => status !== "完了"),
+						}}
+						onFilter={filterTask}
+						onRowClick={(row: TaskFormValues) => {
+							setSelectedTask(row);
+							setIsDetailOpen(true);
+						}}
+						addButton={{
+							text: "新規タスク登録",
+							onClick: handleAdd,
+							className: "",
+						}}
+					/>
+				</TabsContent>
+
+				<TabsContent value="completed">
+					<AppTable
+						sort={sort}
+						onSortChange={setSort}
+						columns={renderTask({
+							onEdit: handleEdit,
+							onDelete: handleDelete,
+							onAdd: handleAdd,
+						})}
+						data={tasks?.filter(task => task.progress === "completed") ?? []}
+						loading={isLoading}
+						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+						toolBar={{
+							researchBarPlaceholder: "タスク検索",
+							researchStatusFilter: ["すべて", "完了"],
+						}}
+						onFilter={filterTask}
+						onRowClick={(row: TaskFormValues) => {
+							setSelectedTask(row);
+							setIsDetailOpen(true);
+						}}
+					/>
+				</TabsContent>
+			</Tabs>
 
 			<TaskDetailSheet
 				task={selectedTask}
@@ -165,7 +200,7 @@ export default function TaskPage() {
 					<DialogHeader>
 						<DialogTitle>タスクの削除</DialogTitle>
 						<DialogDescription>
-							この部活動を削除してもよろしいですか？この操作は元に戻せません。
+							このタスクを削除してもよろしいですか？この操作は元に戻せません。
 						</DialogDescription>
 					</DialogHeader>
 					<DialogFooter>

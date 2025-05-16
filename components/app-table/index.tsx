@@ -76,6 +76,8 @@ interface TableProps<T> {
 	};
 	sort?: { key: string; order: "asc" | "desc" };
 	onSortChange?: (sort: { key: string; order: "asc" | "desc" }) => void;
+	statusFilter?: string;
+	onStatusFilterChange?: (status: string) => void;
 }
 
 export function AppTable<T>({
@@ -89,11 +91,14 @@ export function AppTable<T>({
 	addButton,
 	sort,
 	onSortChange,
+	statusFilter: externalStatusFilter,
+	onStatusFilterChange,
 }: TableProps<T>) {
 	const [reload, setReload] = useState(false);
 	const [filteredData, setFilteredData] = useState<T[]>(data);
 	const [searchQuery, setSearchQuery] = useState("");
-	const [statusFilter, setStatusFilter] = useState<string>("すべて");
+	const [internalStatusFilter, setInternalStatusFilter] = useState<string>("すべて");
+	const statusFilter = externalStatusFilter ?? internalStatusFilter;
 	const [currentPage, setCurrentPage] = useState(1);
 	const { itemsPerPage, setItemsPerPage } = useTableStore();
 
@@ -109,6 +114,14 @@ export function AppTable<T>({
 			onSortChange(newSort);
 		} else {
 			setLocalSort(newSort);
+		}
+	};
+
+	const handleStatusFilterChange = (newStatus: string) => {
+		if (onStatusFilterChange) {
+			onStatusFilterChange(newStatus);
+		} else {
+			setInternalStatusFilter(newStatus);
 		}
 	};
 
@@ -239,7 +252,7 @@ export function AppTable<T>({
 						)}
 						{toolBar?.researchStatusFilter && (
 							<div className="flex items-center gap-2">
-								<Select value={statusFilter} onValueChange={setStatusFilter}>
+								<Select value={statusFilter} onValueChange={handleStatusFilterChange}>
 									<SelectTrigger className="w-[180px]">
 										<div className="flex items-center gap-2">
 											<Filter className="h-4 w-4" />
@@ -260,7 +273,7 @@ export function AppTable<T>({
 										size="sm"
 										onClick={() => {
 											setSearchQuery("");
-											setStatusFilter("すべて");
+											handleStatusFilterChange("すべて");
 											handleSortChange({ key: "taskId", order: "asc" });
 										}}
 									>

@@ -13,7 +13,7 @@ import {
 import { cn, formatDate } from "@/lib/utils";
 import { getProgressColor, getProgressLabel } from "@/lib/utils";
 import type { TaskFormValues } from "@/lib/validations";
-import { Eye, EyeOff, MoreHorizontal, Pencil, Trash } from "lucide-react";
+import { MoreHorizontal, Pencil, Trash } from "lucide-react";
 
 type TaskColumnOptions = {
 	onEdit?: (row: TaskFormValues, e: React.MouseEvent) => void;
@@ -53,8 +53,6 @@ export const filterTask = (
 					return statusFilter === "未着手";
 				case "inProgress":
 					return statusFilter === "進行中";
-				case "completed":
-					return statusFilter === "完了";
 				default:
 					return false;
 			}
@@ -68,7 +66,6 @@ export const getTaskStatusFilters = () => [
 	"すべて",
 	"未着手",
 	"進行中",
-	"完了",
 ];
 
 export const renderTask = ({
@@ -139,15 +136,15 @@ export const renderTask = ({
 			);
 		},
 	},
-	{
-		key: "completedAt",
-		title: "完了日",
-		sortable: true,
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		render: (value: any) => (
-			<span>{value ? formatDate(value, "yyyy/MM/dd") : "-"}</span>
-		),
-	},
+	// {
+	// 	key: "completedAt",
+	// 	title: "完了日",
+	// 	sortable: true,
+	// 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+	// 	render: (value: any) => (
+	// 		<span>{value ? formatDate(value, "yyyy/MM/dd") : "-"}</span>
+	// 	),
+	// },
 	// {
 	//   key: "isPublic",
 	//   title: "公開",
