@@ -1,13 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import confetti from "canvas-confetti";
 
 export const Confetti = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       triggerConfetti();
-    }, 1000);
+    }, 100);
 
     return () => clearTimeout(timer);
   }, []);
@@ -35,7 +35,7 @@ export const Confetti = () => {
       })
 
       if (Date.now() < end) {
-        requestAnimationFrame(frame)
+        requestAnimationFrame(frame);
       }
     })();
   };
