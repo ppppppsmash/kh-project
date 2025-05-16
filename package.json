@@ -35,6 +35,7 @@
 		"@tabler/icons-react": "^3.31.0",
 		"@tanstack/react-query": "^5.74.3",
 		"@vercel/blob": "^1.0.0",
+		"canvas-confetti": "^1.9.3",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
 		"date-fns": "^4.1.0",

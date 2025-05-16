@@ -3,7 +3,6 @@
 import { createTask, deleteTask, updateTask } from "@/actions/task";
 import { TaskModalForm } from "@/components/app-modal/task-modal-form";
 import { TaskDetailSheet } from "@/components/app-sheet/task-detail-sheet";
-// import { TagManager } from "@/components/app-tab/tab-manager";
 import { AppTable } from "@/components/app-table";
 import { useGetTasks } from "@/components/app-table/hooks/use-table-data";
 import {
