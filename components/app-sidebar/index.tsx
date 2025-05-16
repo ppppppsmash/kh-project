@@ -1,7 +1,8 @@
 "use client";
 
+import type * as React from "react";
 import { NavMain } from "@/components/app-sidebar/nav-main";
-import { NavSecondary } from "@/components/app-sidebar/nav-secondary";
+// import { NavSecondary } from "@/components/app-sidebar/nav-secondary";
 // import { NavDocuments } from "@/components/app-sidebar/nav-document";
 import { NavUser } from "@/components/app-sidebar/nav-user";
 import {
@@ -14,7 +15,7 @@ import {
 	SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { navConfig } from "@/config";
-import type * as React from "react";
+import { StarText } from "@/components/animation-ui/star-text";
 
 export const AppSidebar = ({
 	...props
@@ -29,7 +30,9 @@ export const AppSidebar = ({
 							className="data-[slot=sidebar-menu-button]:!p-1.5"
 						>
 							<a href="/admin/dashboard">
-								<span className="text-base font-semibold">ADiXi MGR</span>
+								<StarText className="py-6">
+									ADiXi MGR
+								</StarText>
 							</a>
 						</SidebarMenuButton>
 					</SidebarMenuItem>
