@@ -4,6 +4,7 @@ import { db } from "@/db";
 import { tasks } from "@/db/schema/tasks";
 import type { TaskFormValues } from "@/lib/validations";
 import { desc, eq } from "drizzle-orm";
+import { sendSlackMessage } from "@/lib/slackMessage";
 
 export const getTasks = async (): Promise<TaskFormValues[]> => {
 	const result = await db.select().from(tasks);
@@ -26,6 +27,7 @@ export const createTask = async (data: TaskFormValues) => {
 		.from(tasks)
 		.orderBy(desc(tasks.taskId))
 		.limit(1);
+
 	let taskId = "T001";
 	if (lastTaskRecord.length > 0 && lastTaskRecord[0].taskId) {
 		const match = lastTaskRecord[0].taskId.match(/T(\d+)/);
@@ -45,6 +47,8 @@ export const createTask = async (data: TaskFormValues) => {
 		updatedAt: new Date(),
 	};
 	const newTask = await db.insert(tasks).values(taskData).returning();
+
+	await sendSlackMessage({ message: `${taskData.title}` });
 
 	return newTask;
 };
