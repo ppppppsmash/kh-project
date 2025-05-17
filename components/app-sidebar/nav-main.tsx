@@ -68,7 +68,7 @@ export const NavMain = ({
 																asChild
 																className={cn(
 																	pathname === sub.url &&
-																		"bg-primary text-sidebar-primary-foreground",
+																		"bg-primary text-primary-foreground",
 																)}
 															>
 																<Link href={sub.url}>

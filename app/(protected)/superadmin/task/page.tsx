@@ -99,7 +99,7 @@ export default function TaskPage() {
 
 	return (
 		<div className="mx-auto">
-			<div className="flex justify-between items-center mb-8">
+			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-3xl font-bold">
 					<AuroraText>タスク管理</AuroraText>
 				</h2>

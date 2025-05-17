@@ -114,15 +114,6 @@ export default function AdminQAPage() {
 				<AddButton text="新規QA登録" onClick={handleAdd} />
 			</div>
 
-			<div className="flex flex-col gap-2 mb-4">
-				<Button variant="outline" className="w-fit" asChild>
-					<Link target="_blank" href="/adixi-public/qa/">
-						<IconExternalLink className="w-4 h-4" />
-						リーダー向けのQAページ
-					</Link>
-				</Button>
-			</div>
-
 			<QaModalForm
 				type={role || ""}
 				isOpen={isOpen}

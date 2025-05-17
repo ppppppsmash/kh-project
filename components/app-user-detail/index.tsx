@@ -81,7 +81,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 									<Heart className="w-5 h-5" />
 									<h3 className="font-medium">趣味・特技</h3>
 								</div>
-								<p className="text-lg whitespace-pre-line bg-white p-4 rounded-lg shadow-sm">
+								<p className="text-lg whitespace-pre-line p-4 rounded-lg shadow-sm">
 									{user?.hobby || "未設定"}
 								</p>
 							</div>
@@ -121,7 +121,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 									<BicepsFlexed className="w-5 h-5" />
 									<h3 className="font-medium">得意な技術・スキル</h3>
 								</div>
-								<p className="text-lg whitespace-pre-line bg-white p-4 rounded-lg shadow-sm">
+								<p className="text-lg whitespace-pre-line p-4 rounded-lg shadow-sm">
 									{user?.skills_message || "未設定"}
 								</p>
 							</div>
@@ -133,7 +133,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 										<MessageSquare className="w-5 h-5" />
 										<h3 className="font-medium">自由記載欄</h3>
 									</div>
-									<p className="text-lg whitespace-pre-line bg-white p-4 rounded-lg shadow-sm">
+									<p className="text-lg whitespace-pre-line p-4 rounded-lg shadow-sm">
 										{user.freeText}
 									</p>
 								</div>

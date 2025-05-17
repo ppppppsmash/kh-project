@@ -50,7 +50,11 @@ export default async function RootLayout({
 				>
 					<ActiveThemeProvider initialTheme={activeThemeValue}>
 						<AuthProvider>
-							<QueryProvider>{children}</QueryProvider>
+							<QueryProvider>
+								<div className="h-[100svh] overflow-hidden">
+									{children}
+								</div>
+							</QueryProvider>
 						</AuthProvider>
 					</ActiveThemeProvider>
 				</ThemeProvider>

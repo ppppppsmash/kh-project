@@ -48,14 +48,7 @@ export default function UserPage() {
 				</h2>
 				<EditButton text="編集" onClick={handleEdit} />
 			</div>
-			<div className="space-y-8">
-				<Button variant="outline">
-					<FilePenLine className="h-4 w-4" />
-					<Link target="_blank" href="/adixi-public/member/">
-						LDRページへ
-					</Link>
-				</Button>
-
+			<div className="space-y-8 overflow-y-auto h-[calc(100svh-100px)]">
 				<UserModalForm
 					isOpen={isOpen}
 					onClose={closeModal}

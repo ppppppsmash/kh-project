@@ -115,111 +115,114 @@ export const AccordionTable = <T extends Record<string, unknown>>({
 				)}
 			</div>
 
-			<div className="space-y-4">
-				{currentItems.length > 0 ? (
-					<Accordion type="single" collapsible className="w-full">
-						{currentItems.map((item) => (
-							<AccordionItem
-								key={String(item[idField])}
-								value={String(item[idField])}
-							>
-								<AccordionTrigger className="hover:no-underline">
-									<div className="flex w-full flex-col items-start gap-x-4 text-left sm:flex-row sm:items-center">
-										{columns.map((column) => (
-											<div key={String(column.key)} className="flex-1">
-												{column.render
-													? column.render(item)
-													: String(item[column.key])}
+			<div className="overflow-auto max-h-[70svh]">
+				<div className="space-y-4">
+					{currentItems.length > 0 ? (
+						<Accordion type="single" collapsible className="w-full">
+							{currentItems.map((item) => (
+								<AccordionItem
+									key={String(item[idField])}
+									value={String(item[idField])}
+								>
+									<AccordionTrigger className="hover:no-underline">
+										<div className="flex w-full flex-col items-start gap-x-4 text-left sm:flex-row sm:items-center">
+											{columns.map((column) => (
+												<div key={String(column.key)} className="flex-1">
+													{column.render
+														? column.render(item)
+														: String(item[column.key])}
+												</div>
+											))}
+											<div className="flex items-center gap-2">
+												{onEdit && (
+													<Button
+														variant="ghost"
+														size="icon"
+														onClick={(e) => {
+															e.stopPropagation();
+															onEdit(item);
+														}}
+													>
+														<Pencil className="h-4 w-4" />
+													</Button>
+												)}
+												{onDelete && (
+													<Button
+														variant="ghost"
+														size="icon"
+														onClick={(e) => {
+															e.stopPropagation();
+															onDelete(item[idField]);
+														}}
+													>
+														<Trash2 className="h-4 w-4" />
+													</Button>
+												)}
 											</div>
-										))}
-										<div className="flex items-center gap-2">
-											{onEdit && (
-												<Button
-													variant="ghost"
-													size="icon"
-													onClick={(e) => {
-														e.stopPropagation();
-														onEdit(item);
-													}}
-												>
-													<Pencil className="h-4 w-4" />
-												</Button>
-											)}
-											{onDelete && (
-												<Button
-													variant="ghost"
-													size="icon"
-													onClick={(e) => {
-														e.stopPropagation();
-														onDelete(item[idField]);
-													}}
-												>
-													<Trash2 className="h-4 w-4" />
-												</Button>
-											)}
 										</div>
-									</div>
-								</AccordionTrigger>
-								<AccordionContent>{renderContent(item)}</AccordionContent>
-							</AccordionItem>
-						))}
-					</Accordion>
-				) : (
-					<div className="rounded-md border p-8 text-center text-sm">
-						該当するデータがありません
-					</div>
-				)}
+									</AccordionTrigger>
+									<AccordionContent>{renderContent(item)}</AccordionContent>
+								</AccordionItem>
+							))}
+						</Accordion>
+					) : (
+						<div className="rounded-md border p-8 text-center text-sm">
+							該当するデータがありません
+						</div>
+					)}
+				</div>
 			</div>
 
-			{totalPages > 1 && (
-				<Pagination className="mt-4">
-					<PaginationContent>
-						<PaginationItem>
-							<PaginationPrevious
-								href="#"
-								onClick={(e) => {
-									e.preventDefault();
-									if (currentPage > 1) setCurrentPage(currentPage - 1);
-								}}
-								className={
-									currentPage === 1 ? "pointer-events-none opacity-50" : ""
-								}
-							/>
-						</PaginationItem>
-
-						{Array.from({ length: totalPages }).map((_, i) => (
-							// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-							<PaginationItem key={i}>
-								<PaginationLink
+				{totalPages > 1 && (
+					<Pagination className="mt-4">
+						<PaginationContent>
+							<PaginationItem>
+								<PaginationPrevious
 									href="#"
 									onClick={(e) => {
 										e.preventDefault();
-										setCurrentPage(i + 1);
+										if (currentPage > 1) setCurrentPage(currentPage - 1);
 									}}
-									isActive={currentPage === i + 1}
-								>
-									{i + 1}
-								</PaginationLink>
+									className={
+										currentPage === 1 ? "pointer-events-none opacity-50" : ""
+									}
+								/>
 							</PaginationItem>
-						))}
 
-						<PaginationItem>
-							<PaginationNext
-								href="#"
-								onClick={(e) => {
-									e.preventDefault();
-									if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-								}}
-								className={
-									currentPage === totalPages
-										? "pointer-events-none opacity-50"
-										: ""
-								}
-							/>
-						</PaginationItem>
-					</PaginationContent>
-				</Pagination>
-			)}
-		</div>
+							{Array.from({ length: totalPages }).map((_, i) => (
+								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+								<PaginationItem key={i}>
+									<PaginationLink
+										href="#"
+										onClick={(e) => {
+											e.preventDefault();
+											setCurrentPage(i + 1);
+										}}
+										isActive={currentPage === i + 1}
+									>
+										{i + 1}
+									</PaginationLink>
+								</PaginationItem>
+							))}
+
+							<PaginationItem>
+								<PaginationNext
+									href="#"
+									onClick={(e) => {
+										e.preventDefault();
+										if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+									}}
+									className={
+										currentPage === totalPages
+											? "pointer-events-none opacity-50"
+											: ""
+									}
+								/>
+							</PaginationItem>
+						</PaginationContent>
+					</Pagination>
+				)}
+			</div>
+		
 	);
 };
