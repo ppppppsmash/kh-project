@@ -267,14 +267,17 @@ export function AppTable<T>({
 										))}
 									</SelectContent>
 								</Select>
-								{(searchQuery || statusFilter !== "すべて" || currentSort) && (
+								{(searchQuery || statusFilter !== "すべて" || 
+									(currentSort && (currentSort.key !== sort?.key || currentSort.order !== sort?.order))) && (
 									<Button
 										variant="outline"
 										size="sm"
 										onClick={() => {
 											setSearchQuery("");
 											handleStatusFilterChange("すべて");
-											handleSortChange({ key: "taskId", order: "asc" });
+											if (sort) {
+												handleSortChange({ key: sort.key, order: sort.order });
+											}
 										}}
 									>
 										<X className="h-3.5 w-3.5" />
