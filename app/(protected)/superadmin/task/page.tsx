@@ -28,6 +28,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { AuroraText } from "@/components/animation-ui/aurora-text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { useTaskStatus } from "@/lib/store/task-store";
 
 export default function TaskPage() {
 	const queryClient = useQueryClient();
@@ -38,7 +39,7 @@ export default function TaskPage() {
 	const [currentData, setCurrentData] = useState<TaskFormValues | null>(null);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const { sort, setSort } = useTaskTableSort();
-	const [activeTab, setActiveTab] = useState("active");
+	const { activeTab, setActiveTab } = useTaskStatus();
 
 	const { handleSubmit } = useSubmit<TaskFormValues>({
 		action: async (data) => {
@@ -105,7 +106,7 @@ export default function TaskPage() {
 				</h2>
 			</div>
 
-			<Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+			<Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "active" | "completed")} className="space-y-4">
 				<TabsList>
 					<TabsTrigger value="active">未完了のタスク</TabsTrigger>
 					<TabsTrigger value="completed">完了したタスク</TabsTrigger>
@@ -154,10 +155,9 @@ export default function TaskPage() {
 						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
 						toolBar={{
 							researchBarPlaceholder: "タスク検索",
-							researchStatusFilter: ["すべて", "未着手", "進行中"],
+							researchStatusFilter: ["すべて", "完了"],
 						}}
 						onFilter={filterTask}
-						statusFilter={activeTab === "completed" ? "完了" : "すべて"}
 						onRowClick={(row: TaskFormValues) => {
 							setSelectedTask(row);
 							setIsDetailOpen(true);
