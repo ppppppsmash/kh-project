@@ -314,105 +314,99 @@ export function AppTable<T>({
 			)}
 
 			<div className="relative">
-				<div className="max-h-[67svh] flex flex-col">
-					<div className="flex-none">
-						<Table>
-							<TableHeader className="bg-background">
-								<TableRow>
-									{columns.map((column) => {
-										const isSorted = currentSort?.key === column.key;
-										const sortIcon = isSorted ? (
-											currentSort.order === "asc" ? (
-												<ChevronUp className="ml-1 h-4 w-4" />
-											) : (
-												<ChevronDown className="ml-1 h-4 w-4" />
-											)
+				<div className="max-h-[67svh] overflow-auto">
+					<Table>
+						<TableHeader className="bg-background sticky top-0">
+							<TableRow>
+								{columns.map((column) => {
+									const isSorted = currentSort?.key === column.key;
+									const sortIcon = isSorted ? (
+										currentSort.order === "asc" ? (
+											<ChevronUp className="ml-1 h-4 w-4" />
 										) : (
-											column.sortable && (
-												<ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />
-											)
-										);
+											<ChevronDown className="ml-1 h-4 w-4" />
+										)
+									) : (
+										column.sortable && (
+											<ArrowUpDown className="ml-1 h-4 w-4 opacity-50" />
+										)
+									);
 
-										const className = [
-											"cursor-pointer hover:bg-muted/50",
-											column.hide === "md" ? "hidden md:table-cell" : "",
-											column.hide === "lg" ? "hidden lg:table-cell" : "",
-											column.align === "right" ? "text-right" : "",
-										]
-											.filter(Boolean)
-											.join(" ");
+									const className = [
+										"cursor-pointer hover:bg-muted/50",
+										column.hide === "md" ? "hidden md:table-cell" : "",
+										column.hide === "lg" ? "hidden lg:table-cell" : "",
+										column.align === "right" ? "text-right" : "",
+									]
+										.filter(Boolean)
+										.join(" ");
 
-										return (
-											<TableHead
-												key={column.key as string}
-												className={className}
-												onClick={
-													column.sortable
-														? () =>
-																handleSortChange({
-																	key: column.key as string,
-																	order: currentSort.order === "asc" ? "desc" : "asc",
-																})
-														: undefined
-												}
-											>
-												{sortIcon ? (
-													<div className="flex items-center">
-														{column.title}
-														{sortIcon}
-													</div>
-												) : (
-													<>{column.title}</>
-												)}
-											</TableHead>
-										);
-									})}
-								</TableRow>
-							</TableHeader>
-						</Table>
-					</div>
-					<div className="flex-1 overflow-auto">
-						<Table>
-							<TableBody>
-								{loading ? (
-									Array.from({ length: 5 }).map((_, index) => (
-										// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-										<TableRow key={index}>
-											{columns.map((column) => (
-												<TableCell key={String(column.key)}>
-													<Skeleton className="h-4 w-[100px]" />
-												</TableCell>
-											))}
-										</TableRow>
-									))
-								) : paginatedData.length === 0 ? (
-									<TableRow>
-										<TableCell colSpan={columns.length} className="h-24 text-center">
-											検索条件に一致するデータがありません
-										</TableCell>
-									</TableRow>
-								) : (
-									paginatedData.map((row, index) => (
-										<TableRow
-											// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-											key={index}
-											className={onRowClick ? "cursor-pointer hover:bg-muted/50" : ""}
-											onClick={() => onRowClick?.(row)}
+									return (
+										<TableHead
+											key={column.key as string}
+											className={className}
+											onClick={
+												column.sortable
+													? () =>
+															handleSortChange({
+																key: column.key as string,
+																order: currentSort.order === "asc" ? "desc" : "asc",
+															})
+													: undefined
+											}
 										>
-											{columns.map((column) => (
-												<TableCellItem
-													key={column.key as string}
-													value={row[column.key as keyof T]}
-													render={column.render}
-													row={row}
-												/>
-											))}
-										</TableRow>
-									))
-								)}
-							</TableBody>
-						</Table>
-					</div>
+											{sortIcon ? (
+												<div className="flex items-center">
+													{column.title}
+													{sortIcon}
+												</div>
+											) : (
+												<>{column.title}</>
+											)}
+										</TableHead>
+									);
+								})}
+							</TableRow>
+						</TableHeader>
+						<TableBody>
+							{loading ? (
+								Array.from({ length: 5 }).map((_, index) => (
+									// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+									<TableRow key={index}>
+										{columns.map((column) => (
+											<TableCell key={String(column.key)}>
+												<Skeleton className="h-4 w-[100px]" />
+											</TableCell>
+										))}
+									</TableRow>
+								))
+							) : paginatedData.length === 0 ? (
+								<TableRow>
+									<TableCell colSpan={columns.length} className="h-24 text-center">
+										検索条件に一致するデータがありません
+									</TableCell>
+								</TableRow>
+							) : (
+								paginatedData.map((row, index) => (
+									<TableRow
+										// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+										key={index}
+										className={onRowClick ? "cursor-pointer hover:bg-muted/50" : ""}
+										onClick={() => onRowClick?.(row)}
+									>
+										{columns.map((column) => (
+											<TableCellItem
+												key={column.key as string}
+												value={row[column.key as keyof T]}
+												render={column.render}
+												row={row}
+											/>
+										))}
+									</TableRow>
+								))
+							)}
+						</TableBody>
+					</Table>
 				</div>
 			</div>
 

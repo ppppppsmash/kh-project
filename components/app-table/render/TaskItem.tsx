@@ -99,7 +99,7 @@ export const renderTask = ({
 		title: "カテゴリー",
 		sortable: false,
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		render: (value: any) => <span>{value}</span>,
+		render: (value: any) => <span>{value || "-"}</span>,
 	},
 	{
 		key: "startedAt",

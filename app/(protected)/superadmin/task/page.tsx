@@ -154,9 +154,10 @@ export default function TaskPage() {
 						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
 						toolBar={{
 							researchBarPlaceholder: "タスク検索",
-							researchStatusFilter: ["すべて", "完了"],
+							researchStatusFilter: ["すべて", "未着手", "進行中"],
 						}}
 						onFilter={filterTask}
+						statusFilter={activeTab === "completed" ? "完了" : "すべて"}
 						onRowClick={(row: TaskFormValues) => {
 							setSelectedTask(row);
 							setIsDetailOpen(true);
