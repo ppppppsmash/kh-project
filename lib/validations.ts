@@ -30,7 +30,6 @@ export type MemberFormValues = z.infer<typeof memberFormSchema>;
 
 export const taskFormSchema = z.object({
 	id: z.string().optional(),
-	tagId: z.string().optional(),
 	taskId: z.string().optional(),
 	title: z.string().min(1, "項目名は必須です"),
 	content: z.string().min(1, "内容は必須です"),
@@ -49,7 +48,6 @@ export const taskFormSchema = z.object({
 	createdAt: z.date().optional(),
 	updatedAt: z.date().optional(),
 	completedAt: z.date().nullable().optional(),
-	isPublic: z.boolean().default(false).optional(),
 });
 export type TaskFormValues = z.infer<typeof taskFormSchema>;
 

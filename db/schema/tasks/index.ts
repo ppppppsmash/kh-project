@@ -1,12 +1,10 @@
 import {
-	boolean,
 	pgTable,
 	timestamp,
 	uuid,
 	varchar,
 } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
-import { tags } from "../tags";
 
 export const tasks = pgTable("tasks", {
 	id: uuid("id").primaryKey().$defaultFn(uuidv7),

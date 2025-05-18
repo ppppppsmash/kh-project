@@ -10,7 +10,6 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@/components/ui/select";
-import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDateForInput } from "@/lib/utils";
 import { type TaskFormValues, taskFormSchema } from "@/lib/validations";
@@ -71,7 +70,6 @@ export const TaskModalForm = ({
 				progressDetails: data.progressDetails || "",
 				link: data.link || "",
 				notes: data.notes || "",
-				isPublic: data.isPublic || false,
 			};
 
 			await onSubmit(taskData);
@@ -95,7 +93,6 @@ export const TaskModalForm = ({
 	useEffect(() => {
 		if (isOpen) {
 			form.reset({
-				tagId: selectedTagId || defaultValues?.tagId || "",
 				taskId: defaultValues?.taskId || "",
 				title: defaultValues?.title || "",
 				content: defaultValues?.content || "",
@@ -105,13 +102,12 @@ export const TaskModalForm = ({
 				completedAt: defaultValues?.completedAt || undefined,
 				progress: defaultValues?.progress || "pending",
 				category: defaultValues?.category || "",
-				isPublic: defaultValues?.isPublic || false,
 				progressDetails: defaultValues?.progressDetails || "",
 				link: defaultValues?.link || "",
 				notes: defaultValues?.notes || "",
 			});
 		}
-	}, [isOpen, defaultValues, form, selectedTagId]);
+	}, [isOpen, defaultValues, form]);
 
 	const handleAddCategory = () => {
 		if (newCategory && !categories.includes(newCategory)) {
