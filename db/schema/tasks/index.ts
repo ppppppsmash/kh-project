@@ -24,7 +24,6 @@ export const tasks = pgTable("tasks", {
 	category: varchar("category", { length: 255 }),
 	startedAt: timestamp("started_at").notNull(),
 	completedAt: timestamp("completed_at"),
-	isPublic: boolean("is_public").notNull().default(false),
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at")
 		.defaultNow()

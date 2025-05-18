@@ -145,15 +145,6 @@ export const renderTask = ({
 	// 		<span>{value ? formatDate(value, "yyyy/MM/dd") : "-"}</span>
 	// 	),
 	// },
-	// {
-	//   key: "isPublic",
-	//   title: "公開",
-	//   sortable: false,
-	//   render: (value: any) => (
-	//     <span>{value ? <Eye className="h-4 w-4" /> : <EyeOff className="h-4 w-4" />}</span>
-	//   ),
-	// },
-
 	...createTaskColumns({ onEdit, onDelete, onAdd }),
 ];
 

@@ -329,17 +329,6 @@ export const TaskModalForm = ({
 							</div>
 						)}
 					</div>
-					<div className="space-y-2">
-						<Label htmlFor="isPublic">公開</Label>
-						<Switch
-							id="isPublic"
-							className="mt-2"
-							checked={form.watch("isPublic")}
-							onCheckedChange={(value: boolean) =>
-								form.setValue("isPublic", value)
-							}
-						/>
-					</div>
 				</div>
 
 				<div className="space-y-2">

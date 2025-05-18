@@ -176,6 +176,13 @@
       "when": 1747397903560,
       "tag": "0024_massive_nick_fury",
       "breakpoints": true
+    },
+    {
+      "idx": 25,
+      "version": "7",
+      "when": 1747572123968,
+      "tag": "0025_curly_captain_midlands",
+      "breakpoints": true
     }
   ]
 }
