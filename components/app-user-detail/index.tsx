@@ -22,13 +22,13 @@ interface UserDetailProps {
 
 export const UserDetail = ({ user }: UserDetailProps) => {
 	return (
-		<div className="container mx-auto">
-			<Card className="overflow-hidden border-none shadow-lg">
+		<div className="max-w-full w-full">
+			<Card className="overflow-hidden">
 				<CardContent className="p-0">
-					<div className="grid md:grid-cols-2 gap-2 p-8">
+					<div className="grid md:grid-cols-2 gap-6 p-6">
 						{/* 左側：プロフィール画像 */}
 						<div className="flex flex-col items-center space-y-4">
-							<div className="relative w-80 h-80 rounded-lg overflow-hidden shadow-xl">
+							<div className="relative w-150 h-150 rounded-lg overflow-hidden">
 								{user?.photoUrl ? (
 									<Image
 										src={user.photoUrl}
@@ -49,7 +49,9 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 							</h1>
 						</div>
 
-						<div className="space-y-6">
+						{/* 右側：情報 */}
+						<div className="space-y-4">
+							{/* メールアドレス */}
 							<div className="space-y-2">
 								<div className="flex items-center gap-2 text-gray-600">
 									<Mail className="w-5 h-5" />
@@ -57,8 +59,9 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 								</div>
 								<p className="text-lg">{user?.email || "未設定"}</p>
 							</div>
+
 							{/* 基本情報 */}
-							<div className="grid grid-cols-2 gap-6">
+							<div className="grid grid-cols-2 gap-4">
 								<div className="space-y-2">
 									<div className="flex items-center gap-2 text-gray-600">
 										<Building2 className="w-5 h-5" />
@@ -81,17 +84,18 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 									<Heart className="w-5 h-5" />
 									<h3 className="font-medium">趣味・特技</h3>
 								</div>
-								<p className="text-lg whitespace-pre-line p-4 rounded-lg shadow-sm">
+								<p className="text-lg whitespace-pre-line p-4 rounded-lg bg-gray-50">
 									{user?.hobby || "未設定"}
 								</p>
 							</div>
 
+							{/* 言語スキル */}
 							<div className="space-y-2">
 								<div className="flex items-center gap-2 text-gray-600">
 									<Code2 className="w-5 h-5" />
 									<h3 className="font-medium">言語</h3>
 								</div>
-								<p className="flex flex-wrap gap-x-4">
+								<div className="flex flex-wrap gap-2">
 									{user?.skills &&
 									user.skills.filter((skill) => skill && skill.trim() !== "")
 										.length > 0 ? (
@@ -99,20 +103,20 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 											.filter((skill) => skill && skill.trim() !== "")
 											.map((skill, index) => (
 												<Badge
-													// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
+													// biome-ignore lint/suspicious/noArrayIndexKey: <explanation></explanation>
 													key={index}
 													variant="outline"
-													className="text-sm"
+													className="text-sm bg-gray-50"
 												>
 													{skill}
 												</Badge>
 											))
 									) : (
-										<span className="text-muted-foreground text-xs">
+										<span className="text-muted-foreground text-sm">
 											未設定
 										</span>
 									)}
-								</p>
+								</div>
 							</div>
 
 							{/* スキル */}
@@ -121,7 +125,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 									<BicepsFlexed className="w-5 h-5" />
 									<h3 className="font-medium">得意な技術・スキル</h3>
 								</div>
-								<p className="text-lg whitespace-pre-line p-4 rounded-lg shadow-sm">
+								<p className="text-lg whitespace-pre-line p-4 rounded-lg bg-gray-50">
 									{user?.skills_message || "未設定"}
 								</p>
 							</div>
@@ -133,7 +137,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 										<MessageSquare className="w-5 h-5" />
 										<h3 className="font-medium">自由記載欄</h3>
 									</div>
-									<p className="text-lg whitespace-pre-line p-4 rounded-lg shadow-sm">
+									<p className="text-lg whitespace-pre-line p-4 rounded-lg bg-gray-50">
 										{user.freeText}
 									</p>
 								</div>
