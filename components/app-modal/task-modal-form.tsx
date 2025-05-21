@@ -109,9 +109,22 @@ export const TaskModalForm = ({
 		}
 	}, [isOpen, defaultValues, form]);
 
+	// カテゴリーの初期化
+	useEffect(() => {
+		if (defaultValues?.category) {
+			setCategories(prev => {
+				const category = defaultValues.category;
+				if (category && !prev.includes(category)) {
+					return [...prev, category];
+				}
+				return prev;
+			});
+		}
+	}, [defaultValues?.category]);
+
 	const handleAddCategory = () => {
 		if (newCategory && !categories.includes(newCategory)) {
-			setCategories((prev) => [...prev, newCategory]);
+			setCategories(prev => [...prev, newCategory]);
 			form.setValue("category", newCategory);
 			setNewCategory("");
 			setShowNewCategoryInput(false);
