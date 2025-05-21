@@ -7,7 +7,7 @@ import { desc, eq } from "drizzle-orm";
 import { sendSlackMessage } from "@/lib/slackMessage";
 
 export const getTasks = async (): Promise<TaskFormValues[]> => {
-	const result = await db.select().from(tasks);
+	const result = await db.select().from(tasks).orderBy(desc(tasks.taskId));
 
 		return result.map((task) => ({
 			...task,
@@ -56,7 +56,11 @@ export const createTask = async (data: TaskFormValues) => {
 export const updateTask = async (id: string, data: TaskFormValues) => {
 	const updatedTask = await db
 		.update(tasks)
-		.set(data)
+		.set({
+			...data,
+			// memo: updatedAtを明示的に更新
+			updatedAt: new Date(),
+		})
 		.where(eq(tasks.id, id))
 		.returning();
 
