@@ -194,7 +194,7 @@ export function AppTable<T>({
 		}
 
 		// ソート
-		if (currentSort && currentSort.key !== "taskId") {
+		if (currentSort) {
 			result.sort((a, b) => {
 				const aValue = a[currentSort.key as keyof T];
 				const bValue = b[currentSort.key as keyof T];
