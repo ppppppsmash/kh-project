@@ -1,5 +1,4 @@
 import { IncomingWebhook } from "@slack/webhook";
-import { formatDate } from "@/lib/utils";
 
 type paramType = {
   message: string;
@@ -8,8 +7,6 @@ type paramType = {
 export const sendSlackMessage = async ({ message }: paramType) => {
   const webhookUrl = process.env.SLACK_WEBHOOK_URL as string;
   const webhook = new IncomingWebhook(webhookUrl);
-
-  const date = formatDate(new Date(), "yyyy/MM/dd HH:mm:ss");
 
   const payload = {
     blocks: [
@@ -28,10 +25,6 @@ export const sendSlackMessage = async ({ message }: paramType) => {
             type: "mrkdwn",
             text: `:notebook:*タスク:*\n${message}`,
           },
-          {
-            type: "mrkdwn",
-            text: `:clock1:*日時:*\n${date}`,
-          }
         ],
       },
     ],
