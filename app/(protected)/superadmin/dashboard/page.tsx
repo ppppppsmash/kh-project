@@ -5,21 +5,17 @@ import {
 	useGetUserActivity,
 	useGetTaskStats,
 } from "@/components/app-table/hooks/use-table-data";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import type { ClubFormValues } from "@/lib/validations";
-import { IconExternalLink } from "@tabler/icons-react";
 import {
 	Activity,
 	BarChart3,
 	Calendar,
-	Link as LinkIcon,
 	User,
 	Users,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import Link from "next/link";
 import { AuroraText } from "@/components/animation-ui/aurora-text";
 
 export default function DashboardPage() {
