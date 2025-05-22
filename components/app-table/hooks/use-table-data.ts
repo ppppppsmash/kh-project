@@ -62,3 +62,39 @@ export const useGetQa = () => {
 		queryFn: getQA,
 	});
 };
+// ダッシュボードtask関連
+export const useGetTaskStats = () => {
+	const { data: tasks, isLoading } = useQuery<TaskFormValues[]>({
+		queryKey: ["tasks"],
+		queryFn: getTasks,
+	});
+
+	const getTaskStats = () => {
+		if (!tasks) return {
+			totalTasks: 0,
+			inProgressTasks: 0,
+			todayTasks: 0,
+			completedTasks: 0,
+		};
+
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+
+		return {
+			totalTasks: tasks.length,
+			inProgressTasks: tasks.filter((task: TaskFormValues) => task.progress === "inProgress").length,
+			todayTasks: tasks.filter((task: TaskFormValues) => {
+				const taskDate = task.createdAt ? new Date(task.createdAt) : null;
+				if (!taskDate) return false;
+				taskDate.setHours(0, 0, 0, 0);
+				return taskDate.getTime() === today.getTime();
+			}).length,
+			completedTasks: tasks.filter((task: TaskFormValues) => task.progress === "completed").length,
+		};
+	};
+
+	return {
+		taskStats: getTaskStats(),
+		isLoading,
+	};
+};
