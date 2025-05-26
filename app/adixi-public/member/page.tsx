@@ -4,7 +4,7 @@ import MemberCard from "@/components/app-list/member-card";
 import { MemberGrid } from "@/components/app-list/member-grid";
 import MemberList from "@/components/app-list/member-list";
 import { useGetUserList } from "@/components/app-table/hooks/use-table-data";
-import { Button } from "@/components/ui/button";
+import { AnimatedButton } from "@/components/animation-ui/animated-button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useDisplayStore } from "@/lib/store/member-display-store";
 import type { MemberFormValues } from "@/lib/validations";
@@ -82,7 +82,7 @@ export default function MemberIntroCardPage() {
 							className="relative max-w-2xl w-full"
 							onClick={(e) => e.stopPropagation()}
 						>
-							<Button
+							<AnimatedButton
 								variant="ghost"
 								size="icon"
 								className="absolute right-2 top-2 z-10 bg-background/80 backdrop-blur-sm rounded-full"
@@ -90,7 +90,7 @@ export default function MemberIntroCardPage() {
 							>
 								<X className="h-5 w-5" />
 								<span className="sr-only">閉じる</span>
-							</Button>
+							</AnimatedButton>
 							<MemberCard member={selectedMember} />
 						</motion.div>
 					</motion.div>
