@@ -3,7 +3,7 @@ import { v7 as uuidv7 } from "uuid";
 
 export const categories = pgTable("categories", {
   id: uuid("id").primaryKey().$defaultFn(uuidv7),
-  name: varchar("name", { length: 50 }).notNull(),
+  name: varchar("name", { length: 50 }),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 }, (table) => ({
   // 複数登録防止

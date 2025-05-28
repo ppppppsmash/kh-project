@@ -65,13 +65,13 @@ export const TaskDetailSheet = ({
 						<h3 className="text-sm font-medium text-gray-500 mb-1">タスクID</h3>
 						<p className="text-gray-900 dark:text-gray-100">{task.taskId}</p>
 					</div>
-					{task.category && (
+					{task.categoryId && (
 						<div>
 							<h3 className="text-sm font-medium text-gray-500 mb-1">
 								タスクカテゴリー
 							</h3>
 							<p className="text-gray-900 dark:text-gray-100">
-								{task?.category}
+								{task?.categoryId}
 							</p>
 						</div>
 					)}

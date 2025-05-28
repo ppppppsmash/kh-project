@@ -27,6 +27,7 @@ interface TaskModalFormProps {
 	defaultValues?: Partial<TaskFormValues>;
 	isOpen: boolean;
 	selectedTagId?: string;
+	categories: { id: string; name: string }[];
 }
 
 export const TaskModalForm = ({
@@ -36,12 +37,12 @@ export const TaskModalForm = ({
 	defaultValues,
 	isOpen,
 	selectedTagId,
+	categories,
 }: TaskModalFormProps) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const isEdit = !!defaultValues;
 	const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
 	const [newCategory, setNewCategory] = useState("");
-	const [categories, setCategories] = useState<string[]>([]);
 	const [showConfetti, setShowConfetti] = useState(false);
 
 	const form = useForm<TaskFormValues>({
@@ -62,6 +63,7 @@ export const TaskModalForm = ({
 		setIsSubmitting(true);
 
 		try {
+			console.log("送信データ:", data);
 			const taskData = {
 				...data,
 				dueDate: data.dueDate,
@@ -70,8 +72,10 @@ export const TaskModalForm = ({
 				progressDetails: data.progressDetails || "",
 				link: data.link || "",
 				notes: data.notes || "",
+				categoryId: data.categoryId || undefined,
 			};
 
+			console.log("処理後のデータ:", taskData);
 			await onSubmit(taskData);
 			
 			// 編集モードで進捗が完了に変更された場合、confettiを表示
@@ -101,7 +105,6 @@ export const TaskModalForm = ({
 				dueDate: defaultValues?.dueDate || undefined,
 				completedAt: defaultValues?.completedAt || undefined,
 				progress: defaultValues?.progress || "pending",
-				category: defaultValues?.category || "",
 				progressDetails: defaultValues?.progressDetails || "",
 				link: defaultValues?.link || "",
 				notes: defaultValues?.notes || "",
@@ -109,29 +112,15 @@ export const TaskModalForm = ({
 		}
 	}, [isOpen, defaultValues, form]);
 
-	// カテゴリーの初期化
-	useEffect(() => {
-		if (defaultValues?.category) {
-			setCategories(prev => {
-				const category = defaultValues.category;
-				if (category && !prev.includes(category)) {
-					return [...prev, category];
-				}
-				return prev;
-			});
-		}
-	}, [defaultValues?.category]);
-
 	const handleAddCategory = () => {
-		if (newCategory && !categories.includes(newCategory)) {
-			setCategories(prev => [...prev, newCategory]);
-			form.setValue("category", newCategory);
+		if (newCategory && !categories.some(c => c.name === newCategory)) {
 			setNewCategory("");
 			setShowNewCategoryInput(false);
 		}
 	};
 
-	//console.log(form.formState);
+	console.log(form.formState);
+	console.log(form.formState.errors);
 
 	return (
 		<>
@@ -288,55 +277,21 @@ export const TaskModalForm = ({
 						<Label htmlFor="category">カテゴリー</Label>
 						<Select
 							onValueChange={(value) => {
-								if (value === "new") {
-									setShowNewCategoryInput(true);
-								} else {
-									form.setValue("category", value);
-								}
+								form.setValue("categoryId", value);
 							}}
-							value={form.watch("category")}
+							value={form.watch("categoryId") as string}
 						>
 							<SelectTrigger>
 								<SelectValue placeholder="カテゴリーを選択してください" />
 							</SelectTrigger>
 							<SelectContent>
-								{categories.map((category) => (
-									<SelectItem key={category} value={category}>
-										{category}
+								{categories?.map((category) => (
+									<SelectItem key={category.id} value={category.id}>
+										{category.name}
 									</SelectItem>
 								))}
-								<SelectItem value="new" className="text-primary">
-									<div className="flex items-center gap-2">
-										<Plus className="h-4 w-4" />
-										新しいカテゴリーを追加
-									</div>
-								</SelectItem>
 							</SelectContent>
 						</Select>
-						{showNewCategoryInput && (
-							<div className="flex gap-2">
-								<Input
-									placeholder="新しいカテゴリー名"
-									value={newCategory}
-									onChange={(e) => setNewCategory(e.target.value)}
-								/>
-								<Button
-									type="button"
-									variant="outline"
-									size="icon"
-									onClick={() => setShowNewCategoryInput(false)}
-								>
-									<X className="h-4 w-4" />
-								</Button>
-								<Button
-									type="button"
-									onClick={handleAddCategory}
-									disabled={!newCategory}
-								>
-									追加
-								</Button>
-							</div>
-						)}
 					</div>
 				</div>
 

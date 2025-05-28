@@ -28,6 +28,14 @@ export const memberFormSchema = z.object({
 });
 export type MemberFormValues = z.infer<typeof memberFormSchema>;
 
+export const categorySchema = z.object({
+	id: z.string().optional(),
+	name: z.string().optional(),
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
+});
+export type CategoryValues = z.infer<typeof categorySchema>;
+
 export const taskFormSchema = z.object({
 	id: z.string().optional(),
 	taskId: z.string().optional(),
@@ -43,7 +51,7 @@ export const taskFormSchema = z.object({
 		.optional()
 		.or(z.literal("")),
 	notes: z.string().optional(),
-	category: z.string().optional(),
+	categoryId: z.string().optional(),
 	startedAt: z.date({ required_error: "開始日は必須です" }),
 	createdAt: z.date().optional(),
 	updatedAt: z.date().optional(),

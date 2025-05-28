@@ -5,8 +5,10 @@ import { MemberGrid } from "@/components/app-list/member-grid";
 import MemberList from "@/components/app-list/member-list";
 import { useGetUserList } from "@/components/app-table/hooks/use-table-data";
 import { AnimatedButton } from "@/components/animation-ui/animated-button";
+import { ShimmerButton } from "@/components/animation-ui/shimmer-button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { useDisplayStore } from "@/lib/store/member-display-store";
+import { EditMemberModal } from "@/components/animation-ui/edit-member-modal";
 import type { MemberFormValues } from "@/lib/validations";
 import { Grid, Rows, X } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
@@ -17,6 +19,7 @@ export default function MemberIntroCardPage() {
 	const [selectedMember, setSelectedMember] = useState<MemberFormValues | null>(
 		null,
 	);
+	const [isOpen, setIsOpen] = useState(false);
 	const { displayMode, setDisplayMode } = useDisplayStore();
 
 	const handleSelectMember = (member: MemberFormValues) => {
@@ -25,6 +28,10 @@ export default function MemberIntroCardPage() {
 
 	const handleClose = () => {
 		setSelectedMember(null);
+	};
+
+	const handleEdit = () => {
+		setIsOpen(true);
 	};
 
 	return (
@@ -56,7 +63,7 @@ export default function MemberIntroCardPage() {
 					</ToggleGroupItem>
 				</ToggleGroup>
 
-
+				<ShimmerButton onClick={handleEdit}>編集</ShimmerButton>
 			</div>
 
 			{displayMode === "grid" && (
@@ -98,6 +105,8 @@ export default function MemberIntroCardPage() {
 					</motion.div>
 				)}
 			</AnimatePresence>
+
+			{/* <EditMemberModal isOpen={isOpen} onClose={handleClose} member={selectedMember} /> */}
 		</div>
 	);
 }

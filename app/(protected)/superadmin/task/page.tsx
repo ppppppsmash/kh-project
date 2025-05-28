@@ -4,7 +4,7 @@ import { createTask, deleteTask, updateTask } from "@/actions/task";
 import { TaskModalForm } from "@/components/app-modal/task-modal-form";
 import { TaskDetailSheet } from "@/components/app-sheet/task-detail-sheet";
 import { AppTable } from "@/components/app-table";
-import { useGetTasks } from "@/components/app-table/hooks/use-table-data";
+import { useGetTasks, useGetCategories } from "@/components/app-table/hooks/use-table-data";
 import {
 	filterTask,
 	getTaskStatusFilters,
@@ -30,9 +30,11 @@ import { AuroraText } from "@/components/animation-ui/aurora-text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useTaskStatus } from "@/lib/store/task-store";
 
+
 export default function TaskPage() {
 	const queryClient = useQueryClient();
 	const { data: tasks, isLoading } = useGetTasks();
+	const { data: categories, isLoading: isCategoriesLoading } = useGetCategories();
 	const [selectedTask, setSelectedTask] = useState<TaskFormValues | null>(null);
 	const [isDetailOpen, setIsDetailOpen] = useState(false);
 	const { isOpen, openModal, closeModal } = useModal();
@@ -185,6 +187,10 @@ export default function TaskPage() {
 			/>
 
 			<TaskModalForm
+				categories={categories?.map(category => ({
+					id: category.id || "",
+					name: category.name || "",
+				})) ?? []}
 				isOpen={isOpen}
 				onClose={() => {
 					closeModal();

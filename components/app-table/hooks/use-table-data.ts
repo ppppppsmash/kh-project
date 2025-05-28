@@ -1,11 +1,12 @@
 import { getClubActivity } from "@/actions/club-activity";
 import { getQA } from "@/actions/qa";
 // import { getTags } from "@/actions/tag";
-import { getTasks } from "@/actions/task";
+import { getTasks, getCategories } from "@/actions/task";
 import { getUserInfo, getUserList } from "@/actions/user";
 import { getUserActivity } from "@/actions/user-activity";
 import type {
 	ClubFormValues,
+	CategoryValues,
 	MemberFormValues,
 	QaFormValues,
 	TagFormValues,
@@ -97,4 +98,11 @@ export const useGetTaskStats = () => {
 		taskStats: getTaskStats(),
 		isLoading,
 	};
+};
+
+export const useGetCategories = () => {
+	return useQuery<CategoryValues[]>({
+		queryKey: ["categories"],
+		queryFn: getCategories,
+	});
 };

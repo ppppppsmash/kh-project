@@ -1,8 +1,9 @@
 "use server";
 
 import { db } from "@/db";
+import { categories } from "@/db/schema";
 import { tasks } from "@/db/schema/tasks";
-import type { TaskFormValues } from "@/lib/validations";
+import type { CategoryValues, TaskFormValues } from "@/lib/validations";
 import { desc, eq } from "drizzle-orm";
 import { sendSlackMessage } from "@/lib/slackMessage";
 
@@ -13,7 +14,7 @@ export const getTasks = async (): Promise<TaskFormValues[]> => {
 			...task,
 			progress: task.progress as TaskFormValues["progress"],
 			progressDetails: task.progressDetails || "",
-			category: task.category || "",
+			categoryId: task.categoryId || undefined,
 			startedAt: task.startedAt || new Date(),
 			completedAt: task.completedAt || null,
 			createdAt: task.createdAt || new Date(),
@@ -43,6 +44,7 @@ export const createTask = async (data: TaskFormValues) => {
 		link: data.link ?? "",
 		notes: data.notes ?? "",
 		startedAt: data.startedAt ?? new Date(),
+		categoryId: data.categoryId || undefined,
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};
@@ -71,4 +73,24 @@ export const deleteTask = async (id: string) => {
 	const deletedTask = await db.delete(tasks).where(eq(tasks.id, id));
 
 	return deletedTask;
+};
+
+export const getCategories = async (): Promise<CategoryValues[]> => {
+	const result = await db.select().from(categories).orderBy(desc(categories.name));
+
+	return result.map((category) => ({
+		...category,
+		name: category.name || "",
+		createdAt: category.createdAt || new Date(),
+	}));
+};
+
+export const getCategory = async (id: string): Promise<CategoryValues[]> => {
+	const result = await db.select().from(categories).where(eq(categories.id, id));
+
+	return result.map((category) => ({
+		...category,
+		name: category.name || "",
+		createdAt: category.createdAt || new Date(),
+	}));
 };

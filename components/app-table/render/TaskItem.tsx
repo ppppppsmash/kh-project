@@ -95,7 +95,7 @@ export const renderTask = ({
 		render: (value: any) => <span>{value}</span>,
 	},
 	{
-		key: "category",
+		key: "categoryId",
 		title: "カテゴリー",
 		sortable: false,
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>

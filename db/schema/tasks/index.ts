@@ -5,6 +5,7 @@ import {
 	varchar,
 } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
+import { categories } from "../categories";
 
 export const tasks = pgTable("tasks", {
 	id: uuid("id").primaryKey().$defaultFn(uuidv7),
@@ -19,7 +20,8 @@ export const tasks = pgTable("tasks", {
 	progressDetails: varchar("progress_details", { length: 255 }),
 	link: varchar("link", { length: 255 }).notNull(),
 	notes: varchar("notes", { length: 255 }).notNull(),
-	category: varchar("category", { length: 255 }),
+	categoryId: uuid("category_id")
+		.references(() => categories.id),
 	startedAt: timestamp("started_at").notNull(),
 	completedAt: timestamp("completed_at"),
 	createdAt: timestamp("created_at").defaultNow(),
