@@ -12,13 +12,15 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDateForInput } from "@/lib/utils";
-import { type TaskFormValues, taskFormSchema } from "@/lib/validations";
+import { type CategoryValues, type TaskFormValues, taskFormSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BaseModalForm } from "./base-modal-form";
 import { Confetti } from "@/components/animation-ui/confetti";
+import { addCategory } from "@/app/actions/categories";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface TaskModalFormProps {
 	title?: string;
@@ -27,7 +29,7 @@ interface TaskModalFormProps {
 	defaultValues?: Partial<TaskFormValues>;
 	isOpen: boolean;
 	selectedTagId?: string;
-	categories: { id: string; name: string }[];
+	categories: CategoryValues[];
 }
 
 export const TaskModalForm = ({
@@ -44,6 +46,7 @@ export const TaskModalForm = ({
 	const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
 	const [newCategory, setNewCategory] = useState("");
 	const [showConfetti, setShowConfetti] = useState(false);
+	const queryClient = useQueryClient();
 
 	const form = useForm<TaskFormValues>({
 		resolver: zodResolver(taskFormSchema),
@@ -108,14 +111,27 @@ export const TaskModalForm = ({
 				progressDetails: defaultValues?.progressDetails || "",
 				link: defaultValues?.link || "",
 				notes: defaultValues?.notes || "",
+				categoryId: defaultValues?.categoryId || undefined,
 			});
 		}
 	}, [isOpen, defaultValues, form]);
 
-	const handleAddCategory = () => {
+	const handleAddCategory = async () => {
 		if (newCategory && !categories.some(c => c.name === newCategory)) {
-			setNewCategory("");
-			setShowNewCategoryInput(false);
+			try {
+				const result = await addCategory(newCategory);
+				if (result.success && result.category) {
+					form.setValue("categoryId", result.category.id);
+					setNewCategory("");
+					setShowNewCategoryInput(false);
+					// カテゴリー一覧のキャッシュを無効化して再取得
+					await queryClient.invalidateQueries({ queryKey: ["categories"] });
+				} else {
+					console.error("カテゴリーの追加に失敗しました");
+				}
+			} catch (error) {
+				console.error("カテゴリーの追加中にエラーが発生しました:", error);
+			}
 		}
 	};
 
@@ -277,7 +293,11 @@ export const TaskModalForm = ({
 						<Label htmlFor="category">カテゴリー</Label>
 						<Select
 							onValueChange={(value) => {
-								form.setValue("categoryId", value);
+								if (value === "new") {
+									setShowNewCategoryInput(true);
+								} else {
+									form.setValue("categoryId", value);
+								}
 							}}
 							value={form.watch("categoryId") as string}
 						>
@@ -285,13 +305,43 @@ export const TaskModalForm = ({
 								<SelectValue placeholder="カテゴリーを選択してください" />
 							</SelectTrigger>
 							<SelectContent>
-								{categories?.map((category) => (
-									<SelectItem key={category.id} value={category.id}>
+								{categories.map((category) => (
+									<SelectItem key={category.id || ""} value={category.id || ""}>
 										{category.name}
 									</SelectItem>
 								))}
+								<SelectItem value="new" className="text-primary">
+									<div className="flex items-center gap-2">
+										<Plus className="h-4 w-4" />
+										新しいカテゴリーを追加
+									</div>
+								</SelectItem>
 							</SelectContent>
 						</Select>
+						{showNewCategoryInput && (
+							<div className="flex gap-2">
+								<Input
+									placeholder="新しいカテゴリー名"
+									value={newCategory}
+									onChange={(e) => setNewCategory(e.target.value)}
+								/>
+								<Button
+									type="button"
+									variant="outline"
+									size="icon"
+									onClick={() => setShowNewCategoryInput(false)}
+								>
+									<X className="h-4 w-4" />
+								</Button>
+								<Button
+									type="button"
+									onClick={handleAddCategory}
+									disabled={!newCategory}
+								>
+									追加
+								</Button>
+							</div>
+						)}
 					</div>
 				</div>
 

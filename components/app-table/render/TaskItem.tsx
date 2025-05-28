@@ -12,13 +12,14 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { cn, formatDate } from "@/lib/utils";
 import { getProgressColor, getProgressLabel } from "@/lib/utils";
-import type { TaskFormValues } from "@/lib/validations";
+import type { CategoryValues, TaskFormValues } from "@/lib/validations";
 import { MoreHorizontal, Pencil, Trash } from "lucide-react";
 
 type TaskColumnOptions = {
 	onEdit?: (row: TaskFormValues, e: React.MouseEvent) => void;
 	onDelete?: (row: TaskFormValues, e: React.MouseEvent) => void;
 	onAdd?: () => void;
+	categories: CategoryValues[];
 };
 
 // タスクのフィルター処理
@@ -72,6 +73,7 @@ export const renderTask = ({
 	onEdit,
 	onDelete,
 	onAdd,
+	categories,
 }: TaskColumnOptions): TableColumn<TaskFormValues>[] => [
 	{
 		key: "taskId",
@@ -98,8 +100,11 @@ export const renderTask = ({
 		key: "categoryId",
 		title: "カテゴリー",
 		sortable: false,
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-		render: (value: any) => <span>{value || "-"}</span>,
+		render: (value: string | Date | null | undefined) => {
+			if (typeof value !== 'string') return <span>-</span>;
+			const category = categories.find(cat => cat.id === value);
+			return <span>{category?.name || "-"}</span>;
+		},
 	},
 	{
 		key: "startedAt",
@@ -145,7 +150,7 @@ export const renderTask = ({
 	// 		<span>{value ? formatDate(value, "yyyy/MM/dd") : "-"}</span>
 	// 	),
 	// },
-	...createTaskColumns({ onEdit, onDelete, onAdd }),
+	...createTaskColumns({ onEdit, onDelete, onAdd, categories }),
 ];
 
 export const createTaskColumns = ({

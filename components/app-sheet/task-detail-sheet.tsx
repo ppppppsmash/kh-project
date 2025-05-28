@@ -9,7 +9,7 @@ import {
 	SheetTitle,
 } from "@/components/ui/sheet";
 import { formatDate, getProgressColor, getProgressLabel } from "@/lib/utils";
-import type { TaskFormValues } from "@/lib/validations";
+import type { CategoryValues, TaskFormValues } from "@/lib/validations";
 import { Check, Clock, ListTodo, Pencil, Trash2 } from "lucide-react";
 
 interface TaskDetailSheetProps {
@@ -18,6 +18,7 @@ interface TaskDetailSheetProps {
 	onClose: () => void;
 	onEdit: (task: TaskFormValues) => void;
 	onDelete: (task: TaskFormValues) => void;
+	categories: CategoryValues[];
 }
 
 // タスク進捗アイコン
@@ -38,8 +39,11 @@ export const TaskDetailSheet = ({
 	onClose,
 	onEdit,
 	onDelete,
+	categories,
 }: TaskDetailSheetProps) => {
 	if (!task) return null;
+
+	const category = categories.find(cat => cat.id === task.categoryId);
 
 	return (
 		<Sheet open={isOpen} onOpenChange={onClose}>
@@ -71,7 +75,7 @@ export const TaskDetailSheet = ({
 								タスクカテゴリー
 							</h3>
 							<p className="text-gray-900 dark:text-gray-100">
-								{task?.categoryId}
+								{category?.name || "未設定"}
 							</p>
 						</div>
 					)}

@@ -100,6 +100,8 @@ export default function TaskPage() {
 		openModal();
 	};
 
+	console.log(categories);
+
 	return (
 		<div className="mx-auto">
 			<div className="flex justify-between items-center mb-4">
@@ -122,6 +124,7 @@ export default function TaskPage() {
 							onEdit: handleEdit,
 							onDelete: handleDelete,
 							onAdd: handleAdd,
+							categories: categories ?? [],
 						})}
 						data={tasks?.filter(task => task.progress !== "completed") ?? []}
 						loading={isLoading}
@@ -151,6 +154,7 @@ export default function TaskPage() {
 							onEdit: handleEdit,
 							onDelete: handleDelete,
 							onAdd: handleAdd,
+							categories: categories ?? [],
 						})}
 						data={tasks?.filter(task => task.progress === "completed") ?? []}
 						loading={isLoading}
@@ -184,13 +188,11 @@ export default function TaskPage() {
 					setIsDeleteDialogOpen(true);
 					setIsDetailOpen(false);
 				}}
+				categories={categories ?? []}
 			/>
 
 			<TaskModalForm
-				categories={categories?.map(category => ({
-					id: category.id || "",
-					name: category.name || "",
-				})) ?? []}
+				categories={categories ?? []}
 				isOpen={isOpen}
 				onClose={() => {
 					closeModal();
