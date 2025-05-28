@@ -1,7 +1,8 @@
 import { getClubActivity } from "@/actions/club-activity";
 import { getQA } from "@/actions/qa";
 // import { getTags } from "@/actions/tag";
-import { getTasks, getCategories } from "@/actions/task";
+import { getTasks } from "@/actions/task";
+import { getCategories } from "@/app/actions/categories";
 import { getUserInfo, getUserList } from "@/actions/user";
 import { getUserActivity } from "@/actions/user-activity";
 import type {
