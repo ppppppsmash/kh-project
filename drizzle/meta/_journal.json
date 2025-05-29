@@ -232,6 +232,13 @@
       "when": 1748522010248,
       "tag": "0032_typical_jocasta",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "7",
+      "when": 1748522708979,
+      "tag": "0033_pink_king_cobra",
+      "breakpoints": true
     }
   ]
 }

@@ -6,11 +6,10 @@ import {
 } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 import { categories } from "../categories";
+import { tabs } from "../tabs";
 
 export const tasks = pgTable("tasks", {
 	id: uuid("id").primaryKey().$defaultFn(uuidv7),
-	// tagId: uuid("tag_id")
-	// 	.references(() => tags.id),
 	taskId: varchar("task_id", { length: 255 }).notNull(),
 	title: varchar("title", { length: 255 }).notNull(),
 	content: varchar("content", { length: 255 }).notNull(),
@@ -22,6 +21,8 @@ export const tasks = pgTable("tasks", {
 	notes: varchar("notes", { length: 255 }).notNull(),
 	categoryId: uuid("category_id")
 		.references(() => categories.id),
+	tabId: uuid("tab_id")
+	.references(() => tabs.id),
 	startedAt: timestamp("started_at").notNull(),
 	completedAt: timestamp("completed_at"),
 	createdAt: timestamp("created_at").defaultNow(),
