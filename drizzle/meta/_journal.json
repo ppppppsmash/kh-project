@@ -225,6 +225,13 @@
       "when": 1748437184666,
       "tag": "0031_smart_marten_broadcloak",
       "breakpoints": true
+    },
+    {
+      "idx": 32,
+      "version": "7",
+      "when": 1748522010248,
+      "tag": "0032_typical_jocasta",
+      "breakpoints": true
     }
   ]
 }

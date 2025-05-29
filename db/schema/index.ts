@@ -5,6 +5,6 @@ export { clubActivity } from "./club-activity";
 export { qa } from "./qa";
 export { userActivity } from "./user_activity";
 export { categories } from "./categories";
-export { tags } from "./tags";
+export { tabs } from "./tabs";
 export { tasks } from "./tasks";
-export { taskTags } from "./task_tags";
+export { taskTabs } from "./task_tabs";
