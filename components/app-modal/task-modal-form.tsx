@@ -12,14 +12,14 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDateForInput } from "@/lib/utils";
-import { type CategoryValues, type TaskFormValues, taskFormSchema } from "@/lib/validations";
+import { type CategoryValues, type TabValues, type TaskFormValues, taskFormSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BaseModalForm } from "./base-modal-form";
 import { Confetti } from "@/components/animation-ui/confetti";
-import { addCategory } from "@/app/actions/categories";
+import { addCategory } from "@/actions/categories";
 import { useQueryClient } from "@tanstack/react-query";
 
 interface TaskModalFormProps {
@@ -28,8 +28,8 @@ interface TaskModalFormProps {
 	onClose: () => void;
 	defaultValues?: Partial<TaskFormValues>;
 	isOpen: boolean;
-	selectedTagId?: string;
 	categories: CategoryValues[];
+	tabs: TabValues[];
 }
 
 export const TaskModalForm = ({
@@ -38,8 +38,8 @@ export const TaskModalForm = ({
 	onSubmit,
 	defaultValues,
 	isOpen,
-	selectedTagId,
 	categories,
+	tabs,
 }: TaskModalFormProps) => {
 	const [isSubmitting, setIsSubmitting] = useState(false);
 	const isEdit = !!defaultValues;
@@ -76,6 +76,7 @@ export const TaskModalForm = ({
 				link: data.link || "",
 				notes: data.notes || "",
 				categoryId: data.categoryId || undefined,
+				tabId: data.tabId || undefined,
 			};
 
 			console.log("処理後のデータ:", taskData);
@@ -112,6 +113,7 @@ export const TaskModalForm = ({
 				link: defaultValues?.link || "",
 				notes: defaultValues?.notes || "",
 				categoryId: defaultValues?.categoryId || undefined,
+				tabId: defaultValues?.tabId || undefined,
 			});
 		}
 	}, [isOpen, defaultValues, form]);
@@ -165,20 +167,6 @@ export const TaskModalForm = ({
 							</p>
 						)}
 					</div>
-					{/* <div className="space-y-2 w-full">
-						<Label htmlFor="tagId">タグ</Label>
-						<Select
-							id="tagId"
-							{...form.register("tagId")}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder="タグを選択してください" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="new">新しいタグ</SelectItem>
-							</SelectContent>
-						</Select>
-					</div> */}
 				</div>
 
 				<div className="space-y-2">
@@ -270,7 +258,7 @@ export const TaskModalForm = ({
 					</div>
 				</div>
 
-				<div className="flex gap-x-16 items-start">
+				<div className="flex gap-x-12 items-start justify-between">
 					<div className="space-y-2">
 						<Label htmlFor="progress">進捗状況</Label>
 						<Select
@@ -342,6 +330,30 @@ export const TaskModalForm = ({
 								</Button>
 							</div>
 						)}
+					</div>
+					<div className="space-y-2">
+						<Label htmlFor="tabId">タブ</Label>
+						<Select
+							onValueChange={(value) => {
+								if (value === "new") {
+									setShowNewCategoryInput(true);
+								} else {
+									form.setValue("tabId", value);
+								}
+							}}
+							value={form.watch("tabId") as string}
+						>
+							<SelectTrigger>
+								<SelectValue placeholder="タブを選択してください" />
+							</SelectTrigger>
+							<SelectContent>
+								{tabs.map((tab) => (
+									<SelectItem key={tab.id || ""} value={tab.id || ""}>
+										{tab.name}
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
 					</div>
 				</div>
 
