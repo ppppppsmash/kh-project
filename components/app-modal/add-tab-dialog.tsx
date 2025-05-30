@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface AddTabDialogProps {
   isOpen: boolean;
@@ -21,6 +22,7 @@ interface AddTabDialogProps {
 
 export const AddTabDialog = ({ isOpen, onClose, onAdd }: AddTabDialogProps) => {
   const [tabName, setTabName] = useState("");
+  const queryClient = useQueryClient();
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,6 +30,7 @@ export const AddTabDialog = ({ isOpen, onClose, onAdd }: AddTabDialogProps) => {
       onAdd(tabName.trim());
       setTabName("");
       onClose();
+      queryClient.invalidateQueries({ queryKey: ["tabs"] });
     }
   };
 

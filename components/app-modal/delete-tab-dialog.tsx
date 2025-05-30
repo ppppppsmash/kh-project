@@ -23,6 +23,7 @@ export const DeleteTabDialog = ({
   onConfirm,
   tabName,
 }: DeleteTabDialogProps) => {
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent>
