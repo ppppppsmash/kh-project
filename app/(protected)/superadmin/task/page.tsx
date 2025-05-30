@@ -2,9 +2,10 @@
 
 import { createTask, deleteTask, updateTask } from "@/actions/task";
 import { TaskModalForm } from "@/components/app-modal/task-modal-form";
+import { AddTabDialog } from "@/components/app-modal/add-tab-dialog";
 import { TaskDetailSheet } from "@/components/app-sheet/task-detail-sheet";
 import { AppTable } from "@/components/app-table";
-import { useGetTasks, useGetCategories } from "@/components/app-table/hooks/use-table-data";
+import { useGetTasks, useGetCategories, useGetTabs } from "@/components/app-table/hooks/use-table-data";
 import {
 	filterTask,
 	getTaskStatusFilters,
@@ -22,26 +23,31 @@ import {
 import { CustomToast } from "@/components/ui/toast";
 import { useModal } from "@/hooks/use-modal";
 import { useTaskTableSort } from "@/lib/store/task-store";
+import { useTabStore } from "@/lib/store/tab-store";
 import { useSubmit } from "@/lib/submitHandler";
 import type { TaskFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { AuroraText } from "@/components/animation-ui/aurora-text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { useTaskStatus } from "@/lib/store/task-store";
-
+import { Plus, X } from "lucide-react";
+import { DeleteTabDialog } from "@/components/app-modal/delete-tab-dialog";
 
 export default function TaskPage() {
 	const queryClient = useQueryClient();
 	const { data: tasks, isLoading } = useGetTasks();
 	const { data: categories, isLoading: isCategoriesLoading } = useGetCategories();
+	const { data: tabs, isLoading: isTabsLoading } = useGetTabs();
 	const [selectedTask, setSelectedTask] = useState<TaskFormValues | null>(null);
 	const [isDetailOpen, setIsDetailOpen] = useState(false);
 	const { isOpen, openModal, closeModal } = useModal();
 	const [currentData, setCurrentData] = useState<TaskFormValues | null>(null);
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const { sort, setSort } = useTaskTableSort();
-	const { activeTab, setActiveTab } = useTaskStatus();
+	const [isAddTabDialogOpen, setIsAddTabDialogOpen] = useState(false);
+	const { activeTab, setActiveTab, addTab, removeTab } = useTabStore();
+	const [isDeleteTabDialogOpen, setIsDeleteTabDialogOpen] = useState(false);
+	const [tabToDelete, setTabToDelete] = useState<{ id: string; name: string } | null>(null);
 
 	const { handleSubmit } = useSubmit<TaskFormValues>({
 		action: async (data) => {
@@ -58,6 +64,7 @@ export default function TaskPage() {
 			);
 			setCurrentData(null);
 			queryClient.invalidateQueries({ queryKey: ["tasks"] });
+			queryClient.invalidateQueries({ queryKey: ["tabs"] });
 		},
 		onError: () => {
 			CustomToast.error(
@@ -89,6 +96,7 @@ export default function TaskPage() {
 			setIsDeleteDialogOpen(false);
 			setCurrentData(null);
 			queryClient.invalidateQueries({ queryKey: ["tasks"] });
+			queryClient.invalidateQueries({ queryKey: ["tabs"] });
 		}
 	};
 
@@ -100,7 +108,107 @@ export default function TaskPage() {
 		openModal();
 	};
 
-	console.log(categories);
+	const handleDeleteTab = (tab: { id: string; name: string }) => {
+		setTabToDelete(tab);
+		setIsDeleteTabDialogOpen(true);
+	};
+
+	const handleDeleteTabConfirm = () => {
+		if (tabToDelete) {
+			removeTab(tabToDelete.id);
+			setTabToDelete(null);
+			setIsDeleteTabDialogOpen(false);
+			CustomToast.success("タブを削除しました");
+			queryClient.invalidateQueries({ queryKey: ["tabs"] });
+		}
+	};
+
+	const renderTabContent = (tabId: string) => {
+		if (tabId === "active") {
+			return (
+				<AppTable
+					sort={sort}
+					onSortChange={setSort}
+					columns={renderTask({
+						onEdit: handleEdit,
+						onDelete: handleDelete,
+						onAdd: handleAdd,
+						categories: categories ?? [],
+					})}
+					data={tasks?.filter(task => task.progress !== "completed") ?? []}
+					loading={isLoading}
+					searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+					toolBar={{
+						researchBarPlaceholder: "タスク検索",
+						researchStatusFilter: getTaskStatusFilters().filter(status => status !== "完了"),
+					}}
+					onFilter={filterTask}
+					onRowClick={(row: TaskFormValues) => {
+						setSelectedTask(row);
+						setIsDetailOpen(true);
+					}}
+					addButton={{
+						text: "新規タスク登録",
+						onClick: handleAdd,
+						className: "",
+					}}
+				/>
+			);
+		}
+
+		if (tabId === "completed") {
+			return (
+				<AppTable
+					sort={sort}
+					onSortChange={setSort}
+					columns={renderTask({
+						onEdit: handleEdit,
+						onDelete: handleDelete,
+						onAdd: handleAdd,
+						categories: categories ?? [],
+					})}
+					data={tasks?.filter(task => task.progress === "completed") ?? []}
+					loading={isLoading}
+					searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+					toolBar={{
+						researchBarPlaceholder: "タスク検索",
+						researchStatusFilter: ["すべて", "完了"],
+					}}
+					onFilter={filterTask}
+					onRowClick={(row: TaskFormValues) => {
+						setSelectedTask(row);
+						setIsDetailOpen(true);
+					}}
+				/>
+			);
+		}
+
+		// カスタムタブの場合は空のテーブルを表示
+		return (
+			<AppTable
+				sort={sort}
+				onSortChange={setSort}
+				columns={renderTask({
+					onEdit: handleEdit,
+					onDelete: handleDelete,
+					onAdd: handleAdd,
+					categories: categories ?? [],
+				})}
+				data={[]}
+				loading={false}
+				searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+				toolBar={{
+					researchBarPlaceholder: "タスク検索",
+					researchStatusFilter: getTaskStatusFilters(),
+				}}
+				onFilter={filterTask}
+				onRowClick={(row: TaskFormValues) => {
+					setSelectedTask(row);
+					setIsDetailOpen(true);
+				}}
+			/>
+		);
+	};
 
 	return (
 		<div className="mx-auto">
@@ -110,66 +218,81 @@ export default function TaskPage() {
 				</h2>
 			</div>
 
-			<Tabs value={activeTab} onValueChange={(value) => setActiveTab(value as "active" | "completed")} className="space-y-4">
-				<TabsList>
-					<TabsTrigger value="active">未完了のタスク</TabsTrigger>
-					<TabsTrigger value="completed">完了したタスク</TabsTrigger>
-				</TabsList>
+			<Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">
+				<div className="flex items-center gap-2">
+					<TabsList>
+						<TabsTrigger value="active">未完了のタスク</TabsTrigger>
+						<TabsTrigger value="completed">完了したタスク</TabsTrigger>
+						{tabs?.map((tab) => (
+							<TabsTrigger
+								key={tab.id}
+								value={tab.id || ""}
+								className="relative group"
+							>
+								{tab.name}
+								{tab.id && (
+									<Button
+										variant="ghost"
+										size="icon"
+										className="h-4 w-4 ml-1 opacity-0 group-hover:opacity-100 transition-opacity"
+										onClick={(e) => {
+											e.stopPropagation();
+											handleDeleteTab({ id: tab.id || "", name: tab.name || "" });
+										}}
+									>
+										<X className="h-3 w-3" />
+									</Button>
+								)}
+							</TabsTrigger>
+						))}
+					</TabsList>
+					<Button
+						variant="outline"
+						size="icon"
+						onClick={() => setIsAddTabDialogOpen(true)}
+						className="h-9 w-9"
+					>
+						<Plus className="h-4 w-4" />
+					</Button>
+				</div>
 
 				<TabsContent value="active">
-					<AppTable
-						sort={sort}
-						onSortChange={setSort}
-						columns={renderTask({
-							onEdit: handleEdit,
-							onDelete: handleDelete,
-							onAdd: handleAdd,
-							categories: categories ?? [],
-						})}
-						data={tasks?.filter(task => task.progress !== "completed") ?? []}
-						loading={isLoading}
-						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
-						toolBar={{
-							researchBarPlaceholder: "タスク検索",
-							researchStatusFilter: getTaskStatusFilters().filter(status => status !== "完了"),
-						}}
-						onFilter={filterTask}
-						onRowClick={(row: TaskFormValues) => {
-							setSelectedTask(row);
-							setIsDetailOpen(true);
-						}}
-						addButton={{
-							text: "新規タスク登録",
-							onClick: handleAdd,
-							className: "",
-						}}
-					/>
+					{renderTabContent("active")}
 				</TabsContent>
-
 				<TabsContent value="completed">
-					<AppTable
-						sort={sort}
-						onSortChange={setSort}
-						columns={renderTask({
-							onEdit: handleEdit,
-							onDelete: handleDelete,
-							onAdd: handleAdd,
-							categories: categories ?? [],
-						})}
-						data={tasks?.filter(task => task.progress === "completed") ?? []}
-						loading={isLoading}
-						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
-						toolBar={{
-							researchBarPlaceholder: "タスク検索",
-							researchStatusFilter: ["すべて", "完了"],
-						}}
-						onFilter={filterTask}
-						onRowClick={(row: TaskFormValues) => {
-							setSelectedTask(row);
-							setIsDetailOpen(true);
-						}}
-					/>
+					{renderTabContent("completed")}
 				</TabsContent>
+				{tabs?.map((tab) => (
+					<TabsContent key={tab.id} value={tab.id || ""}>
+						<AppTable
+							sort={sort}
+							onSortChange={setSort}
+							columns={renderTask({
+								onEdit: handleEdit,
+								onDelete: handleDelete,
+								onAdd: handleAdd,
+								categories: categories ?? [],
+							})}
+							data={tasks?.filter(task => task.tabId === tab.id) ?? []}
+							loading={isLoading}
+							searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+							toolBar={{
+								researchBarPlaceholder: "タスク検索",
+								researchStatusFilter: getTaskStatusFilters(),
+							}}
+							onFilter={filterTask}
+							onRowClick={(row: TaskFormValues) => {
+								setSelectedTask(row);
+								setIsDetailOpen(true);
+							}}
+							addButton={{
+								text: "新規タスク登録",
+								onClick: handleAdd,
+								className: "",
+							}}
+						/>
+					</TabsContent>
+				))}
 			</Tabs>
 
 			<TaskDetailSheet
@@ -192,7 +315,6 @@ export default function TaskPage() {
 			/>
 
 			<TaskModalForm
-				categories={categories ?? []}
 				isOpen={isOpen}
 				onClose={() => {
 					closeModal();
@@ -202,6 +324,24 @@ export default function TaskPage() {
 				onSubmit={handleSubmit}
 				defaultValues={selectedTask ?? undefined}
 				title={selectedTask ? "タスク編集" : "新規タスク登録"}
+				categories={categories ?? []}
+				tabs={tabs ?? []}
+			/>
+
+			<AddTabDialog
+				isOpen={isAddTabDialogOpen}
+				onClose={() => setIsAddTabDialogOpen(false)}
+				onAdd={addTab}
+			/>
+
+			<DeleteTabDialog
+				isOpen={isDeleteTabDialogOpen}
+				onClose={() => {
+					setIsDeleteTabDialogOpen(false);
+					setTabToDelete(null);
+				}}
+				onConfirm={handleDeleteTabConfirm}
+				tabName={tabToDelete?.name || ""}
 			/>
 
 			<Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
