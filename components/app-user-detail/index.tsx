@@ -57,7 +57,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 									<Mail className="w-5 h-5" />
 									<h3 className="font-medium">メールアドレス</h3>
 								</div>
-								<p className="text-lg">{user?.email || "未設定"}</p>
+								<p className="text-normal">{user?.email || "未設定"}</p>
 							</div>
 
 							{/* 基本情報 */}
@@ -67,14 +67,14 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 										<Building2 className="w-5 h-5" />
 										<h3 className="font-medium">事業部</h3>
 									</div>
-									<p className="text-lg">{user?.department || "未設定"}</p>
+									<p className="text-normal">{user?.department || "未設定"}</p>
 								</div>
 								<div className="space-y-2">
 									<div className="flex items-center gap-2 text-gray-600">
 										<Briefcase className="w-5 h-5" />
 										<h3 className="font-medium">役職</h3>
 									</div>
-									<p className="text-lg">{user?.position || "未設定"}</p>
+									<p className="text-normal">{user?.position || "未設定"}</p>
 								</div>
 							</div>
 
@@ -84,12 +84,13 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 									<Heart className="w-5 h-5" />
 									<h3 className="font-medium">趣味・特技</h3>
 								</div>
-								<p className="text-lg whitespace-pre-line p-4 rounded-lg bg-gray-50">
+								<p className="text-normal whitespace-pre-line p-4 rounded-lg bg-gray-50">
 									{user?.hobby || "未設定"}
 								</p>
 							</div>
 
 							{/* 言語スキル */}
+							{/* ldr: /components/app-list/member-card.tsx */}
 							<div className="space-y-2">
 								<div className="flex items-center gap-2 text-gray-600">
 									<Code2 className="w-5 h-5" />
@@ -112,7 +113,7 @@ export const UserDetail = ({ user }: UserDetailProps) => {
 												</Badge>
 											))
 									) : (
-										<span className="text-muted-foreground text-sm">
+										<span className="text-muted-foreground text-normal">
 											未設定
 										</span>
 									)}

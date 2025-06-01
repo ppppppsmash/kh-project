@@ -1,6 +1,6 @@
 "use client";
 
-import MemberCard from "@/components/app-list/member-card";
+import { MemberCard } from "@/components/app-list/member-card";
 import { MemberGrid } from "@/components/app-list/member-grid";
 import MemberList from "@/components/app-list/member-list";
 import { useGetUserList } from "@/components/app-table/hooks/use-table-data";

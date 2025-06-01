@@ -428,36 +428,36 @@ export function AppTable<T>({
 					{Math.min(currentPage * itemsPerPage, filteredData.length)}件を表示
 				</div>
 				<div className="flex items-center space-x-2">
-				<Pagination>
-					<PaginationContent>
-						<PaginationItem>
-							<PaginationPrevious
-								onClick={() =>
-									setCurrentPage((prev) => Math.max(prev - 1, 1))
-								}
-							/>
-						</PaginationItem>
-						{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-							<PaginationItem key={page}>
-								<PaginationLink
-									isActive={page === currentPage}
-									onClick={() => setCurrentPage(page)}
-								>
-									{page}
-								</PaginationLink>
+					<Pagination>
+						<PaginationContent>
+							<PaginationItem>
+								<PaginationPrevious
+									onClick={() =>
+										setCurrentPage((prev) => Math.max(prev - 1, 1))
+									}
+								/>
 							</PaginationItem>
-						))}
-						<PaginationItem>
-							<PaginationNext
-								onClick={() =>
-									setCurrentPage((prev) =>
-										Math.min(prev + 1, totalPages),
-									)
-								}
-							/>
-						</PaginationItem>
-					</PaginationContent>
-				</Pagination>
+							{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+								<PaginationItem key={page}>
+									<PaginationLink
+										isActive={page === currentPage}
+										onClick={() => setCurrentPage(page)}
+									>
+										{page}
+									</PaginationLink>
+								</PaginationItem>
+							))}
+							<PaginationItem>
+								<PaginationNext
+									onClick={() =>
+										setCurrentPage((prev) =>
+											Math.min(prev + 1, totalPages),
+										)
+									}
+								/>
+							</PaginationItem>
+						</PaginationContent>
+					</Pagination>
 				</div>
 			</div>
 		</div>

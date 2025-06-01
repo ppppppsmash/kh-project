@@ -10,7 +10,7 @@ interface MemberCardProps {
 	member: MemberFormValues;
 }
 
-export default function MemberCard({ member }: MemberCardProps) {
+export const MemberCard = ({ member }: MemberCardProps) => {
 	return (
 		<Card className="overflow-hidden py-0 h-[80svh]">
 			{member?.photoUrl && (
@@ -32,11 +32,16 @@ export default function MemberCard({ member }: MemberCardProps) {
 					<p className="text-muted-foreground text-xs">{member?.position}</p>
 				</div>
 
+				{/* mgr: components/app-user-detail/index.tsx */}
 				<div className="space-y-4">
 					<div>
 						<h3 className="text-lg font-semibold mb-2">言語</h3>
 						<p className="text-muted-foreground">
-							{member?.skills?.map((skill, index) => (
+							{member?.skills &&
+							member?.skills?.filter((skill) => skill && skill.trim() !== "")
+							.length > 0 ? (
+							member?.skills?.filter((skill) => skill && skill.trim() !== "")
+							.map((skill) => (
 								<Badge
 									key={skill}
 									variant="outline"
@@ -48,8 +53,9 @@ export default function MemberCard({ member }: MemberCardProps) {
 								>
 									{skill}
 								</Badge>
-							)) || (
-								<span className="text-muted-foreground text-xs">未設定</span>
+								))
+							) : (
+								<span className="text-muted-foreground">未設定</span>
 							)}
 						</p>
 					</div>
@@ -68,12 +74,12 @@ export default function MemberCard({ member }: MemberCardProps) {
 
 					<div>
 						<h3 className="text-lg font-semibold mb-2">趣味・特技</h3>
-						<p className="text-muted-foreground">{member?.hobby || "未設定"}</p>
+						<p>{member?.hobby || "未設定"}</p>
 					</div>
 
 					<div>
 						<h3 className="text-lg font-semibold mb-2">自由記載欄</h3>
-						<p className="text-muted-foreground">
+						<p>
 							{member?.freeText || "未設定"}
 						</p>
 					</div>
