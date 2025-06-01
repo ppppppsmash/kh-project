@@ -173,56 +173,45 @@ export const AccordionTable = <T extends Record<string, unknown>>({
 				</div>
 			</div>
 
-				{totalPages > 1 && (
-					<Pagination className="mt-4">
+				{/* ページネーション */}
+			<div className="flex items-center justify-between mt-4">
+				<div className="text-sm text-muted-foreground">
+					{filteredData.length}件中 {(currentPage - 1) * itemsPerPage + 1}-
+					{Math.min(currentPage * itemsPerPage, filteredData.length)}件を表示
+				</div>
+				<div className="flex items-center space-x-2">
+					<Pagination>
 						<PaginationContent>
 							<PaginationItem>
 								<PaginationPrevious
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										if (currentPage > 1) setCurrentPage(currentPage - 1);
-									}}
-									className={
-										currentPage === 1 ? "pointer-events-none opacity-50" : ""
+									onClick={() =>
+										setCurrentPage((prev) => Math.max(prev - 1, 1))
 									}
 								/>
 							</PaginationItem>
-
-							{Array.from({ length: totalPages }).map((_, i) => (
-								// biome-ignore lint/suspicious/noArrayIndexKey: <explanation>
-								<PaginationItem key={i}>
+							{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+								<PaginationItem key={page}>
 									<PaginationLink
-										href="#"
-										onClick={(e) => {
-											e.preventDefault();
-											setCurrentPage(i + 1);
-										}}
-										isActive={currentPage === i + 1}
+										isActive={page === currentPage}
+										onClick={() => setCurrentPage(page)}
 									>
-										{i + 1}
+										{page}
 									</PaginationLink>
 								</PaginationItem>
 							))}
-
 							<PaginationItem>
 								<PaginationNext
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										if (currentPage < totalPages) setCurrentPage(currentPage + 1);
-									}}
-									className={
-										currentPage === totalPages
-											? "pointer-events-none opacity-50"
-											: ""
+									onClick={() =>
+										setCurrentPage((prev) =>
+											Math.min(prev + 1, totalPages),
+										)
 									}
 								/>
 							</PaginationItem>
 						</PaginationContent>
 					</Pagination>
-				)}
+				</div>
 			</div>
-		
+		</div>
 	);
 };

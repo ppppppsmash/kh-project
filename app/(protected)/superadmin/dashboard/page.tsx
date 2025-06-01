@@ -110,7 +110,7 @@ export default function DashboardPage() {
 							</div>
 						</CardContent>
 					</Card>
-					<Card>
+					{/* <Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">本日登録数</CardTitle>
 						</CardHeader>
@@ -119,7 +119,7 @@ export default function DashboardPage() {
 								{taskStats.todayTasks}件
 							</div>
 						</CardContent>
-					</Card>
+					</Card> */}
 					<Card>
 						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 							<CardTitle className="text-sm font-medium">完了数</CardTitle>
