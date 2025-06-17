@@ -24,7 +24,8 @@ import { IconExternalLink } from "@tabler/icons-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
-import { AuroraText } from "@/components/animation-ui/aurora-text";
+import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
+import { navConfig } from "@/config";
 // 固定のカテゴリーリスト
 const defaultCategories = [
 	"現場",
@@ -109,7 +110,12 @@ export default function AdminQAPage() {
 		<div className="mx-auto">
 			<div className="mb-8 flex items-center justify-between">
 				<h2 className="text-3xl font-bold">
-					<AuroraText>QA管理</AuroraText>
+					<PointerHighlight
+						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
+						pointerClassName="text-purple-500"
+					>
+						<span className="relative z-10">{navConfig.navMain[3].title}</span>
+					</PointerHighlight>
 				</h2>
 				<AddButton text="新規QA登録" onClick={handleAdd} />
 			</div>

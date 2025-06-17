@@ -28,10 +28,11 @@ import { useSubmit } from "@/lib/submitHandler";
 import type { TaskFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { AuroraText } from "@/components/animation-ui/aurora-text";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Plus, X } from "lucide-react";
 import { DeleteTabDialog } from "@/components/app-modal/delete-tab-dialog";
+import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
+import { navConfig } from "@/config";
 
 export default function TaskPage() {
 	const queryClient = useQueryClient();
@@ -214,7 +215,12 @@ export default function TaskPage() {
 		<div className="mx-auto">
 			<div className="flex justify-between items-center mb-4">
 				<h2 className="text-3xl font-bold">
-					<AuroraText>タスク管理</AuroraText>
+					<PointerHighlight
+						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
+						pointerClassName="text-purple-500"
+					>
+						<span className="relative z-10">{navConfig.navMain[2].title}</span>
+					</PointerHighlight>
 				</h2>
 			</div>
 

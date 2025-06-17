@@ -16,7 +16,8 @@ import {
 	Users,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { AuroraText } from "@/components/animation-ui/aurora-text";
+import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
+import { navConfig } from "@/config";
 
 export default function DashboardPage() {
 	const { data: session } = useSession();
@@ -34,7 +35,12 @@ export default function DashboardPage() {
 			<div className="space-y-8">
 				<div className="flex justify-between items-center mb-6">
 					<h2 className="text-3xl font-bold">
-						<AuroraText>ダッシュボード</AuroraText>
+						<PointerHighlight
+							rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
+							pointerClassName="text-purple-500"
+						>
+							<span className="relative z-10">{navConfig.navMain[0].title}</span>
+						</PointerHighlight>
 					</h2>
 					<div className="text-sm text-muted-foreground">
 						<Skeleton className="w-24 h-4" />
@@ -58,7 +64,12 @@ export default function DashboardPage() {
 		<div className="space-y-8">
 			<div className="flex justify-between items-center mb-6">
 				<h2 className="text-3xl font-bold">
-					<AuroraText>ダッシュボード</AuroraText>
+					<PointerHighlight
+						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
+						pointerClassName="text-purple-500"
+					>
+						<span className="relative z-10">{navConfig.navMain[0].title}</span>
+					</PointerHighlight>
 				</h2>
 				<div className="text-sm text-muted-foreground">
 					ようこそ、{session?.user?.name}さん
