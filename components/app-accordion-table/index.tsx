@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Filter, Pencil, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { CSVButton } from "@/components/csv-button";
 
 export interface AccordionTableColumn<T> {
 	key: keyof T | string;
@@ -44,6 +45,12 @@ export interface AccordionTableProps<T> {
 	onDelete?: (id: T[keyof T]) => void;
 	itemsPerPage?: number;
 	renderContent: (item: T) => React.ReactNode;
+	csvButton?: {
+		text: string;
+		onClick: (filteredData: T[], searchTerm: string, categoryFilter: string) => void;
+		className?: string;
+		disabled?: boolean;
+	};
 }
 
 export const AccordionTable = <T extends Record<string, unknown>>({
@@ -57,6 +64,7 @@ export const AccordionTable = <T extends Record<string, unknown>>({
 	onDelete,
 	itemsPerPage = 5,
 	renderContent,
+	csvButton,
 }: AccordionTableProps<T>) => {
 	const [searchTerm, setSearchTerm] = useState("");
 	const [categoryFilter, setCategoryFilter] = useState("全て");
@@ -82,37 +90,53 @@ export const AccordionTable = <T extends Record<string, unknown>>({
 		currentPage * itemsPerPage,
 	);
 
+	const handleCSVExport = () => {
+		csvButton?.onClick(filteredData, searchTerm, categoryFilter);
+	};
+
 	return (
 		<div className="mb-6 flex flex-col gap-4">
-			<div className="flex flex-col gap-4 md:flex-row">
-				<div className="relative flex-1">
-					<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-					<Input
-						placeholder="検索..."
-						value={searchTerm}
-						onChange={(e) => setSearchTerm(e.target.value)}
-						className="pl-8"
-					/>
-				</div>
-
-				{categoryField && categories.length > 0 && (
-					<div className="flex gap-2">
-						<Select value={categoryFilter} onValueChange={setCategoryFilter}>
-							<SelectTrigger className="w-[180px]">
-								<Filter className="mr-2 h-4 w-4" />
-								<SelectValue placeholder="カテゴリ" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="全て">全て</SelectItem>
-								{categories.map((category) => (
-									<SelectItem key={category} value={category}>
-										{category}
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
+			<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+				<div className="flex flex-col gap-4 md:flex-row">
+					<div className="relative flex-1">
+						<Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+						<Input
+							placeholder="検索..."
+							value={searchTerm}
+							onChange={(e) => setSearchTerm(e.target.value)}
+							className="pl-8"
+						/>
 					</div>
-				)}
+
+					{categoryField && categories.length > 0 && (
+						<div className="flex gap-2">
+							<Select value={categoryFilter} onValueChange={setCategoryFilter}>
+								<SelectTrigger className="w-[180px]">
+									<Filter className="mr-2 h-4 w-4" />
+									<SelectValue placeholder="カテゴリ" />
+								</SelectTrigger>
+								<SelectContent>
+									<SelectItem value="全て">全て</SelectItem>
+									{categories.map((category) => (
+										<SelectItem key={category} value={category}>
+											{category}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						</div>
+					)}
+					<div className="flex items-center gap-2">
+						{csvButton && (
+							<CSVButton
+								text={csvButton.text}
+								onClick={handleCSVExport}
+								className={csvButton.className}
+								disabled={csvButton.disabled}
+							/>
+						)}
+					</div>
+				</div>
 			</div>
 
 			<div className="overflow-auto max-h-[70svh]">

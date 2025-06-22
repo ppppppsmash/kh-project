@@ -26,6 +26,8 @@ import { useSession } from "next-auth/react";
 import Link from "next/link";
 import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
 import { navConfig } from "@/config";
+import { exportFilteredQaToCSV } from "@/lib/csv-export";
+
 // 固定のカテゴリーリスト
 const defaultCategories = [
 	"現場",
@@ -106,6 +108,20 @@ export default function AdminQAPage() {
 		openModal();
 	};
 
+	const handleCSVExport = (filteredData: QaFormValues[], searchTerm: string, categoryFilter: string) => {
+		try {
+			exportFilteredQaToCSV(
+				filteredData,
+				searchTerm,
+				categoryFilter
+			);
+			CustomToast.success("CSVファイルをエクスポートしました");
+		} catch (error) {
+			console.error("CSVエクスポートエラー:", error);
+			CustomToast.error("CSVエクスポートに失敗しました");
+		}
+	};
+
 	return (
 		<div className="mx-auto">
 			<div className="mb-8 flex items-center justify-between">
@@ -155,6 +171,11 @@ export default function AdminQAPage() {
 					</div>
 				)}
 				itemsPerPage={itemsPerPage}
+				csvButton={{
+					text: "CSV出力",
+					onClick: handleCSVExport,
+					className: "",
+				}}
 			/>
 
 			<Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
