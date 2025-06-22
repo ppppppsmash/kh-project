@@ -26,6 +26,7 @@ import {
 } from "@/components/ui/select";
 import { Filter, Pencil, Search, Trash2 } from "lucide-react";
 import { useState } from "react";
+import { AddButton } from "@/components/add-button";
 import { CSVButton } from "@/components/csv-button";
 
 export interface AccordionTableColumn<T> {
@@ -45,6 +46,11 @@ export interface AccordionTableProps<T> {
 	onDelete?: (id: T[keyof T]) => void;
 	itemsPerPage?: number;
 	renderContent: (item: T) => React.ReactNode;
+	addButton?: {
+		text: string;
+		onClick: () => void;
+		className?: string;
+	};
 	csvButton?: {
 		text: string;
 		onClick: (filteredData: T[], searchTerm: string, categoryFilter: string) => void;
@@ -64,6 +70,7 @@ export const AccordionTable = <T extends Record<string, unknown>>({
 	onDelete,
 	itemsPerPage = 5,
 	renderContent,
+	addButton,
 	csvButton,
 }: AccordionTableProps<T>) => {
 	const [searchTerm, setSearchTerm] = useState("");
@@ -136,6 +143,15 @@ export const AccordionTable = <T extends Record<string, unknown>>({
 							/>
 						)}
 					</div>
+				</div>
+				<div className="flex items-center gap-2">
+					{addButton && (
+						<AddButton
+							text={addButton.text}
+							onClick={addButton.onClick}
+							className={addButton.className}
+						/>
+					)}
 				</div>
 			</div>
 

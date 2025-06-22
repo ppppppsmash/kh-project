@@ -133,7 +133,6 @@ export default function AdminQAPage() {
 						<span className="relative z-10">{navConfig.navMain[3].title}</span>
 					</PointerHighlight>
 				</h2>
-				<AddButton text="新規QA登録" onClick={handleAdd} />
 			</div>
 
 			<QaModalForm
@@ -159,6 +158,11 @@ export default function AdminQAPage() {
 					onDelete: handleDelete,
 				})}
 				idField="id"
+				addButton={{
+					text: "新規QA登録",
+					onClick: handleAdd,
+					className: "",
+				}}
 				searchFields={["question", "answer"]}
 				categoryField="category"
 				categories={categories}
