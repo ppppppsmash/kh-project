@@ -16,7 +16,7 @@ import {
 	Users,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
+import { PointerHighlight } from "@/components/animation-ui/pointer-highlight";
 import { navConfig } from "@/config";
 
 export default function DashboardPage() {
