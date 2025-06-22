@@ -130,7 +130,7 @@ export default function AdminQAPage() {
 						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
 						pointerClassName="text-purple-500"
 					>
-						<span className="relative z-10">{navConfig.navMain[3].title}</span>
+						<span className="relative z-10">{navConfig.navMain[4].title}</span>
 					</PointerHighlight>
 				</h2>
 			</div>

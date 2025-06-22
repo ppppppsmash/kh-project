@@ -97,7 +97,7 @@ export default function ClubActivityPage() {
 						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
 						pointerClassName="text-purple-500"
 					>
-						<span className="relative z-10">{navConfig.navMain[2].title}</span>
+						<span className="relative z-10">{navConfig.navMain[5].title}</span>
 					</PointerHighlight>
 				</h2>
 				<AddButton text="新規部活動登録" onClick={handleAdd} />

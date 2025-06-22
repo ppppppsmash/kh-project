@@ -46,7 +46,7 @@ export default function UserPage() {
 						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
 						pointerClassName="text-purple-500"
 					>
-						<span className="relative z-10">{navConfig.navMain[1].items?.[0]?.title || ""}</span>
+						<span className="relative z-10">{navConfig.navMain[2].items?.[0]?.title || ""}</span>
 					</PointerHighlight>
 				</h2>
 				<EditButton text="編集" onClick={handleEdit} />

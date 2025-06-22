@@ -1,5 +1,6 @@
 import {
 	IconCamera,
+	IconUsersGroup,
 	IconConfetti,
 	IconDashboard,
 	IconDatabase,
@@ -12,8 +13,6 @@ import {
 	IconSearch,
 	IconSettings,
 	IconUser,
-	//TODO: 今後使用するかも
-	IconUsersGroup,
 } from "@tabler/icons-react";
 
 // ナビゲーションの設定
@@ -23,6 +22,11 @@ export const navConfig = {
 			title: "ダッシュボード",
 			url: "/superadmin/dashboard",
 			icon: IconDashboard,
+		},
+		{
+			title: "組織図",
+			url: "/superadmin/organization",
+			icon: IconUsersGroup,
 		},
 		{
 			title: "メンバー",
