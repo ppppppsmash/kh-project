@@ -40,14 +40,14 @@ export default function DashboardPage() {
 			</div>
 
 			<div className="space-y-4">
-				<h3 className="text-lg font-bold">タスク状況</h3>
+				<h3 className="text-lg font-bold">...</h3>
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 				
 				</div>
 			</div>
 
 			<div className="space-y-4">
-				<h3 className="text-lg font-bold">テスト</h3>
+				<h3 className="text-lg font-bold">...</h3>
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 					
 				</div>
