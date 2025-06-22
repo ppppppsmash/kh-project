@@ -3,6 +3,7 @@
 import type React from "react";
 
 import { AddButton } from "@/components/add-button";
+import { CSVButton } from "@/components/csv-button";
 import { ClubActivityTableSkeleton } from "@/components/app-skeleton";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -82,6 +83,12 @@ interface TableProps<T> {
 		onClick: () => void;
 		className?: string;
 	};
+	csvButton?: {
+		text: string;
+		onClick: () => void;
+		className?: string;
+		disabled?: boolean;
+	};
 	sort?: { key: string; order: "asc" | "desc" };
 	onSortChange?: (sort: { key: string; order: "asc" | "desc" }) => void;
 	statusFilter?: string;
@@ -97,6 +104,7 @@ export function AppTable<T>({
 	onRowClick,
 	onFilter,
 	addButton,
+	csvButton,
 	sort,
 	onSortChange,
 	statusFilter: externalStatusFilter,
@@ -310,6 +318,15 @@ export function AppTable<T>({
 								))}
 							</SelectContent>
 						</Select>
+
+						{csvButton && (
+							<CSVButton
+								text={csvButton.text}
+								onClick={csvButton.onClick}
+								className={csvButton.className}
+								disabled={csvButton.disabled}
+							/>
+						)}
 					</div>
 
 					<div className="flex items-center gap-2">

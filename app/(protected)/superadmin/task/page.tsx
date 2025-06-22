@@ -33,6 +33,7 @@ import { Plus, X } from "lucide-react";
 import { DeleteTabDialog } from "@/components/app-modal/delete-tab-dialog";
 import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
 import { navConfig } from "@/config";
+import { exportFilteredTasksToCSV } from "@/lib/csv-export";
 
 export default function TaskPage() {
 	const queryClient = useQueryClient();
@@ -124,8 +125,24 @@ export default function TaskPage() {
 		}
 	};
 
+	const handleCSVExport = (filteredTasks: TaskFormValues[], searchQuery: string, statusFilter: string) => {
+		try {
+			exportFilteredTasksToCSV(
+				filteredTasks,
+				categories ?? [],
+				searchQuery,
+				statusFilter
+			);
+			CustomToast.success("CSVファイルをエクスポートしました");
+		} catch (error) {
+			console.error("CSVエクスポートエラー:", error);
+			CustomToast.error("CSVエクスポートに失敗しました");
+		}
+	};
+
 	const renderTabContent = (tabId: string) => {
 		if (tabId === "active") {
+			const activeTasks = tasks?.filter(task => task.progress !== "completed") ?? [];
 			return (
 				<AppTable
 					sort={sort}
@@ -136,7 +153,7 @@ export default function TaskPage() {
 						onAdd: handleAdd,
 						categories: categories ?? [],
 					})}
-					data={tasks?.filter(task => task.progress !== "completed") ?? []}
+					data={activeTasks}
 					loading={isLoading}
 					searchableKeys={["taskId", "title", "assignee", "dueDate"]}
 					toolBar={{
@@ -153,11 +170,17 @@ export default function TaskPage() {
 						onClick: handleAdd,
 						className: "",
 					}}
+					csvButton={{
+						text: "CSV出力",
+						onClick: () => handleCSVExport(activeTasks, "", "すべて"),
+						className: "",
+					}}
 				/>
 			);
 		}
 
 		if (tabId === "completed") {
+			const completedTasks = tasks?.filter(task => task.progress === "completed") ?? [];
 			return (
 				<AppTable
 					sort={sort}
@@ -168,7 +191,7 @@ export default function TaskPage() {
 						onAdd: handleAdd,
 						categories: categories ?? [],
 					})}
-					data={tasks?.filter(task => task.progress === "completed") ?? []}
+					data={completedTasks}
 					loading={isLoading}
 					searchableKeys={["taskId", "title", "assignee", "dueDate"]}
 					toolBar={{
@@ -179,6 +202,11 @@ export default function TaskPage() {
 					onRowClick={(row: TaskFormValues) => {
 						setSelectedTask(row);
 						setIsDetailOpen(true);
+					}}
+					csvButton={{
+						text: "CSV出力",
+						onClick: () => handleCSVExport(completedTasks, "", "すべて"),
+						className: "",
 					}}
 				/>
 			);
@@ -294,6 +322,11 @@ export default function TaskPage() {
 							addButton={{
 								text: "新規タスク登録",
 								onClick: handleAdd,
+								className: "",
+							}}
+							csvButton={{
+								text: "CSV出力",
+								onClick: () => handleCSVExport(tasks?.filter(task => task.tabId === tab.id) ?? [], "", "すべて"),
 								className: "",
 							}}
 						/>
