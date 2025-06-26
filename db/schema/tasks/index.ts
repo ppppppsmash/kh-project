@@ -3,6 +3,7 @@ import {
 	timestamp,
 	uuid,
 	varchar,
+	text,
 } from "drizzle-orm/pg-core";
 import { v7 as uuidv7 } from "uuid";
 import { categories } from "../categories";
@@ -12,13 +13,13 @@ export const tasks = pgTable("tasks", {
 	id: uuid("id").primaryKey().$defaultFn(uuidv7),
 	taskId: varchar("task_id", { length: 255 }).notNull(),
 	title: varchar("title", { length: 255 }).notNull(),
-	content: varchar("content", { length: 255 }).notNull(),
+	content: text("content").notNull(),
 	assignee: varchar("assignee", { length: 255 }).notNull(),
 	dueDate: timestamp("due_date").notNull(),
 	progress: varchar("progress", { length: 255 }).notNull(),
-	progressDetails: varchar("progress_details", { length: 255 }),
+	progressDetails: text("progress_details"),
 	link: varchar("link", { length: 255 }).notNull(),
-	notes: varchar("notes", { length: 255 }).notNull(),
+	notes: text("notes"),
 	categoryId: uuid("category_id")
 		.references(() => categories.id),
 	tabId: uuid("tab_id")
