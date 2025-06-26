@@ -12,7 +12,8 @@ export const getTasks = async (): Promise<TaskFormValues[]> => {
 		return result.map((task) => ({
 			...task,
 			progress: task.progress as TaskFormValues["progress"],
-			progressDetails: task.progressDetails || "",
+			progressDetails: task.progressDetails || undefined,
+			notes: task.notes || undefined,
 			tabId: task.tabId || undefined,
 			categoryId: task.categoryId || undefined,
 			startedAt: task.startedAt || new Date(),
