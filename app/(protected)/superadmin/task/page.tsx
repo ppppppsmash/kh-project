@@ -9,6 +9,7 @@ import { useGetTasks, useGetCategories, useGetTabs } from "@/components/app-tabl
 import {
 	filterTask,
 	getTaskStatusFilters,
+	getTaskPriorityFilters,
 	renderTask,
 } from "@/components/app-table/render/TaskItem";
 import { Button } from "@/components/ui/button";
@@ -159,6 +160,7 @@ export default function TaskPage() {
 					toolBar={{
 						researchBarPlaceholder: "タスク検索",
 						researchStatusFilter: getTaskStatusFilters().filter(status => status !== "完了"),
+						researchPriorityFilter: getTaskPriorityFilters(),
 					}}
 					onFilter={filterTask}
 					onRowClick={(row: TaskFormValues) => {
@@ -197,6 +199,7 @@ export default function TaskPage() {
 					toolBar={{
 						researchBarPlaceholder: "タスク検索",
 						researchStatusFilter: ["すべて", "完了"],
+						researchPriorityFilter: getTaskPriorityFilters(),
 					}}
 					onFilter={filterTask}
 					onRowClick={(row: TaskFormValues) => {
@@ -313,6 +316,7 @@ export default function TaskPage() {
 							toolBar={{
 								researchBarPlaceholder: "タスク検索",
 								researchStatusFilter: getTaskStatusFilters(),
+								researchPriorityFilter: getTaskPriorityFilters(),
 							}}
 							onFilter={filterTask}
 							onRowClick={(row: TaskFormValues) => {

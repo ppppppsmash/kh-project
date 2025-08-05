@@ -71,13 +71,14 @@ interface TableProps<T> {
 	toolBar?: {
 		researchBarPlaceholder?: string;
 		researchStatusFilter?: string[];
+		researchPriorityFilter?: string[];
 	};
 	columns: TableColumn<T>[];
 	data: T[];
 	loading?: boolean;
 	searchableKeys?: (keyof T)[];
 	onRowClick?: (row: T) => void;
-	onFilter?: (data: T[], searchQuery: string, statusFilter: string) => T[];
+	onFilter?: (data: T[], searchQuery: string, statusFilter: string, priorityFilter?: string) => T[];
 	addButton?: {
 		text: string;
 		onClick: () => void;
@@ -93,6 +94,8 @@ interface TableProps<T> {
 	onSortChange?: (sort: { key: string; order: "asc" | "desc" }) => void;
 	statusFilter?: string;
 	onStatusFilterChange?: (status: string) => void;
+	priorityFilter?: string;
+	onPriorityFilterChange?: (priority: string) => void;
 }
 
 export function AppTable<T>({
@@ -109,12 +112,16 @@ export function AppTable<T>({
 	onSortChange,
 	statusFilter: externalStatusFilter,
 	onStatusFilterChange,
+	priorityFilter: externalPriorityFilter,
+	onPriorityFilterChange,
 }: TableProps<T>) {
 	const [reload, setReload] = useState(false);
 	const [filteredData, setFilteredData] = useState<T[]>(data);
 	const [searchQuery, setSearchQuery] = useState("");
 	const [internalStatusFilter, setInternalStatusFilter] = useState<string>("すべて");
 	const statusFilter = externalStatusFilter ?? internalStatusFilter;
+	const [internalPriorityFilter, setInternalPriorityFilter] = useState<string>("すべて");
+	const priorityFilter = externalPriorityFilter ?? internalPriorityFilter;
 	const [currentPage, setCurrentPage] = useState(1);
 	const { itemsPerPage, setItemsPerPage } = useTableStore();
 
@@ -141,6 +148,14 @@ export function AppTable<T>({
 		}
 	};
 
+	const handlePriorityFilterChange = (newPriority: string) => {
+		if (onPriorityFilterChange) {
+			onPriorityFilterChange(newPriority);
+		} else {
+			setInternalPriorityFilter(newPriority);
+		}
+	};
+
 	useEffect(() => {
 		const fetchData = async () => {
 			try {
@@ -160,7 +175,7 @@ export function AppTable<T>({
 
 		// カスタムフィルター処理
 		if (onFilter) {
-			result = onFilter(result, searchQuery, statusFilter);
+			result = onFilter(result, searchQuery, statusFilter, priorityFilter);
 		} else {
 			// デフォルトの検索フィルタリング
 			if (searchQuery) {
@@ -223,7 +238,7 @@ export function AppTable<T>({
 
 		setFilteredData(result);
 		setCurrentPage(1);
-	}, [data, searchQuery, statusFilter, currentSort, onFilter, searchableKeys]);
+	}, [data, searchQuery, statusFilter, priorityFilter, currentSort, onFilter, searchableKeys]);
 
 	// ページネーション
 	const totalPages = getTotalPages(filteredData, itemsPerPage);
@@ -283,24 +298,44 @@ export function AppTable<T>({
 										))}
 									</SelectContent>
 								</Select>
-								{(searchQuery || statusFilter !== "すべて" || 
-									(currentSort && (currentSort.key !== sort?.key || currentSort.order !== sort?.order))) && (
-									<Button
-										variant="outline"
-										size="sm"
-										onClick={() => {
-											setSearchQuery("");
-											handleStatusFilterChange("すべて");
-											if (sort) {
-												handleSortChange({ key: sort.key, order: sort.order });
-											}
-										}}
-									>
-										<X className="h-3.5 w-3.5" />
-										リセット
-									</Button>
-								)}
 							</div>
+						)}
+						{toolBar?.researchPriorityFilter && (
+							<div className="flex items-center gap-2">
+								<Select value={priorityFilter} onValueChange={handlePriorityFilterChange}>
+									<SelectTrigger className="w-[180px]">
+										<div className="flex items-center gap-2">
+											<Filter className="h-4 w-4" />
+											<SelectValue placeholder="優先度でフィルター" />
+										</div>
+									</SelectTrigger>
+									<SelectContent>
+										{toolBar.researchPriorityFilter?.map((priority) => (
+											<SelectItem key={priority} value={priority}>
+												{priority}
+											</SelectItem>
+										))}
+									</SelectContent>
+								</Select>
+							</div>
+						)}
+						{(searchQuery || statusFilter !== "すべて" || priorityFilter !== "すべて" || 
+							(currentSort && (currentSort.key !== sort?.key || currentSort.order !== sort?.order))) && (
+							<Button
+								variant="outline"
+								size="sm"
+								onClick={() => {
+									setSearchQuery("");
+									handleStatusFilterChange("すべて");
+									handlePriorityFilterChange("すべて");
+									if (sort) {
+										handleSortChange({ key: sort.key, order: sort.order });
+									}
+								}}
+							>
+								<X className="h-3.5 w-3.5" />
+								リセット
+							</Button>
 						)}
 
 						<Select

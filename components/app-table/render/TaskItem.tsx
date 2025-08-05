@@ -27,6 +27,7 @@ export const filterTask = (
 	data: TaskFormValues[],
 	searchQuery: string,
 	statusFilter: string,
+	priorityFilter = "すべて",
 ) => {
 	let result = [...data];
 
@@ -60,6 +61,25 @@ export const filterTask = (
 		});
 	}
 
+	// 優先度フィルタリング
+	if (priorityFilter !== "すべて") {
+		result = result.filter((task) => {
+			switch (task.priority) {
+				case "high":
+					return priorityFilter === "高";
+				case "medium":
+					return priorityFilter === "中";
+				case "low":
+					return priorityFilter === "低";
+				case "none":
+				case undefined:
+					return priorityFilter === "未設定";
+				default:
+					return false;
+			}
+		});
+	}
+
 	return result;
 };
 
@@ -67,6 +87,14 @@ export const getTaskStatusFilters = () => [
 	"すべて",
 	"未着手",
 	"進行中",
+];
+
+export const getTaskPriorityFilters = () => [
+	"すべて",
+	"高",
+	"中",
+	"低",
+	"未設定",
 ];
 
 export const renderTask = ({
@@ -95,6 +123,26 @@ export const renderTask = ({
 		sortable: false,
 		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 		render: (value: any) => <span>{value}</span>,
+	},
+	{
+		key: "priority",
+		title: "優先度",
+		sortable: true,
+		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+		render: (value: any) => {
+			if (!value || value === "none") return <span className="text-gray-500">未設定</span>;
+			return (
+				<span className={cn(
+					value === "high" && "text-red-600 font-medium",
+					value === "medium" && "text-orange-600 font-medium",
+					value === "low" && "text-blue-600 font-medium"
+				)}>
+					{value === "high" && "高"}
+					{value === "medium" && "中"}
+					{value === "low" && "低"}
+				</span>
+			);
+		},
 	},
 	{
 		key: "categoryId",
