@@ -68,11 +68,11 @@ export const navConfig = {
 		//     },
 		//   ],
 		// },
-		{
-			title: "部活動",
-			url: "/superadmin/club-activity",
-			icon: IconConfetti,
-		},
+		// {
+		// 	title: "部活動",
+		// 	url: "/superadmin/club-activity",
+		// 	icon: IconConfetti,
+		// },
 	],
 	navClouds: [
 		{
