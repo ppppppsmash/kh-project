@@ -69,6 +69,16 @@ export const TaskDetailSheet = ({
 						<h3 className="text-sm font-medium text-gray-500 mb-1">タスクID</h3>
 						<p className="text-gray-900 dark:text-gray-100">{task.taskId}</p>
 					</div>
+					<div>
+						<h3 className="text-sm font-medium text-gray-500 mb-1">優先度</h3>
+						<p className="text-gray-900 dark:text-gray-100">
+							{task.priority === "high" && "高"}
+							{task.priority === "medium" && "中"}
+							{task.priority === "low" && "低"}
+							{task.priority === "none" && "未設定"}
+							{!task.priority && "未設定"}
+						</p>
+					</div>
 					{task.categoryId && (
 						<div>
 							<h3 className="text-sm font-medium text-gray-500 mb-1">

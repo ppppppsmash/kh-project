@@ -185,19 +185,40 @@ export const TaskModalForm = ({
 					)}
 				</div>
 
-				<div className="space-y-2">
-					<Label htmlFor="assignee">
-						担当者<span className="text-red-500">*</span>
-					</Label>
-					<Input
-						id="assignee"
-						{...form.register("assignee", { required: "担当者は必須です" })}
-					/>
-					{form.formState.errors.assignee && (
-						<p className="text-sm text-red-500">
-							{form.formState.errors.assignee.message}
-						</p>
-					)}
+				<div className="flex gap-x-10 items-start justify-between">
+					<div className="space-y-2 w-3/4">
+						<Label htmlFor="assignee">
+							担当者<span className="text-red-500">*</span>
+						</Label>
+						<Input
+							id="assignee"
+							{...form.register("assignee", { required: "担当者は必須です" })}
+						/>
+						{form.formState.errors.assignee && (
+							<p className="text-sm text-red-500">
+								{form.formState.errors.assignee.message}
+							</p>
+						)}
+					</div>
+					<div className="space-y-2 w-1/4">
+						<Label htmlFor="priority">優先度</Label>
+						<Select
+							value={form.watch("priority")}
+							onValueChange={(value: string) =>
+								form.setValue("priority", value as TaskFormValues["priority"])
+							}
+						>
+							<SelectTrigger>
+								<SelectValue placeholder="優先度を選択" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="high">高</SelectItem>
+								<SelectItem value="medium">中</SelectItem>
+								<SelectItem value="low">低</SelectItem>
+								<SelectItem value="none">未設定</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
 				</div>
 
 				<div className="flex gap-x-10 items-start">
@@ -278,25 +299,7 @@ export const TaskModalForm = ({
 							</SelectContent>
 						</Select>
 					</div>
-					<div className="space-y-2">
-						<Label htmlFor="priority">優先度</Label>
-						<Select
-							value={form.watch("priority")}
-							onValueChange={(value: string) =>
-								form.setValue("priority", value as TaskFormValues["priority"])
-							}
-						>
-							<SelectTrigger>
-								<SelectValue placeholder="優先度を選択" />
-							</SelectTrigger>
-							<SelectContent>
-								<SelectItem value="high">高</SelectItem>
-								<SelectItem value="medium">中</SelectItem>
-								<SelectItem value="low">低</SelectItem>
-								<SelectItem value="none">未設定</SelectItem>
-							</SelectContent>
-						</Select>
-					</div>
+
 					<div className="space-y-2">
 						<Label htmlFor="category">カテゴリー</Label>
 						<Select
