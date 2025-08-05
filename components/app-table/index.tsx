@@ -283,10 +283,11 @@ export function AppTable<T>({
 						)}
 						{toolBar?.researchStatusFilter && (
 							<div className="flex items-center gap-2">
+								<span className="text-sm font-medium text-blue-600 dark:text-blue-400">ステータス:</span>
 								<Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-									<SelectTrigger className="w-[180px]">
+									<SelectTrigger className="w-[180px] border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/20">
 										<div className="flex items-center gap-2">
-											<Filter className="h-4 w-4" />
+											<Filter className="h-4 w-4 text-blue-600 dark:text-blue-400" />
 											<SelectValue placeholder="ステータスでフィルター" />
 										</div>
 									</SelectTrigger>
@@ -302,10 +303,11 @@ export function AppTable<T>({
 						)}
 						{toolBar?.researchPriorityFilter && (
 							<div className="flex items-center gap-2">
+								<span className="text-sm font-medium text-orange-600 dark:text-orange-400">優先度:</span>
 								<Select value={priorityFilter} onValueChange={handlePriorityFilterChange}>
-									<SelectTrigger className="w-[180px]">
+									<SelectTrigger className="w-[180px] border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-950/20">
 										<div className="flex items-center gap-2">
-											<Filter className="h-4 w-4" />
+											<Filter className="h-4 w-4 text-orange-600 dark:text-orange-400" />
 											<SelectValue placeholder="優先度でフィルター" />
 										</div>
 									</SelectTrigger>
