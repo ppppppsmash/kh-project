@@ -12,6 +12,7 @@ export const getTasks = async (): Promise<TaskFormValues[]> => {
 		return result.map((task) => ({
 			...task,
 			progress: task.progress as TaskFormValues["progress"],
+			priority: task.priority as TaskFormValues["priority"],
 			progressDetails: task.progressDetails || undefined,
 			notes: task.notes || undefined,
 			tabId: task.tabId || undefined,
@@ -46,6 +47,7 @@ export const createTask = async (data: TaskFormValues) => {
 		notes: data.notes ?? "",
 		startedAt: data.startedAt ?? new Date(),
 		categoryId: data.categoryId || undefined,
+		priority: data.priority || "none",
 		createdAt: new Date(),
 		updatedAt: new Date(),
 	};

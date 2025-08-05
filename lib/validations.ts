@@ -52,6 +52,7 @@ export const taskFormSchema = z.object({
 	assignee: z.string().min(1, "担当者は必須です"),
 	dueDate: z.date({ required_error: "期限は必須です" }),
 	progress: z.enum(["pending", "inProgress", "completed"]),
+	priority: z.enum(["high", "medium", "low", "none"]).optional(),
 	progressDetails: z.string().optional(),
 	link: z
 		.string()

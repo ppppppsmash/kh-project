@@ -109,6 +109,7 @@ export const TaskModalForm = ({
 				dueDate: defaultValues?.dueDate || undefined,
 				completedAt: defaultValues?.completedAt || undefined,
 				progress: defaultValues?.progress || "pending",
+				priority: defaultValues?.priority || undefined,
 				progressDetails: defaultValues?.progressDetails || "",
 				link: defaultValues?.link || "",
 				notes: defaultValues?.notes || "",
@@ -274,6 +275,25 @@ export const TaskModalForm = ({
 								<SelectItem value="pending">未着手</SelectItem>
 								<SelectItem value="inProgress">進行中</SelectItem>
 								<SelectItem value="completed">完了</SelectItem>
+							</SelectContent>
+						</Select>
+					</div>
+					<div className="space-y-2">
+						<Label htmlFor="priority">優先度</Label>
+						<Select
+							value={form.watch("priority")}
+							onValueChange={(value: string) =>
+								form.setValue("priority", value as TaskFormValues["priority"])
+							}
+						>
+							<SelectTrigger>
+								<SelectValue placeholder="優先度を選択" />
+							</SelectTrigger>
+							<SelectContent>
+								<SelectItem value="high">高</SelectItem>
+								<SelectItem value="medium">中</SelectItem>
+								<SelectItem value="low">低</SelectItem>
+								<SelectItem value="none">未設定</SelectItem>
 							</SelectContent>
 						</Select>
 					</div>

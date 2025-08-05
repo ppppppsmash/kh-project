@@ -17,6 +17,7 @@ export const tasks = pgTable("tasks", {
 	assignee: varchar("assignee", { length: 255 }).notNull(),
 	dueDate: timestamp("due_date").notNull(),
 	progress: varchar("progress", { length: 255 }).notNull(),
+	priority: varchar("priority", { length: 255 }).default("none"),
 	progressDetails: text("progress_details"),
 	link: varchar("link", { length: 255 }).notNull(),
 	notes: text("notes"),
