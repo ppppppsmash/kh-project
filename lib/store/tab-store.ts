@@ -23,6 +23,8 @@ interface TabStore {
   setActiveTab: (id: string) => void;
   setTabFilter: (id: string, isChecked: boolean) => void;
   resetTabFilters: () => void;
+  addCustomTabFilter: (id: string, name: string) => void;
+  removeCustomTabFilter: (id: string) => void;
 }
 
 export const useTabStore = create<TabStore>((set) => ({
@@ -84,5 +86,13 @@ export const useTabStore = create<TabStore>((set) => ({
   resetTabFilters: () => 
     set((state) => ({
       tabFilters: state.tabFilters.map((filter) => ({ ...filter, isChecked: true })),
+    })),
+  addCustomTabFilter: (id: string, name: string) => 
+    set((state) => ({
+      tabFilters: [...state.tabFilters, { id, name, isChecked: true }],
+    })),
+  removeCustomTabFilter: (id: string) => 
+    set((state) => ({
+      tabFilters: state.tabFilters.filter((filter) => filter.id !== id),
     })),
 }));
