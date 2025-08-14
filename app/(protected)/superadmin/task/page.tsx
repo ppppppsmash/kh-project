@@ -30,11 +30,14 @@ import type { TaskFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Plus, X } from "lucide-react";
+import { Plus, X, Filter, RotateCcw } from "lucide-react";
 import { DeleteTabDialog } from "@/components/app-modal/delete-tab-dialog";
 import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
 import { navConfig } from "@/config";
 import { exportFilteredTasksToCSV } from "@/lib/csv-export";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 
 export default function TaskPage() {
 	const queryClient = useQueryClient();
@@ -48,9 +51,37 @@ export default function TaskPage() {
 	const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
 	const { sort, setSort } = useTaskTableSort();
 	const [isAddTabDialogOpen, setIsAddTabDialogOpen] = useState(false);
-	const { activeTab, setActiveTab, addTab, removeTab } = useTabStore();
+	const { 
+		activeTab, 
+		setActiveTab, 
+		addTab, 
+		removeTab, 
+		tabFilters, 
+		setTabFilter, 
+		resetTabFilters 
+	} = useTabStore();
 	const [isDeleteTabDialogOpen, setIsDeleteTabDialogOpen] = useState(false);
 	const [tabToDelete, setTabToDelete] = useState<{ id: string; name: string } | null>(null);
+
+	// フィルタリングされたタスクを取得
+	const getFilteredTasks = () => {
+		if (!tasks) return [];
+		
+		const checkedTabIds = tabFilters
+			.filter(filter => filter.isChecked)
+			.map(filter => filter.id);
+		
+		return tasks.filter(task => {
+			if (checkedTabIds.includes("active") && task.progress !== "completed") return true;
+			if (checkedTabIds.includes("in-progress") && task.progress === "inProgress") return true;
+			if (checkedTabIds.includes("completed") && task.progress === "completed") return true;
+			
+			// カスタムタブの場合は、そのタブIDがチェックされているかチェック
+			return checkedTabIds.includes(task.tabId || "");
+		});
+	};
+
+	const filteredTasks = getFilteredTasks();
 
 	const { handleSubmit } = useSubmit<TaskFormValues>({
 		action: async (data) => {
@@ -143,7 +174,7 @@ export default function TaskPage() {
 
 	const renderTabContent = (tabId: string) => {
 		if (tabId === "active") {
-			const activeTasks = tasks?.filter(task => task.progress !== "completed") ?? [];
+			const activeTasks = filteredTasks.filter(task => task.progress !== "completed") ?? [];
 			return (
 				<AppTable
 					sort={sort}
@@ -181,8 +212,47 @@ export default function TaskPage() {
 			);
 		}
 
+		if (tabId === "in-progress") {
+			const inProgressTasks = filteredTasks.filter(task => task.progress === "inProgress") ?? [];
+			return (
+				<AppTable
+					sort={sort}
+					onSortChange={setSort}
+					columns={renderTask({
+						onEdit: handleEdit,
+						onDelete: handleDelete,
+						onAdd: handleAdd,
+						categories: categories ?? [],
+					})}
+					data={inProgressTasks}
+					loading={isLoading}
+					searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+					toolBar={{
+						researchBarPlaceholder: "タスク検索",
+						researchStatusFilter: ["すべて", "進行中"],
+						researchPriorityFilter: getTaskPriorityFilters(),
+					}}
+					onFilter={filterTask}
+					onRowClick={(row: TaskFormValues) => {
+						setSelectedTask(row);
+						setIsDetailOpen(true);
+					}}
+					addButton={{
+						text: "新規タスク登録",
+						onClick: handleAdd,
+						className: "",
+					}}
+					csvButton={{
+						text: "CSV出力",
+						onClick: () => handleCSVExport(inProgressTasks, "", "すべて"),
+						className: "",
+					}}
+				/>
+			);
+		}
+
 		if (tabId === "completed") {
-			const completedTasks = tasks?.filter(task => task.progress === "completed") ?? [];
+			const completedTasks = filteredTasks.filter(task => task.progress === "completed") ?? [];
 			return (
 				<AppTable
 					sort={sort}
@@ -259,6 +329,7 @@ export default function TaskPage() {
 				<div className="flex items-center gap-2">
 					<TabsList>
 						<TabsTrigger value="active">未完了のタスク</TabsTrigger>
+						<TabsTrigger value="in-progress">進行中のタスク</TabsTrigger>
 						<TabsTrigger value="completed">完了したタスク</TabsTrigger>
 						{tabs?.map((tab) => (
 							<TabsTrigger
@@ -277,12 +348,54 @@ export default function TaskPage() {
 											handleDeleteTab({ id: tab.id || "", name: tab.name || "" });
 										}}
 									>
-										<X className="h-3 w-3" />
+										<X className="h-4 w-4" />
 									</Button>
 								)}
 							</TabsTrigger>
 						))}
 					</TabsList>
+					
+					{/* タブフィルター */}
+					<Popover>
+						<PopoverTrigger asChild>
+							<Button variant="outline" size="icon" className="h-9 w-9">
+								<Filter className="h-4 w-4" />
+							</Button>
+						</PopoverTrigger>
+						<PopoverContent className="w-80" align="end">
+							<div className="space-y-4">
+								<div className="flex items-center justify-between">
+									<h4 className="font-medium">タブフィルター</h4>
+									<Button
+										variant="ghost"
+										size="sm"
+										onClick={resetTabFilters}
+										className="h-8 px-2"
+									>
+										<RotateCcw className="h-3 w-3 mr-1" />
+										リセット
+									</Button>
+								</div>
+								<div className="space-y-3">
+									{tabFilters.map((filter) => (
+										<div key={filter.id} className="flex items-center space-x-2">
+											<Checkbox
+												id={filter.id}
+												checked={filter.isChecked}
+												onCheckedChange={(checked) => 
+													setTabFilter(filter.id, checked === true)
+												}
+											/>
+											<Label htmlFor={filter.id} className="text-sm">
+												{filter.name}
+											</Label>
+										</div>
+									))}
+								</div>
+							</div>
+						</PopoverContent>
+					</Popover>
+					
 					<Button
 						variant="outline"
 						size="icon"
@@ -295,6 +408,9 @@ export default function TaskPage() {
 
 				<TabsContent value="active">
 					{renderTabContent("active")}
+				</TabsContent>
+				<TabsContent value="in-progress">
+					{renderTabContent("in-progress")}
 				</TabsContent>
 				<TabsContent value="completed">
 					{renderTabContent("completed")}
@@ -310,7 +426,7 @@ export default function TaskPage() {
 								onAdd: handleAdd,
 								categories: categories ?? [],
 							})}
-							data={tasks?.filter(task => task.tabId === tab.id) ?? []}
+							data={filteredTasks.filter(task => task.tabId === tab.id) ?? []}
 							loading={isLoading}
 							searchableKeys={["taskId", "title", "assignee", "dueDate"]}
 							toolBar={{
@@ -330,7 +446,7 @@ export default function TaskPage() {
 							}}
 							csvButton={{
 								text: "CSV出力",
-								onClick: () => handleCSVExport(tasks?.filter(task => task.tabId === tab.id) ?? [], "", "すべて"),
+								onClick: () => handleCSVExport(filteredTasks.filter(task => task.tabId === tab.id) ?? [], "", "すべて"),
 								className: "",
 							}}
 						/>
