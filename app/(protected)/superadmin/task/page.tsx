@@ -389,9 +389,10 @@ export default function TaskPage() {
 						<div className="flex items-center gap-2 flex-wrap">
 							{/* デフォルトタブ */}
 							{tabFilters.map((filter) => (
-								<div key={filter.id} className="flex items-center space-x-2 bg-muted/50 rounded-lg px-3 py-2">
+								<div key={filter.id} className="flex items-center space-x-2 bg-gray-100 dark:bg-white dark:text-black rounded-lg px-3 py-2">
 									<Checkbox
 										id={filter.id}
+										className="dark:bg-white dark:border-black "
 										checked={filter.isChecked}
 										onCheckedChange={(checked) => {
 											if (checked) {
