@@ -9,7 +9,7 @@ import {
 	SheetTitle,
 } from "@/components/ui/sheet";
 import { formatDate, getProgressColor, getProgressLabel } from "@/lib/utils";
-import type { CategoryValues, TaskFormValues } from "@/lib/validations";
+import type { CategoryValues, TaskFormValues, TabValues } from "@/lib/validations";
 import { Check, Clock, ListTodo, Pencil, Trash2 } from "lucide-react";
 
 interface TaskDetailSheetProps {
@@ -19,6 +19,7 @@ interface TaskDetailSheetProps {
 	onEdit: (task: TaskFormValues) => void;
 	onDelete: (task: TaskFormValues) => void;
 	categories: CategoryValues[];
+	tabs: TabValues[];
 }
 
 // タスク進捗アイコン
@@ -40,10 +41,12 @@ export const TaskDetailSheet = ({
 	onEdit,
 	onDelete,
 	categories,
+	tabs,
 }: TaskDetailSheetProps) => {
 	if (!task) return null;
 
 	const category = categories.find(cat => cat.id === task.categoryId);
+	const tab = tabs.find(tab => tab.id === task.tabId);
 
 	return (
 		<Sheet open={isOpen} onOpenChange={onClose}>
@@ -92,6 +95,12 @@ export const TaskDetailSheet = ({
 					<div>
 						<h3 className="text-sm font-medium text-gray-500 mb-1">担当者</h3>
 						<p className="text-gray-900 dark:text-gray-100">{task.assignee}</p>
+					</div>
+					<div>
+						<h3 className="text-sm font-medium text-gray-500 mb-1">タブ</h3>
+						<p className="text-gray-900 dark:text-gray-100">
+							{tab?.name || "未設定"}
+						</p>
 					</div>
 					<div className="grid grid-cols-2 gap-4">
 						<div>

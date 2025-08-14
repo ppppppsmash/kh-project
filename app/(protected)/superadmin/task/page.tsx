@@ -544,6 +544,7 @@ export default function TaskPage() {
 					setIsDetailOpen(false);
 				}}
 				categories={categories ?? []}
+				tabs={tabs ?? []}
 			/>
 
 			<TaskModalForm
