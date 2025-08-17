@@ -37,7 +37,12 @@ export const filterTask = (
 			const searchableFields = [
 				task.taskId,
 				task.title,
+				task.content,
 				task.assignee,
+				task.priority === "high" ? "高" : 
+					task.priority === "medium" ? "中" : 
+					task.priority === "low" ? "低" : 
+					task.priority === "none" ? "未設定" : "未設定",
 				formatDate(task.dueDate, "yyyy/MM/dd"),
 				getProgressLabel(task.progress),
 			];

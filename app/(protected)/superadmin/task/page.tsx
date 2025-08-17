@@ -228,7 +228,7 @@ export default function TaskPage() {
 						})}
 						data={filteredTasks}
 						loading={isLoading}
-						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+						searchableKeys={["taskId", "title", "content", "assignee", "priority", "categoryId", "dueDate", "progress"]}
 						toolBar={{
 							researchBarPlaceholder: "タスク検索",
 							researchStatusFilter: getTaskStatusFilters().filter(status => status !== "完了"),
@@ -269,7 +269,7 @@ export default function TaskPage() {
 						})}
 						data={filteredTasks}
 						loading={isLoading}
-						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+						searchableKeys={["taskId", "title", "content", "assignee", "priority", "categoryId", "dueDate", "progress"]}
 						toolBar={{
 							researchBarPlaceholder: "タスク検索",
 							researchStatusFilter: ["進捗状況:すべて", "進行中"],
@@ -310,7 +310,7 @@ export default function TaskPage() {
 						})}
 						data={filteredTasks}
 						loading={isLoading}
-						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+						searchableKeys={["taskId", "title", "content", "assignee", "priority", "categoryId", "dueDate", "progress"]}
 						toolBar={{
 							researchBarPlaceholder: "タスク検索",
 							researchStatusFilter: ["進捗状況:すべて", "完了"],
@@ -344,7 +344,7 @@ export default function TaskPage() {
 				})}
 				data={[]}
 				loading={false}
-				searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+				searchableKeys={["taskId", "title", "content", "assignee", "priority", "categoryId", "dueDate", "progress"]}
 				toolBar={{
 					researchBarPlaceholder: "タスク検索",
 					researchStatusFilter: getTaskStatusFilters(),
@@ -501,7 +501,7 @@ export default function TaskPage() {
 									})}
 									data={filteredTasks.filter(task => task.tabId === tabId)}
 									loading={isLoading}
-									searchableKeys={["taskId", "title", "assignee", "dueDate"]}
+									searchableKeys={["taskId", "title", "content", "assignee", "priority", "categoryId", "dueDate", "progress"]}
 									toolBar={{
 										researchBarPlaceholder: "タスク検索",
 										researchStatusFilter: getTaskStatusFilters(),

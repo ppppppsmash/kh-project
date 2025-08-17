@@ -12,7 +12,13 @@ export const exportToCSV = (
 	// CSVコンテンツを生成
 	const csvContent = [
 		headers.join(","),
-		...rows.map(row => row.map(cell => `"${cell}"`).join(","))
+		...rows.map(row => 
+			row.map(cell => {
+				// セルの値を安全に処理
+				const safeCell = String(cell || "").replace(/"/g, '""');
+				return `"${safeCell}"`;
+			}).join(",")
+		)
 	].join("\n");
 
 	// BOMを追加してUTF-8でエンコード
@@ -41,32 +47,55 @@ export const exportTasksToCSV = (
 	const headers = [
 		"タスクID",
 		"項目",
+		"内容",
 		"担当者",
+		"優先度",
 		"カテゴリー",
 		"起票日",
 		"期限日",
 		"進捗",
-		"内容",
 		"進捗状況・対応内容",
 		"リンク先",
-		"備考"
+		"備考",
+		"完了日"
 	];
 
 	// データ行を生成
 	const rows = tasks.map(task => {
 		const category = categories.find(cat => cat.id === task.categoryId);
+		const priorityLabel = task.priority === "high" ? "高" : 
+			task.priority === "medium" ? "中" : 
+			task.priority === "low" ? "低" : 
+			task.priority === "none" ? "未設定" : "未設定";
+		
+		// 各フィールドの値を安全に取得し、空文字列に変換
+		const taskId = task.taskId || "";
+		const title = task.title || "";
+		const content = task.content || "";
+		const assignee = task.assignee || "";
+		const categoryName = category?.name || "";
+		const startedAt = task.startedAt ? formatDate(task.startedAt, "yyyy/MM/dd") : "";
+		const dueDate = task.dueDate ? formatDate(task.dueDate, "yyyy/MM/dd") : "";
+		const progress = getProgressLabel(task.progress) || "";
+		const progressDetails = task.progressDetails || "";
+		const link = task.link || "";
+		const notes = task.notes || "";
+		const completedAt = task.completedAt ? formatDate(task.completedAt, "yyyy/MM/dd") : "";
+		
 		return [
-			task.taskId || "",
-			task.title || "",
-			task.assignee || "",
-			category?.name || "",
-			task.startedAt ? formatDate(task.startedAt, "yyyy/MM/dd") : "",
-			task.dueDate ? formatDate(task.dueDate, "yyyy/MM/dd") : "",
-			getProgressLabel(task.progress) || "",
-			task.content || "",
-			task.progressDetails || "",
-			task.link || "",
-			task.notes || ""
+			taskId,
+			title,
+			content,
+			assignee,
+			priorityLabel,
+			categoryName,
+			startedAt,
+			dueDate,
+			progress,
+			progressDetails,
+			link,
+			notes,
+			completedAt
 		];
 	});
 
@@ -94,17 +123,29 @@ export const exportQaToCSV = (
 
 	// データ行を生成
 	const rows = qaItems.map(item => {
+		// 各フィールドの値を安全に取得し、空文字列に変換
+		const questionCode = item.questionCode || "";
+		const question = item.question || "";
+		const answer = item.answer || "";
+		const category = item.category || "";
+		const questionBy = item.questionBy || "";
+		const answeredBy = item.answeredBy || "";
+		const isPublic = item.isPublic ? "公開" : "非公開";
+		const startedAt = item.startedAt ? formatDate(item.startedAt, "yyyy/MM/dd") : "";
+		const createdAt = item.createdAt ? formatDate(item.createdAt, "yyyy/MM/dd") : "";
+		const updatedAt = item.updatedAt ? formatDate(item.updatedAt, "yyyy/MM/dd") : "";
+		
 		return [
-			item.questionCode || "",
-			item.question || "",
-			item.answer || "",
-			item.category || "",
-			item.questionBy || "",
-			item.answeredBy || "",
-			item.isPublic ? "公開" : "非公開",
-			item.startedAt ? formatDate(item.startedAt, "yyyy/MM/dd") : "",
-			item.createdAt ? formatDate(item.createdAt, "yyyy/MM/dd") : "",
-			item.updatedAt ? formatDate(item.updatedAt, "yyyy/MM/dd") : ""
+			questionCode,
+			question,
+			answer,
+			category,
+			questionBy,
+			answeredBy,
+			isPublic,
+			startedAt,
+			createdAt,
+			updatedAt
 		];
 	});
 
@@ -116,7 +157,8 @@ export const exportFilteredTasksToCSV = (
 	tasks: TaskFormValues[],
 	categories: CategoryValues[],
 	searchQuery = "",
-	statusFilter = "すべて",
+	statusFilter = "進捗状況:すべて",
+	priorityFilter = "優先度:すべて",
 	filename?: string
 ) => {
 	// フィルタリング処理（TaskItem.tsxのfilterTask関数と同様）
@@ -126,23 +168,28 @@ export const exportFilteredTasksToCSV = (
 	if (searchQuery) {
 		filteredTasks = filteredTasks.filter((task) => {
 			const searchableFields = [
-				task.taskId,
-				task.title,
-				task.assignee,
-				formatDate(task.dueDate, "yyyy/MM/dd"),
-				getProgressLabel(task.progress),
-				task.progressDetails,
-				task.link,
-				task.notes
+				task.taskId || "",
+				task.title || "",
+				task.content || "",
+				task.assignee || "",
+				task.priority === "high" ? "高" : 
+					task.priority === "medium" ? "中" : 
+					task.priority === "low" ? "低" : 
+					task.priority === "none" ? "未設定" : "未設定",
+				task.dueDate ? formatDate(task.dueDate, "yyyy/MM/dd") : "",
+				getProgressLabel(task.progress) || "",
+				task.progressDetails || "",
+				task.link || "",
+				task.notes || ""
 			];
 			return searchableFields.some((field) =>
-				field?.toLowerCase().includes(searchQuery.toLowerCase()),
+				field.toLowerCase().includes(searchQuery.toLowerCase()),
 			);
 		});
 	}
 
 	// ステータスフィルタリング
-	if (statusFilter !== "すべて") {
+	if (statusFilter !== "進捗状況:すべて") {
 		filteredTasks = filteredTasks.filter((task) => {
 			switch (task.progress) {
 				case "pending":
@@ -151,6 +198,25 @@ export const exportFilteredTasksToCSV = (
 					return statusFilter === "進行中";
 				case "completed":
 					return statusFilter === "完了";
+				default:
+					return false;
+			}
+		});
+	}
+
+	// 優先度フィルタリング
+	if (priorityFilter !== "優先度:すべて") {
+		filteredTasks = filteredTasks.filter((task) => {
+			switch (task.priority) {
+				case "high":
+					return priorityFilter === "高";
+				case "medium":
+					return priorityFilter === "中";
+				case "low":
+					return priorityFilter === "低";
+				case "none":
+				case undefined:
+					return priorityFilter === "未設定";
 				default:
 					return false;
 			}
@@ -178,15 +244,15 @@ export const exportFilteredQaToCSV = (
 	if (searchQuery) {
 		filteredQa = filteredQa.filter((item) => {
 			const searchableFields = [
-				item.questionCode,
-				item.question,
-				item.answer,
-				item.category,
-				item.questionBy,
-				item.answeredBy
+				item.questionCode || "",
+				item.question || "",
+				item.answer || "",
+				item.category || "",
+				item.questionBy || "",
+				item.answeredBy || ""
 			];
 			return searchableFields.some((field) =>
-				field?.toLowerCase().includes(searchQuery.toLowerCase()),
+				field.toLowerCase().includes(searchQuery.toLowerCase()),
 			);
 		});
 	}
@@ -194,7 +260,7 @@ export const exportFilteredQaToCSV = (
 	// カテゴリフィルタリング
 	if (categoryFilter !== "全て") {
 		filteredQa = filteredQa.filter((item) => 
-			item.category?.toLowerCase().includes(categoryFilter.toLowerCase())
+			(item.category || "").toLowerCase().includes(categoryFilter.toLowerCase())
 		);
 	}
 
