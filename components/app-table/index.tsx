@@ -118,9 +118,9 @@ export function AppTable<T>({
 	const [reload, setReload] = useState(false);
 	const [filteredData, setFilteredData] = useState<T[]>(data);
 	const [searchQuery, setSearchQuery] = useState("");
-	const [internalStatusFilter, setInternalStatusFilter] = useState<string>("すべて");
+	const [internalStatusFilter, setInternalStatusFilter] = useState<string>("進捗状況:すべて");
 	const statusFilter = externalStatusFilter ?? internalStatusFilter;
-	const [internalPriorityFilter, setInternalPriorityFilter] = useState<string>("すべて");
+	const [internalPriorityFilter, setInternalPriorityFilter] = useState<string>("優先度:すべて");
 	const priorityFilter = externalPriorityFilter ?? internalPriorityFilter;
 	const [currentPage, setCurrentPage] = useState(1);
 	const { itemsPerPage, setItemsPerPage } = useTableStore();
@@ -283,7 +283,6 @@ export function AppTable<T>({
 						)}
 						{toolBar?.researchStatusFilter && (
 							<div className="flex items-center gap-2">
-								<span className="text-sm font-medium text-blue-600 dark:text-blue-400">ステータス:</span>
 								<Select value={statusFilter} onValueChange={handleStatusFilterChange}>
 									<SelectTrigger className="w-[180px] border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/20">
 										<div className="flex items-center gap-2">
@@ -303,7 +302,6 @@ export function AppTable<T>({
 						)}
 						{toolBar?.researchPriorityFilter && (
 							<div className="flex items-center gap-2">
-								<span className="text-sm font-medium text-orange-600 dark:text-orange-400">優先度:</span>
 								<Select value={priorityFilter} onValueChange={handlePriorityFilterChange}>
 									<SelectTrigger className="w-[180px] border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-950/20">
 										<div className="flex items-center gap-2">
@@ -321,15 +319,15 @@ export function AppTable<T>({
 								</Select>
 							</div>
 						)}
-						{(searchQuery || statusFilter !== "すべて" || priorityFilter !== "すべて" || 
+						{(searchQuery || statusFilter !== "進捗状況:すべて" || priorityFilter !== "優先度:すべて" || 
 							(currentSort && (currentSort.key !== sort?.key || currentSort.order !== sort?.order))) && (
 							<Button
 								variant="outline"
 								size="sm"
 								onClick={() => {
 									setSearchQuery("");
-									handleStatusFilterChange("すべて");
-									handlePriorityFilterChange("すべて");
+									handleStatusFilterChange("進捗状況:すべて");
+									handlePriorityFilterChange("優先度:すべて");
 									if (sort) {
 										handleSortChange({ key: sort.key, order: sort.order });
 									}

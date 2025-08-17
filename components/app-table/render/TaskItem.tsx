@@ -48,7 +48,7 @@ export const filterTask = (
 	}
 
 	// ステータスフィルタリング
-	if (statusFilter !== "すべて") {
+	if (statusFilter !== "進捗状況:すべて") {
 		result = result.filter((task) => {
 			switch (task.progress) {
 				case "pending":
@@ -62,7 +62,7 @@ export const filterTask = (
 	}
 
 	// 優先度フィルタリング
-	if (priorityFilter !== "すべて") {
+	if (priorityFilter !== "優先度:すべて") {
 		result = result.filter((task) => {
 			switch (task.priority) {
 				case "high":
@@ -84,13 +84,13 @@ export const filterTask = (
 };
 
 export const getTaskStatusFilters = () => [
-	"すべて",
+	"進捗状況:すべて",
 	"未着手",
 	"進行中",
 ];
 
 export const getTaskPriorityFilters = () => [
-	"すべて",
+	"優先度:すべて",
 	"高",
 	"中",
 	"低",

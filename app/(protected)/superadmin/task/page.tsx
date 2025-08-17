@@ -196,13 +196,14 @@ export default function TaskPage() {
 		}
 	};
 
-	const handleCSVExport = (filteredTasks: TaskFormValues[], searchQuery: string, statusFilter: string) => {
+	const handleCSVExport = (filteredTasks: TaskFormValues[], searchQuery: string, statusFilter: string, priorityFilter: string) => {
 		try {
 			exportFilteredTasksToCSV(
 				filteredTasks,
 				categories ?? [],
 				searchQuery,
-				statusFilter
+				statusFilter,
+				priorityFilter
 			);
 			CustomToast.success("CSVファイルをエクスポートしました");
 		} catch (error) {
@@ -245,7 +246,7 @@ export default function TaskPage() {
 						}}
 						csvButton={{
 							text: "CSV出力",
-							onClick: () => handleCSVExport(filteredTasks, "", "すべて"),
+							onClick: () => handleCSVExport(filteredTasks, "", "進捗状況:すべて", "優先度:すべて"),
 							className: "",
 						}}
 					/>
@@ -271,7 +272,7 @@ export default function TaskPage() {
 						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
 						toolBar={{
 							researchBarPlaceholder: "タスク検索",
-							researchStatusFilter: ["すべて", "進行中"],
+							researchStatusFilter: ["進捗状況:すべて", "進行中"],
 							researchPriorityFilter: getTaskPriorityFilters(),
 						}}
 						onFilter={filterTask}
@@ -286,7 +287,7 @@ export default function TaskPage() {
 						}}
 						csvButton={{
 							text: "CSV出力",
-							onClick: () => handleCSVExport(filteredTasks, "", "すべて"),
+							onClick: () => handleCSVExport(filteredTasks, "", "進捗状況:すべて", "優先度:すべて"),
 							className: "",
 						}}
 					/>
@@ -312,7 +313,7 @@ export default function TaskPage() {
 						searchableKeys={["taskId", "title", "assignee", "dueDate"]}
 						toolBar={{
 							researchBarPlaceholder: "タスク検索",
-							researchStatusFilter: ["すべて", "完了"],
+							researchStatusFilter: ["進捗状況:すべて", "完了"],
 							researchPriorityFilter: getTaskPriorityFilters(),
 						}}
 						onFilter={filterTask}
@@ -322,7 +323,7 @@ export default function TaskPage() {
 						}}
 						csvButton={{
 							text: "CSV出力",
-							onClick: () => handleCSVExport(filteredTasks, "", "すべて"),
+							onClick: () => handleCSVExport(filteredTasks, "", "進捗状況:すべて", "優先度:すべて"),
 							className: "",
 						}}
 					/>
@@ -465,9 +466,9 @@ export default function TaskPage() {
 								variant="outline"
 								size="sm"
 								onClick={() => setIsAddTabDialogOpen(true)}
-								className="h-8 px-3"
+								className="h-8"
 							>
-								<Plus className="h-4 w-4 mr-1" />
+								<Plus className="h-3 w-3" />
 								タブ追加
 							</Button>
 						</div>
@@ -518,7 +519,7 @@ export default function TaskPage() {
 									}}
 									csvButton={{
 										text: "CSV出力",
-										onClick: () => handleCSVExport(filteredTasks.filter(task => task.tabId === tabId), "", "すべて"),
+										onClick: () => handleCSVExport(filteredTasks.filter(task => task.tabId === tabId), "", "進捗状況:すべて", "優先度:すべて"),
 										className: "",
 									}}
 								/>
