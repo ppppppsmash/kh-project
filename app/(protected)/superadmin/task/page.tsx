@@ -94,27 +94,34 @@ export default function TaskPage() {
 			// デフォルトタブが選択されている場合
 			const finalFilteredTasks: TaskFormValues[] = [];
 			
-			// 未完了タスクのフィルター適用（進行中と未着手を含む）
+			// 各チェックボックスの状態に応じてタスクを追加
 			if (checkedTabIds.includes("active")) {
-				const activeTasks = tasks.filter(task => 
-					task.progress === "pending" || task.progress === "inProgress"
-				);
-				finalFilteredTasks.push(...activeTasks);
+				// 未完了タスク（未着手のみ）
+				const pendingTasks = tasks.filter(task => task.progress === "pending");
+				finalFilteredTasks.push(...pendingTasks);
 			}
 			
-			// 進行中タスクのフィルター適用
 			if (checkedTabIds.includes("in-progress")) {
+				// 進行中タスク
 				const inProgressTasks = tasks.filter(task => task.progress === "inProgress");
 				finalFilteredTasks.push(...inProgressTasks);
 			}
 			
-			// 完了タスクのフィルター適用
 			if (checkedTabIds.includes("completed")) {
+				// 完了タスク
 				const completedTasks = tasks.filter(task => task.progress === "completed");
 				finalFilteredTasks.push(...completedTasks);
 			}
 			
-			filteredTasks = finalFilteredTasks;
+			// 重複を除去（タスクIDベース）
+			const seenTaskIds = new Set<string>();
+			filteredTasks = finalFilteredTasks.filter(task => {
+				if (seenTaskIds.has(task.id || "")) {
+					return false;
+				}
+				seenTaskIds.add(task.id || "");
+				return true;
+			});
 		}
 		
 		return filteredTasks;
