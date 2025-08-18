@@ -83,6 +83,83 @@ export default function DashboardPage() {
 		}
 	};
 
+	// フィールド名を日本語に変換する関数
+	const getFieldDisplayName = (fieldName: string): string => {
+		const fieldNames: Record<string, string> = {
+			title: "タイトル",
+			content: "内容",
+			assignee: "担当者",
+			dueDate: "期限日",
+			progress: "進捗",
+			priority: "優先度",
+			progressDetails: "進捗詳細",
+			notes: "備考",
+			link: "リンク",
+			categoryId: "カテゴリ",
+			tabId: "タブ",
+			startedAt: "開始日",
+			completedAt: "完了日",
+			question: "質問",
+			answer: "回答",
+			questionCode: "質問コード",
+			category: "カテゴリ",
+			isPublic: "公開設定",
+			questionBy: "質問者",
+			answeredBy: "回答者",
+			name: "名前",
+			email: "メールアドレス",
+			role: "役割",
+			department: "部署",
+			position: "役職",
+			skills: "スキル",
+			hobby: "趣味",
+			freeText: "自由記述",
+			description: "説明",
+			leader: "リーダー",
+			memberCount: "メンバー数",
+			activityType: "活動タイプ",
+			status: "ステータス",
+			location: "場所",
+			detail: "詳細"
+		};
+		return fieldNames[fieldName] || fieldName;
+	};
+
+	// 値を読みやすい形式にフォーマットする関数
+	const formatValue = (value: unknown): string => {
+		if (value === null || value === undefined) {
+			return "未設定";
+		}
+		if (typeof value === "boolean") {
+			return value ? "はい" : "いいえ";
+		}
+		if (value instanceof Date) {
+			return value.toLocaleDateString("ja-JP");
+		}
+		if (typeof value === "string") {
+			// 進捗や優先度などの列挙値を日本語に変換
+			const enumValues: Record<string, string> = {
+				pending: "未着手",
+				inProgress: "進行中",
+				completed: "完了",
+				high: "高",
+				medium: "中",
+				low: "低",
+				none: "未設定",
+				active: "アクティブ",
+				inactive: "非アクティブ",
+				superadmin: "スーパー管理者",
+				admin: "管理者",
+				user: "ユーザー"
+			};
+			return enumValues[value] || value;
+		}
+		if (Array.isArray(value)) {
+			return value.join(", ");
+		}
+		return String(value);
+	};
+
 	if (isUserActivityLoading || isTaskStatsLoading) {
 		return (
 			<div className="space-y-8">
@@ -164,34 +241,59 @@ export default function DashboardPage() {
 																try {
 																	const details = JSON.parse(activity.resourceDetails);
 																	if (details.oldData && details.newData) {
-																		// 変更前後の比較表示
-																		return (
-																			<div className="space-y-2">
-																				<div>
-																					<span className="font-medium text-red-600">変更前:</span>
-																					<pre className="mt-1 p-2 bg-red-50 dark:bg-red-950/20 rounded text-xs overflow-x-auto">
-																						{JSON.stringify(details.oldData, null, 2)}
-																					</pre>
-																				</div>
-																				<div>
-																					<span className="font-medium text-green-600">変更後:</span>
-																					<pre className="mt-1 p-2 bg-green-50 dark:bg-green-950/20 rounded text-xs overflow-x-auto">
-																						{JSON.stringify(details.newData, null, 2)}
-																					</pre>
-																				</div>
+																		// 変更前後の比較表示をテキスト形式で
+																		const changes: string[] = [];
+																		
+																		// 各フィールドの変更をチェック
+																		for (const key of Object.keys(details.newData)) {
+																			const oldValue = details.oldData[key];
+																			const newValue = details.newData[key];
+																			
+																			if (oldValue !== newValue) {
+																				// フィールド名を日本語に変換
+																				const fieldName = getFieldDisplayName(key);
+																				
+																				if (oldValue === null || oldValue === undefined) {
+																					changes.push(`${fieldName}が「${formatValue(newValue)}」に設定されました`);
+																				} else if (newValue === null || newValue === undefined) {
+																					changes.push(`${fieldName}が削除されました`);
+																				} else {
+																					changes.push(`${fieldName}が「${formatValue(oldValue)}」から「${formatValue(newValue)}」に更新されました`);
+																				}
+																			}
+																		}
+																		
+																		return changes.length > 0 ? (
+																			<div className="space-y-1">
+																				{changes.map((change) => (
+																					<div key={`change-${change}`} className="flex items-center gap-2">
+																						<span className="text-blue-600">•</span>
+																						<span>{change}</span>
+																					</div>
+																				))}
 																			</div>
+																		) : (
+																			<span className="text-muted-foreground">変更はありません</span>
 																		);
 																	}
-																	// 単一の詳細情報表示
+																	// 単一の詳細情報表示（作成・削除時）
 																	return (
-																		<pre className="whitespace-pre-wrap break-words overflow-x-auto">
-																			{JSON.stringify(details, null, 2)}
-																		</pre>
+																		<div className="space-y-1 text-xs">
+																			{Object.entries(details).map(([key, value]) => {
+																				const fieldName = getFieldDisplayName(key);
+																				return (
+																					<div key={key} className="flex items-center gap-2">
+																						<span className="text-green-600">•</span>
+																						<span>{fieldName}: {formatValue(value)}</span>
+																					</div>
+																				);
+																			})}
+																		</div>
 																	);
 																} catch (error) {
 																	return (
-																		<div className="text-red-600">
-																			データの解析に失敗しました: {activity.resourceDetails}
+																		<div className="text-red-600 text-xs">
+																			データの解析に失敗しました
 																		</div>
 																	);
 																}

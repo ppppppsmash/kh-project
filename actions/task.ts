@@ -79,7 +79,29 @@ export const createTask = async (data: TaskFormValues) => {
 	// ユーザ操作履歴を記録
 	try {
 		const currentUser = await getCurrentUser();
-		await logTaskActivity(currentUser.userId, currentUser.userName, "task_create", data.title);
+		await logTaskActivity(
+			currentUser.userId, 
+			currentUser.userName, 
+			"task_create", 
+			newTask[0]?.id,
+			data.title,
+			{
+				taskId: taskId,
+				assignee: data.assignee,
+				dueDate: data.dueDate,
+				progress: data.progress,
+				priority: data.priority,
+				categoryId: data.categoryId,
+				content: data.content,
+				notes: data.notes,
+				tabId: data.tabId,
+				link: data.link,
+				startedAt: data.startedAt,
+				completedAt: data.completedAt,
+				updatedAt: newTask[0]?.updatedAt,
+				createdAt: newTask[0]?.createdAt
+			}
+		);
 	} catch (error) {
 		console.error("Error logging task creation:", error);
 	}
@@ -88,6 +110,17 @@ export const createTask = async (data: TaskFormValues) => {
 };
 
 export const updateTask = async (id: string, data: TaskFormValues) => {
+	// 更新前のタスク情報を取得（変更内容の比較用）
+	let oldTaskData = null;
+	try {
+		const oldTask = await db.select().from(tasks).where(eq(tasks.id, id));
+		if (oldTask.length > 0) {
+			oldTaskData = oldTask[0];
+		}
+	} catch (error) {
+		console.error("Error getting old task data:", error);
+	}
+
 	const updatedTask = await db
 		.update(tasks)
 		.set({
@@ -101,7 +134,47 @@ export const updateTask = async (id: string, data: TaskFormValues) => {
 	// ユーザ操作履歴を記録
 	try {
 		const currentUser = await getCurrentUser();
-		await logTaskActivity(currentUser.userId, currentUser.userName, "task_update", data.title);
+		const changeDetails = oldTaskData ? {
+			oldData: {
+				title: oldTaskData.title,
+				assignee: oldTaskData.assignee,
+				dueDate: oldTaskData.dueDate,
+				progress: oldTaskData.progress,
+				priority: oldTaskData.priority,
+				content: oldTaskData.content,
+				progressDetails: oldTaskData.progressDetails,
+				notes: oldTaskData.notes,
+				link: oldTaskData.link,
+				startedAt: oldTaskData.startedAt,
+				completedAt: oldTaskData.completedAt,
+				updatedAt: oldTaskData.updatedAt,
+				createdAt: oldTaskData.createdAt
+			},
+			newData: {
+				title: data.title,
+				assignee: data.assignee,
+				dueDate: data.dueDate,
+				progress: data.progress,
+				priority: data.priority,
+				content: data.content,
+				progressDetails: data.progressDetails,
+				notes: data.notes,
+				link: data.link,
+				startedAt: data.startedAt,
+				completedAt: data.completedAt,
+				updatedAt: data.updatedAt,
+				createdAt: data.createdAt
+			}
+		} : undefined;
+
+		await logTaskActivity(
+			currentUser.userId, 
+			currentUser.userName, 
+			"task_update", 
+			id,
+			data.title,
+			changeDetails
+		);
 	} catch (error) {
 		console.error("Error logging task update:", error);
 	}
@@ -112,10 +185,26 @@ export const updateTask = async (id: string, data: TaskFormValues) => {
 export const deleteTask = async (id: string) => {
 	// 削除前にタスク情報を取得（履歴記録用）
 	let taskTitle = "";
+	let taskDetails = null;
 	try {
-		const taskToDelete = await db.select({ title: tasks.title }).from(tasks).where(eq(tasks.id, id));
+		const taskToDelete = await db.select().from(tasks).where(eq(tasks.id, id));
 		if (taskToDelete.length > 0) {
-			taskTitle = taskToDelete[0].title;
+			const task = taskToDelete[0];
+			taskTitle = task.title;
+			taskDetails = {
+				taskId: task.taskId,
+				assignee: task.assignee,
+				dueDate: task.dueDate,
+				progress: task.progress,
+				priority: task.priority,
+				content: task.content,
+				notes: task.notes,
+				link: task.link,
+				categoryId: task.categoryId,
+				tabId: task.tabId,
+				startedAt: task.startedAt,
+				completedAt: task.completedAt
+			};
 		}
 	} catch (error) {
 		console.error("Error getting task title for deletion:", error);
@@ -126,7 +215,14 @@ export const deleteTask = async (id: string) => {
 	// ユーザ操作履歴を記録
 	try {
 		const currentUser = await getCurrentUser();
-		await logTaskActivity(currentUser.userId, currentUser.userName, "task_delete", taskTitle);
+		await logTaskActivity(
+			currentUser.userId, 
+			currentUser.userName, 
+			"task_delete", 
+			id,
+			taskTitle,
+			taskDetails || undefined
+		);
 	} catch (error) {
 		console.error("Error logging task deletion:", error);
 	}

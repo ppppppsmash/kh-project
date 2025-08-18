@@ -61,7 +61,21 @@ export const createQA = async (data: QaFormValues) => {
 	// ユーザ操作履歴を記録
 	if (currentUserId && currentUser) {
 		try {
-			await logQaActivity(currentUserId, currentUser, "qa_create", data.question);
+			await logQaActivity(
+				currentUserId, 
+				currentUser, 
+				"qa_create", 
+				inserted[0]?.id,
+				data.question,
+				{
+					questionCode,
+					category: data.category,
+					isPublic: data.isPublic,
+					questionBy: data.questionBy || currentUser,
+					answeredBy: data.answer ? currentUser : null,
+					startedAt: data.startedAt
+				}
+			);
 		} catch (error) {
 			console.error("Error logging QA creation:", error);
 		}
@@ -74,6 +88,17 @@ export const updateQA = async (id: string, data: QaFormValues) => {
 	const session = await auth();
 	const currentUser = session?.user?.name;
 	const currentUserId = session?.user?.id;
+
+	// 更新前のQA情報を取得（変更内容の比較用）
+	let oldQaData = null;
+	try {
+		const oldQa = await db.select().from(qa).where(eq(qa.id, id));
+		if (oldQa.length > 0) {
+			oldQaData = oldQa[0];
+		}
+	} catch (error) {
+		console.error("Error getting old QA data:", error);
+	}
 
 	const updatedQA = await db
 		.update(qa)
@@ -88,7 +113,33 @@ export const updateQA = async (id: string, data: QaFormValues) => {
 	// ユーザ操作履歴を記録
 	if (currentUserId && currentUser) {
 		try {
-			await logQaActivity(currentUserId, currentUser, "qa_update", data.question);
+			const changeDetails = oldQaData ? {
+				oldData: {
+					question: oldQaData.question,
+					answer: oldQaData.answer,
+					category: oldQaData.category,
+					isPublic: oldQaData.isPublic,
+					questionBy: oldQaData.questionBy,
+					answeredBy: oldQaData.answeredBy
+				},
+				newData: {
+					question: data.question,
+					answer: data.answer,
+					category: data.category,
+					isPublic: data.isPublic,
+					questionBy: data.questionBy,
+					answeredBy: currentUser
+				}
+			} : undefined;
+
+			await logQaActivity(
+				currentUserId, 
+				currentUser, 
+				"qa_update", 
+				id,
+				data.question,
+				changeDetails
+			);
 		} catch (error) {
 			console.error("Error logging QA update:", error);
 		}
@@ -100,10 +151,20 @@ export const updateQA = async (id: string, data: QaFormValues) => {
 export const deleteQA = async (id: string) => {
 	// 削除前にQA情報を取得（履歴記録用）
 	let qaQuestion = "";
+	let qaDetails = null;
 	try {
-		const qaToDelete = await db.select({ question: qa.question }).from(qa).where(eq(qa.id, id));
+		const qaToDelete = await db.select().from(qa).where(eq(qa.id, id));
 		if (qaToDelete.length > 0) {
-			qaQuestion = qaToDelete[0].question;
+			const qaItem = qaToDelete[0];
+			qaQuestion = qaItem.question;
+			qaDetails = {
+				questionCode: qaItem.questionCode,
+				category: qaItem.category,
+				isPublic: qaItem.isPublic,
+				questionBy: qaItem.questionBy,
+				answeredBy: qaItem.answeredBy,
+				startedAt: qaItem.startedAt
+			};
 		}
 	} catch (error) {
 		console.error("Error getting QA question for deletion:", error);
@@ -118,7 +179,14 @@ export const deleteQA = async (id: string) => {
 	
 	if (currentUserId && currentUser) {
 		try {
-			await logQaActivity(currentUserId, currentUser, "qa_delete", qaQuestion);
+			await logQaActivity(
+				currentUserId, 
+				currentUser, 
+				"qa_delete", 
+				id,
+				qaQuestion,
+				qaDetails || undefined
+			);
 		} catch (error) {
 			console.error("Error logging QA deletion:", error);
 		}

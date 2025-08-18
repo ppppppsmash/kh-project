@@ -75,6 +75,7 @@ export const TaskModalForm = ({
 				progressDetails: data.progressDetails || "",
 				link: data.link || "",
 				notes: data.notes || "",
+				priority: data.priority || "none",
 				categoryId: data.categoryId || undefined,
 				tabId: data.tabId || undefined,
 			};
