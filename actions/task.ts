@@ -5,6 +5,26 @@ import { tasks } from "@/db/schema/tasks";
 import type { TaskFormValues } from "@/lib/validations";
 import { desc, eq } from "drizzle-orm";
 import { sendSlackMessage } from "@/lib/slackMessage";
+import { logTaskActivity } from "./user-activity";
+import { auth } from "@/auth";
+
+// 現在のユーザ情報を取得する関数
+const getCurrentUser = async () => {
+	try {
+		const session = await auth();
+		if (!session?.user?.id || !session?.user?.name) {
+			throw new Error("User session not found");
+		}
+		return { 
+			userId: session.user.id, 
+			userName: session.user.name 
+		};
+	} catch (error) {
+		console.error("Error getting current user:", error);
+		// デフォルト値を返す（実際の運用では適切なエラーハンドリングが必要）
+		return { userId: "unknown", userName: "不明なユーザー" };
+	}
+};
 
 export const getTasks = async (): Promise<TaskFormValues[]> => {
 	const result = await db.select().from(tasks).orderBy(desc(tasks.taskId));
@@ -53,7 +73,16 @@ export const createTask = async (data: TaskFormValues) => {
 	};
 	const newTask = await db.insert(tasks).values(taskData).returning();
 
+	// Slack通知
 	await sendSlackMessage({ message: `${taskData.title}` });
+
+	// ユーザ操作履歴を記録
+	try {
+		const currentUser = await getCurrentUser();
+		await logTaskActivity(currentUser.userId, currentUser.userName, "task_create", data.title);
+	} catch (error) {
+		console.error("Error logging task creation:", error);
+	}
 
 	return newTask;
 };
@@ -69,11 +98,38 @@ export const updateTask = async (id: string, data: TaskFormValues) => {
 		.where(eq(tasks.id, id))
 		.returning();
 
+	// ユーザ操作履歴を記録
+	try {
+		const currentUser = await getCurrentUser();
+		await logTaskActivity(currentUser.userId, currentUser.userName, "task_update", data.title);
+	} catch (error) {
+		console.error("Error logging task update:", error);
+	}
+
 	return updatedTask;
 };
 
 export const deleteTask = async (id: string) => {
+	// 削除前にタスク情報を取得（履歴記録用）
+	let taskTitle = "";
+	try {
+		const taskToDelete = await db.select({ title: tasks.title }).from(tasks).where(eq(tasks.id, id));
+		if (taskToDelete.length > 0) {
+			taskTitle = taskToDelete[0].title;
+		}
+	} catch (error) {
+		console.error("Error getting task title for deletion:", error);
+	}
+
 	const deletedTask = await db.delete(tasks).where(eq(tasks.id, id));
+
+	// ユーザ操作履歴を記録
+	try {
+		const currentUser = await getCurrentUser();
+		await logTaskActivity(currentUser.userId, currentUser.userName, "task_delete", taskTitle);
+	} catch (error) {
+		console.error("Error logging task deletion:", error);
+	}
 
 	return deletedTask;
 };

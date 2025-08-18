@@ -30,6 +30,29 @@ export default function DashboardPage() {
 		return clubs?.filter((club) => club.status === status).length ?? 0;
 	};
 
+	const getActionLabel = (action: string) => {
+		switch (action) {
+			case "login":
+				return "ログイン";
+			case "logout":
+				return "ログアウト";
+			case "task_create":
+				return "タスク作成";
+			case "task_update":
+				return "タスク更新";
+			case "task_delete":
+				return "タスク削除";
+			case "qa_create":
+				return "QA作成";
+			case "qa_update":
+				return "QA更新";
+			case "qa_delete":
+				return "QA削除";
+			default:
+				return action;
+		}
+	};
+
 	if (isUserActivityLoading || isTaskStatsLoading) {
 		return (
 			<div className="space-y-8">
@@ -86,7 +109,7 @@ export default function DashboardPage() {
 									<User className="h-4 w-4 text-muted-foreground" />
 									<span className="font-bold">{activity.userName}</span>
 									<span className="text-muted-foreground ml-4">
-										{activity.action === "login" ? "ログイン" : "ログアウト"}
+										{getActionLabel(activity.action)}
 									</span>
 								</p>
 							</div>

@@ -27,7 +27,7 @@ export const getUserActivity = cache(
 				})
 				.from(userActivity)
 				.orderBy(desc(userActivity.createdAt))
-				.limit(10);
+				.limit(20); // 10件から20件に増加
 
 			return activities.map((activity) => ({
 				...activity,
@@ -52,4 +52,42 @@ export const createUserActivity = async (data: CreateUserActivityInput) => {
 		.returning();
 
 	return newActivity;
+};
+
+// タスク操作のユーザ操作履歴を記録するヘルパー関数
+export const logTaskActivity = async (
+	userId: string,
+	userName: string,
+	action: "task_create" | "task_update" | "task_delete",
+	taskTitle?: string
+) => {
+	try {
+		await createUserActivity({
+			userId,
+			userName,
+			action,
+		});
+	} catch (error) {
+		console.error("Error logging task activity:", error);
+		// ログ記録の失敗はタスク操作を妨げないようにする
+	}
+};
+
+// QA操作のユーザ操作履歴を記録するヘルパー関数
+export const logQaActivity = async (
+	userId: string,
+	userName: string,
+	action: "qa_create" | "qa_update" | "qa_delete",
+	qaTitle?: string
+) => {
+	try {
+		await createUserActivity({
+			userId,
+			userName,
+			action,
+		});
+	} catch (error) {
+		console.error("Error logging QA activity:", error);
+		// ログ記録の失敗はQA操作を妨げないようにする
+	}
 };
