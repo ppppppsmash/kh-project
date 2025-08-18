@@ -10,10 +10,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { ClubFormValues } from "@/lib/validations";
 import {
 	Activity,
-	BarChart3,
-	Calendar,
 	User,
-	Users,
+	FileText,
+	HelpCircle,
+	Building,
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { navConfig } from "@/config";
@@ -48,8 +48,38 @@ export default function DashboardPage() {
 				return "QA更新";
 			case "qa_delete":
 				return "QA削除";
+			case "member_create":
+				return "メンバー作成";
+			case "member_update":
+				return "メンバー更新";
+			case "member_delete":
+				return "メンバー削除";
+			case "club_create":
+				return "部活動作成";
+			case "club_update":
+				return "部活動更新";
+			case "club_delete":
+				return "部活動削除";
 			default:
 				return action;
+		}
+	};
+
+	const getResourceIcon = (resourceType: string | undefined) => {
+		switch (resourceType) {
+			case "task":
+				return <FileText className="h-4 w-4" />;
+			case "qa":
+				return <HelpCircle className="h-4 w-4" />;
+			case "member":
+				return <User className="h-4 w-4" />;
+			case "club":
+				return <Building className="h-4 w-4" />;
+			case "login":
+			case "logout":
+				return <Activity className="h-4 w-4" />;
+			default:
+				return <Activity className="h-4 w-4" />;
 		}
 	};
 
@@ -103,15 +133,76 @@ export default function DashboardPage() {
 				<h3 className="text-lg font-bold">ユーザ操作履歴</h3>
 				<div className="flex flex-col gap-2">
 					{userActivity?.map((activity) => (
-						<div key={activity.id} className="flex items-center gap-4 text-sm">
-							<div className="flex gap-4 items-center justify-between w-full">
-								<p className="flex items-center gap-1">
-									<User className="h-4 w-4 text-muted-foreground" />
-									<span className="font-bold">{activity.userName}</span>
-									<span className="text-muted-foreground ml-4">
-										{getActionLabel(activity.action)}
-									</span>
-								</p>
+						<div key={activity.id} className="flex items-start gap-4 text-sm p-3 bg-muted/30 rounded-lg">
+							<div className="flex gap-4 items-start justify-between w-full">
+								<div className="flex flex-col gap-1 flex-1">
+									<div className="flex items-center gap-2">
+										{getResourceIcon(activity.resourceType)}
+										<span className="font-bold">{activity.userName}</span>
+										<span className="text-muted-foreground">
+											{getActionLabel(activity.action)}
+										</span>
+									</div>
+									
+									{/* 操作対象の詳細情報を表示 */}
+									{activity.resourceType && activity.resourceType !== "login" && activity.resourceType !== "logout" && (
+										<div className="ml-6 mt-1 text-xs">
+											{activity.resourceName && (
+												<div className="flex items-center gap-1 text-muted-foreground">
+													<span>対象:</span>
+													<span className="font-medium text-foreground">
+														{activity.resourceName}
+													</span>
+												</div>
+											)}
+											{activity.resourceDetails && (
+												<div className="mt-1 p-2 bg-background rounded border text-xs">
+													<details className="cursor-pointer">
+														<summary className="font-medium">変更詳細</summary>
+														<div className="mt-1">
+															{(() => {
+																try {
+																	const details = JSON.parse(activity.resourceDetails);
+																	if (details.oldData && details.newData) {
+																		// 変更前後の比較表示
+																		return (
+																			<div className="space-y-2">
+																				<div>
+																					<span className="font-medium text-red-600">変更前:</span>
+																					<pre className="mt-1 p-2 bg-red-50 dark:bg-red-950/20 rounded text-xs overflow-x-auto">
+																						{JSON.stringify(details.oldData, null, 2)}
+																					</pre>
+																				</div>
+																				<div>
+																					<span className="font-medium text-green-600">変更後:</span>
+																					<pre className="mt-1 p-2 bg-green-50 dark:bg-green-950/20 rounded text-xs overflow-x-auto">
+																						{JSON.stringify(details.newData, null, 2)}
+																					</pre>
+																				</div>
+																			</div>
+																		);
+																	}
+																	// 単一の詳細情報表示
+																	return (
+																		<pre className="whitespace-pre-wrap break-words overflow-x-auto">
+																			{JSON.stringify(details, null, 2)}
+																		</pre>
+																	);
+																} catch (error) {
+																	return (
+																		<div className="text-red-600">
+																			データの解析に失敗しました: {activity.resourceDetails}
+																		</div>
+																	);
+																}
+															})()}
+														</div>
+													</details>
+												</div>
+											)}
+										</div>
+									)}
+								</div>
 							</div>
 							<p className="text-muted-foreground text-xs text-nowrap">
 								{activity.createdAt?.toLocaleString()}
@@ -167,7 +258,7 @@ export default function DashboardPage() {
 				</div>
 			</div>
 
-			<div className="space-y-4">
+			{/* <div className="space-y-4">
 				<h3 className="text-lg font-bold">部活動</h3>
 				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
 					<Card>
@@ -217,7 +308,7 @@ export default function DashboardPage() {
 						</CardContent>
 					</Card>
 				</div>
-			</div>
+			</div> */}
 		</div>
 	);
 }

@@ -111,8 +111,18 @@ export const userActivityFormSchema = z.object({
 		"task_delete",
 		"qa_create",
 		"qa_update", 
-		"qa_delete"
+		"qa_delete",
+		"member_create",
+		"member_update",
+		"member_delete",
+		"club_create",
+		"club_update",
+		"club_delete"
 	]),
+	resourceType: z.enum(["task", "qa", "member", "club", "login", "logout"]).optional(),
+	resourceId: z.string().optional(),
+	resourceName: z.string().optional(),
+	resourceDetails: z.string().optional(),
 	createdAt: z.date().optional(),
 });
 export type UserActivityFormValues = z.infer<typeof userActivityFormSchema>;
