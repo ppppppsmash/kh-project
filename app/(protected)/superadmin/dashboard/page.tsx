@@ -208,7 +208,7 @@ export default function DashboardPage() {
 
 			<div className="flex flex-col gap-2">
 				<h3 className="text-lg font-bold">ユーザ操作履歴</h3>
-				<div className="flex flex-col gap-2">
+				<div className="flex flex-col gap-2 max-h-[40svh] overflow-y-auto">
 					{userActivity?.map((activity) => (
 						<div key={activity.id} className="flex items-start gap-4 text-sm p-3 bg-muted/30 rounded-lg">
 							<div className="flex gap-4 items-start justify-between w-full">
@@ -242,7 +242,7 @@ export default function DashboardPage() {
 																	const details = JSON.parse(activity.resourceDetails);
 																	if (details.oldData && details.newData) {
 																		// 変更前後の比較表示をテキスト形式で
-																		const changes: string[] = [];
+																		const changes: Array<{fieldName: string, oldValue: string | null | undefined, newValue: string | null | undefined, type: 'create' | 'delete' | 'update'}> = [];
 																		
 																		// 各フィールドの変更をチェック
 																		for (const key of Object.keys(details.newData)) {
@@ -254,21 +254,45 @@ export default function DashboardPage() {
 																				const fieldName = getFieldDisplayName(key);
 																				
 																				if (oldValue === null || oldValue === undefined) {
-																					changes.push(`${fieldName}が「${formatValue(newValue)}」に設定されました`);
+																					changes.push({fieldName, oldValue, newValue, type: 'create'});
 																				} else if (newValue === null || newValue === undefined) {
-																					changes.push(`${fieldName}が削除されました`);
+																					changes.push({fieldName, oldValue, newValue, type: 'delete'});
 																				} else {
-																					changes.push(`${fieldName}が「${formatValue(oldValue)}」から「${formatValue(newValue)}」に更新されました`);
+																					changes.push({fieldName, oldValue, newValue, type: 'update'});
 																				}
 																			}
 																		}
 																		
 																		return changes.length > 0 ? (
 																			<div className="space-y-1">
-																				{changes.map((change) => (
-																					<div key={`change-${change}`} className="flex items-center gap-2">
+																				{changes.map((change, index) => (
+																					<div key={`change-${change.fieldName}-${index}`} className="flex items-center gap-2">
 																						<span className="text-blue-600">•</span>
-																						<span>{change}</span>
+																						<span>
+																							{change.type === 'create' && (
+																								<>
+																									<span>{change.fieldName}が</span>
+																									<span className="text-green-500 font-medium">「{formatValue(change.newValue)}」</span>
+																									<span>に設定されました</span>
+																								</>
+																							)}
+																							{change.type === 'delete' && (
+																								<>
+																									<span>{change.fieldName}が</span>
+																									<span className="text-red-500 font-medium">「{formatValue(change.oldValue)}」</span>
+																									<span>から削除されました</span>
+																								</>
+																							)}
+																							{change.type === 'update' && (
+																								<>
+																									<span>{change.fieldName}が</span>
+																									<span className="text-red-500 font-medium">「{formatValue(change.oldValue)}」</span>
+																									<span>から</span>
+																									<span className="text-green-500 font-medium">「{formatValue(change.newValue)}」</span>
+																									<span>に更新されました</span>
+																								</>
+																							)}
+																						</span>
 																					</div>
 																				))}
 																			</div>
