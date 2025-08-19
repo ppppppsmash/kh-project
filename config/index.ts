@@ -54,6 +54,11 @@ export const navConfig = {
 			icon: IconHelp,
 		},
 		// {
+		// 	title: "資料管理",
+		// 	url: "/superadmin/documents",
+		// 	icon: IconFileDescription,
+		// },
+		// {
 		//   title: "チーム",
 		//   url: "/team",
 		//   icon: IconUsersGroup,
