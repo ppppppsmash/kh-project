@@ -18,6 +18,7 @@ import {
 import { useSession } from "next-auth/react";
 import { navConfig } from "@/config";
 import { PointerHighlight } from "@/components/animation-ui/pointer-highlight";
+import { Highlighter } from "@/components/animation-ui/high-lighter-text";
 
 export default function DashboardPage() {
 	const { data: session } = useSession();
@@ -234,8 +235,8 @@ export default function DashboardPage() {
 											)}
 											{activity.resourceDetails && (
 												<div className="mt-1 p-2 bg-background rounded border text-xs">
-													<details className="cursor-pointer">
-														<summary className="font-medium">変更詳細</summary>
+													<div>
+														<div className="font-medium mb-2">変更詳細</div>
 														<div className="mt-1">
 															{(() => {
 																try {
@@ -272,23 +273,31 @@ export default function DashboardPage() {
 																							{change.type === 'create' && (
 																								<>
 																									<span>{change.fieldName}が</span>
-																									<span className="text-green-500 font-medium">「{formatValue(change.newValue)}」</span>
+																									<Highlighter action="underline" color="#ffd1dc" strokeWidth={1.5} animationDuration={600} iterations={2} padding={2} multiline={true}>
+																										<span className="font-bold">{" "}{formatValue(change.newValue)}{" "}</span>
+																									</Highlighter>
 																									<span>に設定されました</span>
 																								</>
 																							)}
 																							{change.type === 'delete' && (
 																								<>
 																									<span>{change.fieldName}が</span>
-																									<span className="text-red-500 font-medium">「{formatValue(change.oldValue)}」</span>
+																									<Highlighter action="underline" color="#ffd1dc" strokeWidth={1.5} animationDuration={600} iterations={2} padding={2} multiline={true}>
+																										<span className="font-bold">{" "}{formatValue(change.oldValue)}{" "}</span>
+																									</Highlighter>
 																									<span>から削除されました</span>
 																								</>
 																							)}
 																							{change.type === 'update' && (
 																								<>
 																									<span>{change.fieldName}が</span>
-																									<span className="text-red-500 font-medium">「{formatValue(change.oldValue)}」</span>
+																									<Highlighter action="underline" color="#ffd1dc" strokeWidth={1.5} animationDuration={600} iterations={2} padding={2} multiline={true}>
+																										<span className="font-bold">{" "}{formatValue(change.oldValue)}{" "}</span>
+																									</Highlighter>
 																									<span>から</span>
-																									<span className="text-green-500 font-medium">「{formatValue(change.newValue)}」</span>
+																									<Highlighter action="underline" color="#87CEFA">
+																										<span className="font-bold">{" "}{formatValue(change.newValue)}{" "}</span>
+																									</Highlighter>
 																									<span>に更新されました</span>
 																								</>
 																							)}
@@ -323,7 +332,7 @@ export default function DashboardPage() {
 																}
 															})()}
 														</div>
-													</details>
+													</div>
 												</div>
 											)}
 										</div>
