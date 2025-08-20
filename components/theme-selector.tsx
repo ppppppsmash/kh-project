@@ -50,6 +50,21 @@ const MONO_THEMES = [
 	},
 ];
 
+const BLUR_THEMES = [
+	{
+		name: "Glass",
+		value: "glass",
+	},
+	{
+		name: "Frost",
+		value: "frost",
+	},
+	{
+		name: "Crystal",
+		value: "crystal",
+	},
+];
+
 export function ThemeSelector() {
 	const { activeTheme, setActiveTheme } = useThemeConfig();
 
@@ -65,7 +80,7 @@ export function ThemeSelector() {
 					className="justify-start *:data-[slot=select-value]:w-12"
 				>
 					<span className="text-muted-foreground hidden sm:block">
-						テーマカラー:
+						テーマ:
 					</span>
 					<span className="text-muted-foreground block sm:hidden">Theme</span>
 					<SelectValue placeholder="Select a theme" />
@@ -91,6 +106,15 @@ export function ThemeSelector() {
 					<SelectGroup>
 						<SelectLabel>Monospaced</SelectLabel>
 						{MONO_THEMES.map((theme) => (
+							<SelectItem key={theme.name} value={theme.value}>
+								{theme.name}
+							</SelectItem>
+						))}
+					</SelectGroup>
+					<SelectSeparator />
+					<SelectGroup>
+						<SelectLabel>Blur Effects</SelectLabel>
+						{BLUR_THEMES.map((theme) => (
 							<SelectItem key={theme.name} value={theme.value}>
 								{theme.name}
 							</SelectItem>

@@ -267,3 +267,407 @@ body {
 	background-size: 200% 200%;
 	animation: gradient 5s ease infinite;
 }
+
+/* Blur Effects - Apple-style glass morphism (Optimized for Performance) */
+.theme-glass {
+	--background: oklch(1 0 0 / 0.8);
+	--card: oklch(1 0 0 / 0.6);
+	--popover: oklch(1 0 0 / 0.7);
+	--border: oklch(1 0 0 / 0.2);
+	--input: oklch(1 0 0 / 0.3);
+	--ring: oklch(0.708 0 0 / 0.3);
+	--sidebar: oklch(0.985 0 0 / 0.8);
+	--sidebar-border: oklch(1 0 0 / 0.2);
+	--primary: oklch(0.205 0 0);
+	--primary-foreground: oklch(0.985 0 0);
+	--secondary: oklch(0.97 0 0);
+	--secondary-foreground: oklch(0.205 0 0);
+	--accent: oklch(0.97 0 0);
+	--accent-foreground: oklch(0.205 0 0);
+	--muted: oklch(0.97 0 0);
+	--muted-foreground: oklch(0.556 0 0);
+}
+
+.theme-glass [data-slot="card"],
+.theme-glass [data-slot="popover"],
+.theme-glass [data-slot="sidebar"],
+.theme-glass [data-slot="dialog"] {
+	background: oklch(1 0 0 / 0.1);
+	border: 1px solid oklch(1 0 0 / 0.2);
+	box-shadow: 
+		0 8px 32px 0 oklch(0 0 0 / 0.1),
+		0 4px 16px 0 oklch(0 0 0 / 0.05);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	will-change: backdrop-filter;
+}
+
+.theme-glass [data-slot="input"],
+.theme-glass [data-slot="button"] {
+	background: oklch(1 0 0 / 0.1);
+	border: 1px solid oklch(1 0 0 / 0.2);
+	backdrop-filter: blur(10px);
+	-webkit-backdrop-filter: blur(10px);
+	will-change: backdrop-filter;
+}
+
+.theme-glass [data-slot="button"] {
+	color: oklch(0.205 0 0);
+	font-weight: 500;
+}
+
+.theme-glass [data-slot="button"]:hover {
+	background: oklch(1 0 0 / 0.2);
+	transform: translateY(-1px);
+	box-shadow: 0 4px 12px 0 oklch(0 0 0 / 0.15);
+}
+
+.theme-frost {
+	--background: oklch(0.98 0.01 240 / 0.9);
+	--card: oklch(0.98 0.01 240 / 0.7);
+	--popover: oklch(0.98 0.01 240 / 0.8);
+	--border: oklch(0.98 0.01 240 / 0.3);
+	--input: oklch(0.98 0.01 240 / 0.4);
+	--ring: oklch(0.7 0.01 240 / 0.4);
+	--sidebar: oklch(0.96 0.01 240 / 0.9);
+	--sidebar-border: oklch(0.98 0.01 240 / 0.3);
+	--primary: oklch(0.2 0.1 240);
+	--primary-foreground: oklch(0.98 0 0);
+	--secondary: oklch(0.95 0.01 240);
+	--secondary-foreground: oklch(0.2 0.1 240);
+	--accent: oklch(0.95 0.01 240);
+	--accent-foreground: oklch(0.2 0.1 240);
+	--muted: oklch(0.95 0.01 240);
+	--muted-foreground: oklch(0.4 0.01 240);
+}
+
+.theme-frost [data-slot="card"],
+.theme-frost [data-slot="popover"],
+.theme-frost [data-slot="sidebar"],
+.theme-frost [data-slot="dialog"] {
+	background: oklch(0.98 0.01 240 / 0.15);
+	border: 1px solid oklch(0.98 0.01 240 / 0.3);
+	box-shadow: 
+		0 12px 40px 0 oklch(0 0 0 / 0.08),
+		0 6px 20px 0 oklch(0 0 0 / 0.04);
+	backdrop-filter: blur(25px);
+	-webkit-backdrop-filter: blur(25px);
+	will-change: backdrop-filter;
+}
+
+.theme-frost [data-slot="input"],
+.theme-frost [data-slot="button"] {
+	background: oklch(0.98 0.01 240 / 0.15);
+	border: 1px solid oklch(0.98 0.01 240 / 0.3);
+	backdrop-filter: blur(15px);
+	-webkit-backdrop-filter: blur(15px);
+	will-change: backdrop-filter;
+}
+
+.theme-frost [data-slot="button"] {
+	color: oklch(0.2 0.1 240);
+	font-weight: 500;
+}
+
+.theme-frost [data-slot="button"]:hover {
+	background: oklch(0.98 0.01 240 / 0.25);
+	transform: translateY(-2px);
+	box-shadow: 0 8px 25px 0 oklch(0 0 0 / 0.12);
+}
+
+.theme-crystal {
+	--background: oklch(0.99 0.005 180 / 0.85);
+	--card: oklch(0.99 0.005 180 / 0.65);
+	--popover: oklch(0.99 0.005 180 / 0.75);
+	--border: oklch(0.99 0.005 180 / 0.25);
+	--input: oklch(0.99 0.005 180 / 0.35);
+	--ring: oklch(0.7 0.005 180 / 0.35);
+	--sidebar: oklch(0.97 0.005 180 / 0.85);
+	--sidebar-border: oklch(0.99 0.005 180 / 0.25);
+	--primary: oklch(0.15 0.05 180);
+	--primary-foreground: oklch(0.99 0 0);
+	--secondary: oklch(0.94 0.005 180);
+	--secondary-foreground: oklch(0.15 0.05 180);
+	--accent: oklch(0.94 0.005 180);
+	--accent-foreground: oklch(0.15 0.05 180);
+	--muted: oklch(0.94 0.005 180);
+	--muted-foreground: oklch(0.35 0.005 180);
+}
+
+.theme-crystal [data-slot="card"],
+.theme-crystal [data-slot="popover"],
+.theme-crystal [data-slot="sidebar"],
+.theme-crystal [data-slot="dialog"] {
+	background: oklch(0.99 0.005 180 / 0.2);
+	border: 1px solid oklch(0.99 0.005 180 / 0.25);
+	box-shadow: 
+		0 16px 50px 0 oklch(0 0 0 / 0.06),
+		0 8px 25px 0 oklch(0 0 0 / 0.03),
+		inset 0 1px 0 0 oklch(1 0 0 / 0.1);
+	backdrop-filter: blur(30px);
+	-webkit-backdrop-filter: blur(30px);
+	will-change: backdrop-filter;
+}
+
+.theme-crystal [data-slot="input"],
+.theme-crystal [data-slot="button"] {
+	background: oklch(0.99 0.005 180 / 0.2);
+	border: 1px solid oklch(0.99 0.005 180 / 0.25);
+	backdrop-filter: blur(20px);
+	-webkit-backdrop-filter: blur(20px);
+	will-change: backdrop-filter;
+}
+
+.theme-crystal [data-slot="button"] {
+	color: oklch(0.15 0.05 180);
+	font-weight: 500;
+}
+
+.theme-crystal [data-slot="button"]:hover {
+	background: oklch(0.99 0.005 180 / 0.3);
+	transform: translateY(-3px);
+	box-shadow: 
+		0 12px 35px 0 oklch(0 0 0 / 0.1),
+		0 6px 20px 0 oklch(0 0 0 / 0.05);
+}
+
+/* Enhanced button styles for blur themes */
+.theme-glass [data-slot="button"],
+.theme-frost [data-slot="button"],
+.theme-crystal [data-slot="button"] {
+	position: relative;
+	overflow: hidden;
+}
+
+.theme-glass [data-slot="button"]::before,
+.theme-frost [data-slot="button"]::before,
+.theme-crystal [data-slot="button"]::before {
+	content: '';
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background: linear-gradient(135deg, oklch(1 0 0 / 0.1), oklch(1 0 0 / 0.05));
+	border-radius: inherit;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+}
+
+.theme-glass [data-slot="button"]:hover::before,
+.theme-frost [data-slot="button"]:hover::before,
+.theme-crystal [data-slot="button"]:hover::before {
+	opacity: 1;
+}
+
+/* Input field improvements */
+.theme-glass [data-slot="input"],
+.theme-frost [data-slot="input"],
+.theme-crystal [data-slot="input"] {
+	color: oklch(0.2 0 0);
+	font-weight: 400;
+}
+
+.theme-glass [data-slot="input"]::placeholder,
+.theme-frost [data-slot="input"]::placeholder,
+.theme-crystal [data-slot="input"]::placeholder {
+	color: oklch(0.5 0 0);
+	opacity: 0.7;
+}
+
+/* Dark mode support for blur themes */
+.dark .theme-glass {
+	--background: oklch(0.1 0 0 / 0.8);
+	--card: oklch(0.15 0 0 / 0.6);
+	--popover: oklch(0.15 0 0 / 0.7);
+	--border: oklch(1 0 0 / 0.1);
+	--input: oklch(1 0 0 / 0.15);
+	--ring: oklch(1 0 0 / 0.2);
+	--sidebar: oklch(0.1 0 0 / 0.8);
+	--sidebar-border: oklch(1 0 0 / 0.1);
+	--primary: oklch(0.9 0 0);
+	--primary-foreground: oklch(0.1 0 0);
+	--secondary: oklch(0.2 0 0);
+	--secondary-foreground: oklch(0.9 0 0);
+	--accent: oklch(0.2 0 0);
+	--accent-foreground: oklch(0.9 0 0);
+	--muted: oklch(0.2 0 0);
+	--muted-foreground: oklch(0.7 0 0);
+}
+
+.dark .theme-glass [data-slot="button"] {
+	color: oklch(0.9 0 0);
+}
+
+.dark .theme-glass [data-slot="input"] {
+	color: oklch(0.9 0 0);
+}
+
+.dark .theme-glass [data-slot="input"]::placeholder {
+	color: oklch(0.7 0 0);
+}
+
+.dark .theme-frost {
+	--background: oklch(0.05 0.01 240 / 0.9);
+	--card: oklch(0.08 0.01 240 / 0.7);
+	--popover: oklch(0.08 0.01 240 / 0.8);
+	--border: oklch(1 0 0 / 0.15);
+	--input: oklch(1 0 0 / 0.2);
+	--ring: oklch(1 0 0 / 0.25);
+	--sidebar: oklch(0.05 0.01 240 / 0.9);
+	--sidebar-border: oklch(1 0 0 / 0.15);
+	--primary: oklch(0.9 0.01 240);
+	--primary-foreground: oklch(0.05 0.01 240);
+	--secondary: oklch(0.15 0.01 240);
+	--secondary-foreground: oklch(0.9 0.01 240);
+	--accent: oklch(0.15 0.01 240);
+	--accent-foreground: oklch(0.9 0.01 240);
+	--muted: oklch(0.15 0.01 240);
+	--muted-foreground: oklch(0.7 0.01 240);
+}
+
+.dark .theme-frost [data-slot="button"] {
+	color: oklch(0.9 0.01 240);
+}
+
+.dark .theme-frost [data-slot="input"] {
+	color: oklch(0.9 0.01 240);
+}
+
+.dark .theme-frost [data-slot="input"]::placeholder {
+	color: oklch(0.7 0.01 240);
+}
+
+.dark .theme-crystal {
+	--background: oklch(0.08 0.005 180 / 0.85);
+	--card: oklch(0.12 0.005 180 / 0.65);
+	--popover: oklch(0.12 0.005 180 / 0.75);
+	--border: oklch(1 0 0 / 0.12);
+	--input: oklch(1 0 0 / 0.18);
+	--ring: oklch(1 0 0 / 0.22);
+	--sidebar: oklch(0.08 0.005 180 / 0.85);
+	--sidebar-border: oklch(1 0 0 / 0.12);
+	--primary: oklch(0.9 0.005 180);
+	--primary-foreground: oklch(0.08 0.005 180);
+	--secondary: oklch(0.15 0.005 180);
+	--secondary-foreground: oklch(0.9 0.005 180);
+	--accent: oklch(0.15 0.005 180);
+	--accent-foreground: oklch(0.9 0.005 180);
+	--muted: oklch(0.15 0.005 180);
+	--muted-foreground: oklch(0.7 0.005 180);
+}
+
+.dark .theme-crystal [data-slot="button"] {
+	color: oklch(0.9 0.005 180);
+}
+
+.dark .theme-crystal [data-slot="input"] {
+	color: oklch(0.9 0.005 180);
+}
+
+.dark .theme-crystal [data-slot="input"]::placeholder {
+	color: oklch(0.7 0.005 180);
+}
+
+/* Performance optimizations */
+.theme-glass,
+.theme-frost,
+.theme-crystal {
+	/* Enable hardware acceleration */
+	transform: translateZ(0);
+	backface-visibility: hidden;
+	perspective: 1000px;
+}
+
+/* Smooth transitions only for specific properties */
+.theme-glass [data-slot="card"],
+.theme-glass [data-slot="popover"],
+.theme-glass [data-slot="sidebar"],
+.theme-glass [data-slot="dialog"],
+.theme-glass [data-slot="input"],
+.theme-glass [data-slot="button"],
+.theme-frost [data-slot="card"],
+.theme-frost [data-slot="popover"],
+.theme-frost [data-slot="sidebar"],
+.theme-frost [data-slot="dialog"],
+.theme-frost [data-slot="input"],
+.theme-frost [data-slot="button"],
+.theme-crystal [data-slot="card"],
+.theme-crystal [data-slot="popover"],
+.theme-crystal [data-slot="sidebar"],
+.theme-crystal [data-slot="dialog"],
+.theme-crystal [data-slot="input"],
+.theme-crystal [data-slot="button"] {
+	transition: 
+		background-color 0.2s ease,
+		border-color 0.2s ease,
+		box-shadow 0.2s ease,
+		transform 0.2s ease;
+}
+
+/* Enhanced blur effects for specific components */
+.theme-glass [data-slot="dialog"],
+.theme-frost [data-slot="dialog"],
+.theme-crystal [data-slot="dialog"] {
+	backdrop-filter: blur(40px);
+	-webkit-backdrop-filter: blur(40px);
+	background: oklch(1 0 0 / 0.1);
+	border: 1px solid oklch(1 0 0 / 0.2);
+	box-shadow: 
+		0 25px 50px -12px oklch(0 0 0 / 0.25),
+		0 0 0 1px oklch(1 0 0 / 0.1);
+}
+
+.dark .theme-glass [data-slot="dialog"],
+.dark .theme-frost [data-slot="dialog"],
+.dark .theme-crystal [data-slot="dialog"] {
+	background: oklch(0.1 0 0 / 0.1);
+	border: 1px solid oklch(1 0 0 / 0.1);
+	box-shadow: 
+		0 25px 50px -12px oklch(0 0 0 / 0.5),
+		0 0 0 1px oklch(1 0 0 / 0.05);
+}
+
+/* Reduce blur on mobile for better performance */
+@media (max-width: 768px) {
+	.theme-glass [data-slot="card"],
+	.theme-glass [data-slot="popover"],
+	.theme-glass [data-slot="sidebar"],
+	.theme-glass [data-slot="dialog"] {
+		backdrop-filter: blur(10px);
+		-webkit-backdrop-filter: blur(10px);
+	}
+	
+	.theme-frost [data-slot="card"],
+	.theme-frost [data-slot="popover"],
+	.theme-frost [data-slot="sidebar"],
+	.theme-frost [data-slot="dialog"] {
+		backdrop-filter: blur(15px);
+		-webkit-backdrop-filter: blur(15px);
+	}
+	
+	.theme-crystal [data-slot="card"],
+	.theme-crystal [data-slot="popover"],
+	.theme-crystal [data-slot="sidebar"],
+	.theme-crystal [data-slot="dialog"] {
+		backdrop-filter: blur(20px);
+		-webkit-backdrop-filter: blur(20px);
+	}
+}
+
+/* Disable blur on low-end devices */
+@media (prefers-reduced-motion: reduce) {
+	.theme-glass [data-slot],
+	.theme-frost [data-slot],
+	.theme-crystal [data-slot] {
+		backdrop-filter: none;
+		-webkit-backdrop-filter: none;
+		background: oklch(1 0 0 / 0.9);
+	}
+	
+	.dark .theme-glass [data-slot],
+	.dark .theme-frost [data-slot],
+	.dark .theme-crystal [data-slot] {
+		background: oklch(0.1 0 0 / 0.9);
+	}
+}

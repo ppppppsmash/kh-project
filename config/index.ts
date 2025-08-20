@@ -23,10 +23,20 @@ export const navConfig = {
 			url: "/superadmin/dashboard",
 			icon: IconDashboard,
 		},
+		// {
+		// 	title: "資料管理",
+		// 	url: "/superadmin/documents",
+		// 	icon: IconFileDescription,
+		// },
+		// {
+		// 	title: "組織図",
+		// 	url: "/superadmin/organization",
+		// 	icon: IconUsersGroup,
+		// },
 		{
-			title: "組織図",
-			url: "/superadmin/organization",
-			icon: IconUsersGroup,
+			title: "週報管理",
+			url: "/superadmin/reports",
+			icon: IconReport,
 		},
 		{
 			title: "メンバー",
@@ -53,11 +63,6 @@ export const navConfig = {
 			url: "/superadmin/qa",
 			icon: IconHelp,
 		},
-		// {
-		// 	title: "資料管理",
-		// 	url: "/superadmin/documents",
-		// 	icon: IconFileDescription,
-		// },
 		// {
 		//   title: "チーム",
 		//   url: "/team",
