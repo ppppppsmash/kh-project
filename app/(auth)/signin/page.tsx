@@ -4,7 +4,8 @@ import { InteractiveHoverButton } from "@/components/animation-ui/active-hover-b
 import { TextHoverEffect } from "@/components/animation-ui/text-hover-effect";
 import { Icons } from "@/components/ui/icons";
 import { signIn } from "next-auth/react";
-import { SigninBackground } from "./_components/signin-background";
+// import { SigninBackground } from "./_components/signin-background";
+import AnimatedSquareBg from "./_components/animated-square-bg";
 
 export default function LoginPage() {
 	const handleSignIn = async () => {
@@ -12,7 +13,7 @@ export default function LoginPage() {
 	};
 
 	return (
-		<div className="min-h-screen w-full flex flex-col items-center justify-center p-4 animate-gradient bg-gradient-to-b from-blue-400 to-purple-400">
+		<div className="min-h-screen w-full flex flex-col items-center justify-center p-4">
 			<div className="w-full h-[16rem] flex items-center justify-center z-50">
 				<TextHoverEffect text="ADiXi" />
 			</div>
@@ -26,7 +27,13 @@ export default function LoginPage() {
 				</InteractiveHoverButton>
 			</div>
 
-			<SigninBackground />
+			<AnimatedSquareBg
+				speed={0.4} 
+				squareSize={45}
+				direction="diagonal"
+				borderColor="#271e37"
+				hoverFillColor="#222"
+			/>
 		</div>
 	);
 }
