@@ -129,7 +129,7 @@ export const getUserRole = async (
 		return user[0].role as MemberFormValues["role"];
 	} catch (error) {
 		console.error("Error getting user role:", error);
-		return "admin";
+		return "superadmin";
 	}
 };
 

@@ -21,7 +21,7 @@ export const users = pgTable("users", {
 	role: varchar("role", {
 		length: 255,
 		enum: ["superadmin", "admin", "user"],
-	}).default("admin"),
+	}).default("superadmin"),
 	// プロフィール情報
 	department: varchar("department", { length: 255 }),
 	position: varchar("position", { length: 255 }),
