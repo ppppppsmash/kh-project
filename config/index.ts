@@ -13,6 +13,7 @@ import {
 	IconSearch,
 	IconSettings,
 	IconUser,
+	IconBell,
 } from "@tabler/icons-react";
 
 // ナビゲーションの設定
@@ -63,6 +64,11 @@ export const navConfig = {
 			url: "/superadmin/qa",
 			icon: IconHelp,
 		},
+		{
+			title: "災害通知",
+			url: "/superadmin/disaster-notification",
+			icon: IconBell,
+		}
 		// {
 		//   title: "チーム",
 		//   url: "/team",
