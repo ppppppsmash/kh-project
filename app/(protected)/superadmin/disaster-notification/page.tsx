@@ -401,7 +401,7 @@ export default function DisasterNotificationPage() {
                 震度3以上の地震情報
               </CardDescription>
             </CardHeader>
-            <CardContent className="max-h-[600px] overflow-y-auto pr-2" style={{ scrollbarWidth: 'thin', scrollbarColor: '#d1d5db #f3f4f6' }}>
+            <CardContent className="max-h-[600px] overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#d1d5db #f3f4f6' }}>
               {loading ? (
                 <div className="text-center py-8">
                   <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
@@ -414,11 +414,11 @@ export default function DisasterNotificationPage() {
                   <p className="text-xs mt-2">気象庁XMLからリアルタイムで取得</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {filterByRegion(earthquakeData, selectedRegion).map((earthquake: EarthquakeInfo) => (
-                    <Card key={earthquake.id} className="border-l-4x">
+                    <Card key={earthquake.id} className="w-full">
                       <CardContent className="pt-4">
-                        <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-start mb-2">
                           <div className="flex items-center gap-2">
                             {earthquake.magnitude > 0 && (
                               <Badge variant="destructive">
@@ -485,9 +485,9 @@ export default function DisasterNotificationPage() {
                   <p className="text-xs mt-2">気象庁XMLからリアルタイムで取得</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                   {filterByRegion(weatherAlerts, selectedRegion).map((alert: WeatherAlert) => (
-                    <Card key={alert.id} className="border-l-4">
+                    <Card key={alert.id} className="w-full">
                       <CardContent className="pt-4">
                         <div className="flex justify-between items-start mb-2">
                           <div className="flex items-center gap-2">
