@@ -3,7 +3,7 @@
 import { db } from "@/db";
 import { tasks } from "@/db/schema/tasks";
 import type { TaskFormValues } from "@/lib/validations";
-import { desc, eq } from "drizzle-orm";
+import { desc, eq, sql } from "drizzle-orm";
 import { sendSlackMessage } from "@/lib/slackMessage";
 import { logTaskActivity } from "./user-activity";
 import { auth } from "@/auth";
@@ -44,21 +44,62 @@ export const getTasks = async (): Promise<TaskFormValues[]> => {
 		}));
 };
 
-export const createTask = async (data: TaskFormValues) => {
-	const lastTaskRecord = await db
+// 一意のタスクIDを生成する関数（日付ベースの形式）
+const generateUniqueTaskId = async (): Promise<string> => {
+	const now = new Date();
+	// 日付をYYYYMMDD
+	const dateStr = now.toISOString().slice(0, 10).replace(/-/g, "");
+	const prefix = `T-${dateStr}-`;
+	
+	// 当日作成されたタスクの最大番号を取得
+	const pattern = `${prefix}%`;
+	const todayTasks = await db
 		.select({ taskId: tasks.taskId })
 		.from(tasks)
+		.where(sql`${tasks.taskId} LIKE ${pattern}`)
 		.orderBy(desc(tasks.taskId))
 		.limit(1);
 
-	let taskId = "T001";
-	if (lastTaskRecord.length > 0 && lastTaskRecord[0].taskId) {
-		const match = lastTaskRecord[0].taskId.match(/T(\d+)/);
+	let nextNumber = 1;
+	if (todayTasks.length > 0 && todayTasks[0].taskId) {
+		// T-YYYYMMDD-XXX形式から番号を抽出
+		const match = todayTasks[0].taskId.match(/T-\d{8}-(\d+)/);
 		if (match) {
-			const nextNumber = Number.parseInt(match[1], 10) + 1;
-			taskId = `T${nextNumber.toString().padStart(3, "0")}`;
+			nextNumber = Number.parseInt(match[1], 10) + 1;
 		}
 	}
+
+	// T-YYYYMMDD-XXX
+	return `${prefix}${nextNumber.toString().padStart(3, "0")}`;
+};
+
+export const createTask = async (data: TaskFormValues) => {
+	// 一意のIDを生成（重複チェック付き）
+	let taskId: string;
+	let attempts = 0;
+	const maxAttempts = 10;
+
+	do {
+		taskId = await generateUniqueTaskId();
+		// 既存のタスクIDと重複していないか確認
+		const existingTask = await db
+			.select({ taskId: tasks.taskId })
+			.from(tasks)
+			.where(eq(tasks.taskId, taskId))
+			.limit(1);
+
+		if (existingTask.length === 0) {
+			break; // 重複なし
+		}
+
+		attempts++;
+		if (attempts >= maxAttempts) {
+			// 最大試行回数に達した場合、タイムスタンプベースのIDを使用
+			const dateStr = new Date().toISOString().slice(0, 10).replace(/-/g, "");
+			taskId = `T-${dateStr}-${Date.now().toString().slice(-6)}`;
+			break;
+		}
+	} while (attempts < maxAttempts);
 
 	const taskData = {
 		...data,
