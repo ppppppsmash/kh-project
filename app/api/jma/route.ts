@@ -499,6 +499,8 @@ function extractPrefecture(text: string): string {
   // 気象庁のXMLデータの形式に対応
   // 【福岡県気象警報・注意報】から都道府県名を抽出
   
+  console.log('Extracting prefecture from:', text);
+  
   const prefectures = [
     '北海道', '青森県', '岩手県', '宮城県', '秋田県', '山形県', '福島県',
     '茨城県', '栃木県', '群馬県', '埼玉県', '千葉県', '東京都', '神奈川県',
@@ -514,7 +516,9 @@ function extractPrefecture(text: string): string {
   const bracketMatch = text.match(bracketPattern);
   if (bracketMatch && bracketMatch[1]) {
     const extracted = bracketMatch[1].trim();
+    console.log('Bracket match found:', extracted);
     if (prefectures.includes(extracted)) {
+      console.log('Prefecture extracted:', extracted);
       return extracted;
     }
   }
@@ -522,10 +526,12 @@ function extractPrefecture(text: string): string {
   // 通常の検索
   for (const prefecture of prefectures) {
     if (text.includes(prefecture)) {
+      console.log('Prefecture found in text:', prefecture);
       return prefecture;
     }
   }
   
+  console.log('No prefecture found');
   return '';
 }
 

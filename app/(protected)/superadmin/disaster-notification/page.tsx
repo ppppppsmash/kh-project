@@ -104,16 +104,6 @@ export default function DisasterNotificationPage() {
   const [currentIp, setCurrentIp] = useState<string | null>(null);
   const [selectedRegion, setSelectedRegion] = useState<RegionKey>('all');
 
-  const getCurrentIp = async () => {
-    try {
-      const response = await fetch('/api/disaster/ip');
-      const data = await response.json();
-      setCurrentIp(data.ip);
-    } catch (error) {
-      console.error('Failed to get IP address:', error);
-    }
-  };
-
   const testApiConnection = async () => {
     try {
       const response = await fetch('/api/jma/test');
@@ -131,21 +121,31 @@ export default function DisasterNotificationPage() {
     if (region === 'all') return data;
     
     const regionPrefectures = REGIONS[region].prefectures as readonly string[];
-    return data.filter(item => {
+    console.log(`Filtering by region: ${region}`, regionPrefectures);
+    
+    const filtered = data.filter(item => {
       // 地震データの場合
       if ('location' in item) {
-        return regionPrefectures.some(prefecture => 
-          item.location?.includes(prefecture) || 
-          item.description?.includes(prefecture)
+        const earthquakeItem = item as EarthquakeInfo;
+        const matches = regionPrefectures.some(prefecture => 
+          earthquakeItem.location?.includes(prefecture) || 
+          earthquakeItem.description?.includes(prefecture)
         );
+        console.log(`Earthquake item: ${earthquakeItem.location}, matches: ${matches}`);
+        return matches;
       }
       // 気象警報データの場合
       if ('prefecture' in item) {
         const weatherItem = item as WeatherAlert;
-        return weatherItem.prefecture && (regionPrefectures as string[]).includes(weatherItem.prefecture);
+        const matches = weatherItem.prefecture && (regionPrefectures as string[]).includes(weatherItem.prefecture);
+        console.log(`Weather item: ${weatherItem.prefecture}, matches: ${matches}`);
+        return matches;
       }
       return false;
     });
+    
+    console.log(`Filtered ${data.length} items to ${filtered.length} items`);
+    return filtered;
   };
 
   const fetchData = async () => {
@@ -182,9 +182,24 @@ export default function DisasterNotificationPage() {
       // サンプルデータの詳細ログ
       if (earthquakeData.data?.items?.length > 0) {
         console.log('First earthquake item:', earthquakeData.data.items[0]);
+        console.log('Earthquake item structure:', {
+          id: earthquakeData.data.items[0].id,
+          location: earthquakeData.data.items[0].location,
+          description: earthquakeData.data.items[0].description,
+          hasLocation: 'location' in earthquakeData.data.items[0],
+          hasPrefecture: 'prefecture' in earthquakeData.data.items[0]
+        });
       }
       if (weatherData.data?.items?.length > 0) {
         console.log('First weather item:', weatherData.data.items[0]);
+        console.log('Weather item structure:', {
+          id: weatherData.data.items[0].id,
+          prefecture: weatherData.data.items[0].prefecture,
+          area: weatherData.data.items[0].area,
+          description: weatherData.data.items[0].description,
+          hasLocation: 'location' in weatherData.data.items[0],
+          hasPrefecture: 'prefecture' in weatherData.data.items[0]
+        });
       }
       
       // データを設定
@@ -391,7 +406,7 @@ export default function DisasterNotificationPage() {
         </TabsList>
 
         <TabsContent value="earthquake" className="space-y-4">
-          <Card>
+          <Card className="max-h-[50vh]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Zap className="h-5 w-5" />
@@ -401,7 +416,7 @@ export default function DisasterNotificationPage() {
                 震度3以上の地震情報
               </CardDescription>
             </CardHeader>
-            <CardContent className="max-h-[600px] overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#d1d5db #f3f4f6' }}>
+            <CardContent className="overflow-y-auto" style={{ scrollbarWidth: 'thin', scrollbarColor: '#d1d5db #f3f4f6' }}>
               {loading ? (
                 <div className="text-center py-8">
                   <RefreshCw className="h-8 w-8 animate-spin mx-auto mb-4" />
