@@ -15,12 +15,13 @@ import { formatDateForInput } from "@/lib/utils";
 import { type CategoryValues, type TabValues, type TaskFormValues, taskFormSchema } from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { BaseModalForm } from "./base-modal-form";
 import { Confetti } from "@/components/animation-ui/confetti";
 import { addCategory } from "@/actions/categories";
 import { useQueryClient } from "@tanstack/react-query";
+import { CustomToast } from "@/components/ui/toast";
 
 interface TaskModalFormProps {
 	title?: string;
@@ -47,6 +48,9 @@ export const TaskModalForm = ({
 	const [newCategory, setNewCategory] = useState("");
 	const [showConfetti, setShowConfetti] = useState(false);
 	const queryClient = useQueryClient();
+	const [isInitialLoad, setIsInitialLoad] = useState(true);
+	
+	const STORAGE_KEY = "task-form-draft";
 
 	const form = useForm<TaskFormValues>({
 		resolver: zodResolver(taskFormSchema),
@@ -61,6 +65,49 @@ export const TaskModalForm = ({
 			return () => clearTimeout(timer);
 		}
 	}, [showConfetti]);
+
+	// 一時保存をクリア
+	const clearDraft = useCallback(() => {
+		localStorage.removeItem(STORAGE_KEY);
+	}, []);
+
+	// 一時保存を読み込み
+	const loadDraft = useCallback((): Partial<TaskFormValues> | null => {
+		if (typeof window === "undefined") return null;
+		try {
+			const saved = localStorage.getItem(STORAGE_KEY);
+			if (saved) {
+				const parsed = JSON.parse(saved);
+				// Date型のフィールドを復元
+				if (parsed.startedAt) {
+					parsed.startedAt = new Date(parsed.startedAt);
+				}
+				if (parsed.dueDate) {
+					parsed.dueDate = new Date(parsed.dueDate);
+				}
+				if (parsed.completedAt) {
+					parsed.completedAt = new Date(parsed.completedAt);
+				}
+				return parsed;
+			}
+		} catch (error) {
+			console.error("一時保存の読み込みに失敗しました:", error);
+		}
+		return null;
+	}, []);
+
+	// 一時保存
+	const saveDraft = useCallback((data: Partial<TaskFormValues>, showToast = false) => {
+		if (typeof window === "undefined") return;
+		try {
+			localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+			if (showToast) {
+				CustomToast.info("一時保存しました");
+			}
+		} catch (error) {
+			console.error("一時保存に失敗しました:", error);
+		}
+	}, []);
 
 	const handleSubmit = async (data: TaskFormValues) => {
 		setIsSubmitting(true);
@@ -88,6 +135,8 @@ export const TaskModalForm = ({
 				setShowConfetti(true);
 			}
 			
+			// 送信成功時に一時保存をクリア
+			clearDraft();
 			form.reset();
 			onClose();
 		} catch (error) {
@@ -99,26 +148,40 @@ export const TaskModalForm = ({
 
 	//onsole.log(form.formState.errors);
 
+	// モーダルを開く際に一時保存があれば復元
 	useEffect(() => {
 		if (isOpen) {
+			setIsInitialLoad(true);
+			const draft = loadDraft();
+			
+			// 編集モードの場合はdefaultValuesを優先、新規登録の場合は一時保存を優先かな
+			const initialValues = isEdit 
+				? defaultValues 
+				: (draft || defaultValues);
+			
 			form.reset({
-				taskId: defaultValues?.taskId || "",
-				title: defaultValues?.title || "",
-				content: defaultValues?.content || "",
-				assignee: defaultValues?.assignee || "",
-				startedAt: defaultValues?.startedAt || new Date(),
-				dueDate: defaultValues?.dueDate || undefined,
-				completedAt: defaultValues?.completedAt || undefined,
-				progress: defaultValues?.progress || "pending",
-				priority: defaultValues?.priority || undefined,
-				progressDetails: defaultValues?.progressDetails || "",
-				link: defaultValues?.link || "",
-				notes: defaultValues?.notes || "",
-				categoryId: defaultValues?.categoryId || undefined,
-				tabId: defaultValues?.tabId || undefined,
+				taskId: initialValues?.taskId || "",
+				title: initialValues?.title || "",
+				content: initialValues?.content || "",
+				assignee: initialValues?.assignee || "",
+				startedAt: initialValues?.startedAt || new Date(),
+				dueDate: initialValues?.dueDate || undefined,
+				completedAt: initialValues?.completedAt || undefined,
+				progress: initialValues?.progress || "pending",
+				priority: initialValues?.priority || undefined,
+				progressDetails: initialValues?.progressDetails || "",
+				link: initialValues?.link || "",
+				notes: initialValues?.notes || "",
+				categoryId: initialValues?.categoryId || undefined,
+				tabId: initialValues?.tabId || undefined,
 			});
+			
+			// 初回ロード後、少し遅延させてから監視を開始
+			setTimeout(() => {
+				setIsInitialLoad(false);
+			}, 500);
 		}
-	}, [isOpen, defaultValues, form]);
+	}, [isOpen, defaultValues, form, isEdit, loadDraft]);
 
 	const handleAddCategory = async () => {
 		if (newCategory && !categories.some(c => c.name === newCategory)) {
@@ -137,6 +200,40 @@ export const TaskModalForm = ({
 				console.error("カテゴリーの追加中にエラーが発生しました:", error);
 			}
 		}
+	};
+
+	// フォームの値を監視して、変更があったら一時保存（デバウンス付き）
+	useEffect(() => {
+		if (!isOpen || isInitialLoad) return;
+		
+		let timeoutId: NodeJS.Timeout;
+		
+		const saveWithDebounce = () => {
+			clearTimeout(timeoutId);
+			timeoutId = setTimeout(() => {
+				const currentValues = form.getValues();
+				if (currentValues.title || currentValues.content || currentValues.assignee) {
+					saveDraft(currentValues, false); // toastは表示しない
+				}
+			}, 1000); // 1秒後に保存
+		};
+		
+		// フォームの変更を監視
+		const subscription = form.watch(saveWithDebounce);
+		
+		return () => {
+			clearTimeout(timeoutId);
+			subscription.unsubscribe();
+		};
+	}, [isOpen, isInitialLoad, form, saveDraft]);
+
+	const handleClose = () => {
+		// モーダルを閉じる際に一時保存
+		const formValues = form.getValues();
+		if (formValues.title || formValues.content || formValues.assignee) {
+			saveDraft(formValues, true);
+		}
+		onClose();
 	};
 
 	const handleClear = () => {
@@ -159,6 +256,8 @@ export const TaskModalForm = ({
 		});
 		setNewCategory("");
 		setShowNewCategoryInput(false);
+
+		clearDraft();
 	};
 
 	console.log(form.formState);
@@ -170,7 +269,7 @@ export const TaskModalForm = ({
 			<BaseModalForm
 				title={title}
 				isOpen={isOpen}
-				onClose={onClose}
+				onClose={handleClose}
 				onSubmit={form.handleSubmit(handleSubmit)}
 				isSubmitting={isSubmitting}
 				isEdit={isEdit}
