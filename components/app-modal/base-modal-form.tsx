@@ -23,6 +23,8 @@ interface BaseModalFormProps {
 	isSubmitting?: boolean;
 	submitText?: string;
 	isEdit?: boolean;
+	onClear?: () => void;
+	showClearButton?: boolean;
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	form: UseFormReturn<any>;
 }
@@ -36,6 +38,8 @@ export const BaseModalForm = ({
 	isSubmitting = false,
 	submitText = "登録",
 	isEdit = false,
+	onClear,
+	showClearButton = false,
 	form,
 }: BaseModalFormProps) => {
 	const x = useMotionValue(0);
@@ -90,13 +94,20 @@ export const BaseModalForm = ({
 								<Form {...form}>
 									<form onSubmit={onSubmit} className="space-y-4">
 										{children}
-										<div className="flex justify-end space-x-2">
-											<Button type="button" variant="outline" onClick={onClose}>
-												キャンセル
-											</Button>
-											<Button type="submit" disabled={isSubmitting}>
-												{isSubmitting ? "処理中..." : isEdit ? "更新" : submitText}
-											</Button>
+										<div className="flex justify-between items-center">
+											{showClearButton && onClear && (
+												<Button type="button" variant="outline" onClick={onClear}>
+													クリア
+												</Button>
+											)}
+											<div className="flex justify-end space-x-2 ml-auto">
+												<Button type="button" variant="outline" onClick={onClose}>
+													キャンセル
+												</Button>
+												<Button type="submit" disabled={isSubmitting}>
+													{isSubmitting ? "処理中..." : isEdit ? "更新" : submitText}
+												</Button>
+											</div>
 										</div>
 									</form>
 								</Form>

@@ -139,6 +139,28 @@ export const TaskModalForm = ({
 		}
 	};
 
+	const handleClear = () => {
+		// 編集モードの場合は元の値にリセット、新規登録の場合はデフォルト値にリセット
+		form.reset({
+			taskId: defaultValues?.taskId || "",
+			title: defaultValues?.title || "",
+			content: defaultValues?.content || "",
+			assignee: defaultValues?.assignee || "",
+			startedAt: defaultValues?.startedAt || new Date(),
+			dueDate: defaultValues?.dueDate || undefined,
+			completedAt: defaultValues?.completedAt || undefined,
+			progress: defaultValues?.progress || "pending",
+			priority: defaultValues?.priority || undefined,
+			progressDetails: defaultValues?.progressDetails || "",
+			link: defaultValues?.link || "",
+			notes: defaultValues?.notes || "",
+			categoryId: defaultValues?.categoryId || undefined,
+			tabId: defaultValues?.tabId || undefined,
+		});
+		setNewCategory("");
+		setShowNewCategoryInput(false);
+	};
+
 	console.log(form.formState);
 	console.log(form.formState.errors);
 
@@ -152,6 +174,8 @@ export const TaskModalForm = ({
 				onSubmit={form.handleSubmit(handleSubmit)}
 				isSubmitting={isSubmitting}
 				isEdit={isEdit}
+				onClear={handleClear}
+				showClearButton={true}
 				form={form}
 			>
 				<div className="flex gap-x-10 items-start">
