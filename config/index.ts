@@ -14,6 +14,7 @@ import {
 	IconSettings,
 	IconUser,
 	IconBell,
+	IconFilePencil,
 } from "@tabler/icons-react";
 
 // ナビゲーションの設定
@@ -34,11 +35,6 @@ export const navConfig = {
 		// 	url: "/superadmin/organization",
 		// 	icon: IconUsersGroup,
 		// },
-		{
-			title: "週報管理",
-			url: "/superadmin/reports",
-			icon: IconReport,
-		},
 		{
 			title: "メンバー",
 			url: "/superadmin/member",
@@ -63,6 +59,11 @@ export const navConfig = {
 			title: "QA管理",
 			url: "/superadmin/qa",
 			icon: IconHelp,
+		},
+		{
+			title: "アンケート管理",
+			url: "/superadmin/survey",
+			icon: IconFilePencil,
 		},
 		{
 			title: "災害通知",
