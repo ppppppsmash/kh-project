@@ -8,6 +8,10 @@ const nextConfig: NextConfig = {
 				protocol: "https",
 				hostname: "kxiebh2k4xk247kc.public.blob.vercel-storage.com",
 			},
+			{
+				protocol: "https",
+				hostname: "avatars.slack-edge.com",
+			},
 		],
 	},
 };
