@@ -8,3 +8,4 @@ export { categories } from "./categories";
 export { tabs } from "./tabs";
 export { tasks } from "./tasks";
 export { taskTabs } from "./task_tabs";
+export { surveys, surveyItems, surveyResponses, surveyResponseItems } from "./surveys";

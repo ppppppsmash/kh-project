@@ -134,3 +134,29 @@ export const tagFormSchema = z.object({
 	updatedAt: z.date().optional(),
 });
 export type TagFormValues = z.infer<typeof tagFormSchema>;
+
+export const surveyItemSchema = z.object({
+	id: z.string().optional(),
+	surveyId: z.string().optional(),
+	question: z.string().min(1, "質問は必須です"),
+	questionType: z.enum(["text", "textarea", "select", "radio", "checkbox"]),
+	options: z.string().optional(),
+	isRequired: z.boolean().default(false).optional(),
+	order: z.string().optional(),
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
+});
+export type SurveyItemFormValues = z.infer<typeof surveyItemSchema>;
+
+export const surveyFormSchema = z.object({
+	id: z.string().optional(),
+	title: z.string().min(1, "タイトルは必須です"),
+	description: z.string().optional(),
+	theme: z.string().default("default").optional(),
+	isPublic: z.boolean().default(false).optional(),
+	isPublished: z.boolean().default(false).optional(),
+	items: z.array(surveyItemSchema).min(1, "少なくとも1つの項目が必要です"),
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
+});
+export type SurveyFormValues = z.infer<typeof surveyFormSchema>;
