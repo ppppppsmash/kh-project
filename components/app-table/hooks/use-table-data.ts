@@ -5,6 +5,7 @@ import { getTasks } from "@/actions/task";
 import { getCategories } from "@/actions/categories";
 import { getUserInfo, getUserList } from "@/actions/user";
 import { getUserActivity } from "@/actions/user-activity";
+import { getSurveys } from "@/actions/survey";
 import type {
 	ClubFormValues,
 	CategoryValues,
@@ -12,6 +13,7 @@ import type {
 	QaFormValues,
 	TabValues,
 	TaskFormValues,
+	SurveyFormValues,
 } from "@/lib/validations";
 import type { UserActivityFormValues } from "@/lib/validations";
 import { useQuery } from "@tanstack/react-query";
@@ -105,5 +107,12 @@ export const useGetTabs = () => {
 	return useQuery<TabValues[]>({
 		queryKey: ["tabs"],
 		queryFn: getTabs,
+	});
+};
+
+export const useGetSurveys = () => {
+	return useQuery<SurveyFormValues[]>({
+		queryKey: ["surveys"],
+		queryFn: getSurveys,
 	});
 };

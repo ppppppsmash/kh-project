@@ -1,0 +1,1 @@
+ALTER TABLE "survey_responses" ADD COLUMN "respondent_name" varchar(255);

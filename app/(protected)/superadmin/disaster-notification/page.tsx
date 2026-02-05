@@ -21,6 +21,7 @@ interface EarthquakeInfo {
     lng: number;
   };
   description?: string;
+  title?: string;
 }
 
 interface WeatherAlert {
@@ -116,6 +117,40 @@ export default function DisasterNotificationPage() {
     }
   };
 
+  // 地震情報のみをフィルタリングする関数（降灰予報、火山情報などを除外）
+  const filterEarthquakeOnly = (data: EarthquakeInfo[]): EarthquakeInfo[] => {
+    return data.filter(item => {
+      const title = item.title?.toLowerCase() || '';
+      const description = item.description?.toLowerCase() || '';
+      const location = item.location?.toLowerCase() || '';
+      const combinedText = `${title} ${description} ${location}`;
+      
+      // 除外するキーワード（火山関連）
+      const excludeKeywords = [
+        '降灰', '火山', '噴火', '火口', 'マグマ', '溶岩',
+        'volcano', 'ash', 'eruption', 'crater', 'magma', 'lava'
+      ];
+      
+      // 除外キーワードが含まれている場合は除外
+      if (excludeKeywords.some(keyword => combinedText.includes(keyword.toLowerCase()))) {
+        return false;
+      }
+      
+      // 地震関連のキーワードが含まれている場合は含める
+      const includeKeywords = [
+        '地震', '震度', 'マグニチュード', '震源', '余震',
+        'earthquake', 'magnitude', 'seismic', 'aftershock'
+      ];
+      
+      // 地震関連のキーワードが含まれているか、マグニチュードや震度の情報がある場合は含める
+      const hasEarthquakeKeyword = includeKeywords.some(keyword => combinedText.includes(keyword.toLowerCase()));
+      const hasMagnitude = item.magnitude > 0;
+      const hasIntensity = item.intensity && item.intensity !== '不明';
+      
+      return hasEarthquakeKeyword || hasMagnitude || hasIntensity;
+    });
+  };
+
   // 地域フィルタリング関数
   const filterByRegion = <T extends EarthquakeInfo | WeatherAlert>(data: T[], region: RegionKey): T[] => {
     if (region === 'all') return data;
@@ -127,18 +162,32 @@ export default function DisasterNotificationPage() {
       // 地震データの場合
       if ('location' in item) {
         const earthquakeItem = item as EarthquakeInfo;
-        const matches = regionPrefectures.some(prefecture => 
-          earthquakeItem.location?.includes(prefecture) || 
-          earthquakeItem.description?.includes(prefecture)
-        );
+        // location、description、titleのすべてをチェック
+        const matches = regionPrefectures.some(prefecture => {
+          const locationMatch = earthquakeItem.location?.includes(prefecture);
+          const descriptionMatch = earthquakeItem.description?.includes(prefecture);
+          const titleMatch = earthquakeItem.title?.includes(prefecture);
+          return locationMatch || descriptionMatch || titleMatch;
+        });
         console.log(`Earthquake item: ${earthquakeItem.location}, matches: ${matches}`);
         return matches;
       }
       // 気象警報データの場合
-      if ('prefecture' in item) {
+      if ('prefecture' in item || 'area' in item) {
         const weatherItem = item as WeatherAlert;
-        const matches = weatherItem.prefecture && (regionPrefectures as string[]).includes(weatherItem.prefecture);
-        console.log(`Weather item: ${weatherItem.prefecture}, matches: ${matches}`);
+        // prefectureが存在する場合は直接チェック
+        if (weatherItem.prefecture && (regionPrefectures as string[]).includes(weatherItem.prefecture)) {
+          console.log(`Weather item: ${weatherItem.prefecture}, matches: true (prefecture)`);
+          return true;
+        }
+        // prefectureが空の場合は、areaやtitleから都道府県名を抽出してチェック
+        const matches = regionPrefectures.some(prefecture => {
+          const areaMatch = weatherItem.area?.includes(prefecture);
+          const titleMatch = weatherItem.title?.includes(prefecture);
+          const descriptionMatch = weatherItem.description?.includes(prefecture);
+          return areaMatch || titleMatch || descriptionMatch;
+        });
+        console.log(`Weather item: prefecture=${weatherItem.prefecture}, area=${weatherItem.area}, matches: ${matches}`);
         return matches;
       }
       return false;
@@ -430,7 +479,7 @@ export default function DisasterNotificationPage() {
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                  {filterByRegion(earthquakeData, selectedRegion).map((earthquake: EarthquakeInfo) => (
+                  {filterByRegion(filterEarthquakeOnly(earthquakeData), selectedRegion).map((earthquake: EarthquakeInfo) => (
                     <Card key={earthquake.id} className="w-full">
                       <CardContent className="pt-4">
                         <div className="flex items-start mb-2">

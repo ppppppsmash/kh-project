@@ -281,6 +281,27 @@
       "when": 1759934531402,
       "tag": "0039_common_star_brand",
       "breakpoints": true
+    },
+    {
+      "idx": 40,
+      "version": "7",
+      "when": 1769076078196,
+      "tag": "0040_late_mister_sinister",
+      "breakpoints": true
+    },
+    {
+      "idx": 41,
+      "version": "7",
+      "when": 1769085805332,
+      "tag": "0041_smiling_thunderbolt_ross",
+      "breakpoints": true
+    },
+    {
+      "idx": 42,
+      "version": "7",
+      "when": 1769086298335,
+      "tag": "0042_cool_titania",
+      "breakpoints": true
     }
   ]
 }

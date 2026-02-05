@@ -17,12 +17,23 @@ export function PointerHighlight({
 }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
+  const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
-    if (containerRef.current) {
-      const { width, height } = containerRef.current.getBoundingClientRect();
-      setDimensions({ width, height });
-    }
+    setIsMounted(true);
+  }, []);
+
+  useEffect(() => {
+    if (!isMounted || !containerRef.current) return;
+
+    const updateDimensions = () => {
+      if (containerRef.current) {
+        const { width, height } = containerRef.current.getBoundingClientRect();
+        setDimensions({ width, height });
+      }
+    };
+
+    updateDimensions();
 
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
@@ -40,15 +51,16 @@ export function PointerHighlight({
         resizeObserver.unobserve(containerRef.current);
       }
     };
-  }, []);
+  }, [isMounted]);
 
   return (
     <div
       className={cn("relative w-fit", containerClassName)}
       ref={containerRef}
+      suppressHydrationWarning
     >
       {children}
-      {dimensions.width > 0 && dimensions.height > 0 && (
+      {isMounted && dimensions.width > 0 && dimensions.height > 0 && (
         <motion.div
           className="pointer-events-none absolute inset-0 z-0"
           initial={{ opacity: 0, scale: 0.95, originX: 0, originY: 0 }}
