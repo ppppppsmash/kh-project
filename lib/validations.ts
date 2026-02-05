@@ -153,7 +153,6 @@ export const surveyFormSchema = z.object({
 	title: z.string().min(1, "タイトルは必須です"),
 	description: z.string().optional(),
 	theme: z.string().default("default").optional(),
-	isPublic: z.boolean().default(false).optional(),
 	isPublished: z.boolean().default(false).optional(),
 	items: z.array(surveyItemSchema).min(1, "少なくとも1つの項目が必要です"),
 	createdAt: z.date().optional(),

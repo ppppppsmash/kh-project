@@ -79,7 +79,6 @@ export default function SurveyPage() {
 			title: item.title || "",
 			description: item.description || "",
 			theme: item.theme || "default",
-			isPublic: item.isPublic ?? false,
 			isPublished: item.isPublished ?? false,
 			items: (item.items || []).map((surveyItem) => ({
 				id: surveyItem.id,

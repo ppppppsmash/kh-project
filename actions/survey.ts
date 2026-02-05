@@ -16,7 +16,6 @@ export const getSurveys = async (): Promise<SurveyFormValues[]> => {
 		title: survey.title,
 		description: survey.description ?? undefined,
 		theme: survey.theme ?? "default",
-		isPublic: survey.isPublic ?? false,
 		isPublished: survey.isPublished ?? false,
 		items: itemsData
 			.filter((item) => item.surveyId === survey.id)
@@ -50,7 +49,6 @@ export const getSurvey = async (id: string): Promise<SurveyFormValues | null> =>
 		title: survey.title,
 		description: survey.description ?? undefined,
 		theme: survey.theme ?? "default",
-		isPublic: survey.isPublic ?? false,
 		isPublished: survey.isPublished ?? false,
 		items: items.map((item) => ({
 			id: item.id,
@@ -86,7 +84,6 @@ export const getPublicSurvey = async (id: string): Promise<SurveyFormValues | nu
 		title: survey.title,
 		description: survey.description ?? undefined,
 		theme: survey.theme ?? "default",
-		isPublic: survey.isPublic ?? false,
 		isPublished: survey.isPublished ?? false,
 		items: items.map((item) => ({
 			id: item.id,
@@ -111,7 +108,6 @@ export const createSurvey = async (data: SurveyFormValues) => {
 			title: surveyData.title,
 			description: surveyData.description,
 			theme: surveyData.theme || "default",
-			isPublic: surveyData.isPublic ?? false,
 			isPublished: surveyData.isPublished ?? false,
 		})
 		.returning();
@@ -141,7 +137,6 @@ export const updateSurvey = async (id: string, data: SurveyFormValues) => {
 			title: surveyData.title,
 			description: surveyData.description,
 			theme: surveyData.theme || "default",
-			isPublic: surveyData.isPublic ?? false,
 			isPublished: surveyData.isPublished ?? false,
 			updatedAt: new Date(),
 		})

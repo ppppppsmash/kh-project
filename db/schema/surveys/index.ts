@@ -13,7 +13,6 @@ export const surveys = pgTable("surveys", {
 	title: varchar("title", { length: 255 }).notNull(),
 	description: text("description"),
 	theme: varchar("theme", { length: 50 }).default("default"),
-	isPublic: boolean("is_public").default(false),
 	isPublished: boolean("is_published").default(false),
 	createdAt: timestamp("created_at").defaultNow(),
 	updatedAt: timestamp("updated_at")

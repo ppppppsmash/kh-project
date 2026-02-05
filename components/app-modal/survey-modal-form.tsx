@@ -67,7 +67,6 @@ export function SurveyModalForm({
 			title: "",
 			description: "",
 			theme: "default",
-			isPublic: false,
 			isPublished: false,
 			items: [{ question: "", questionType: "text", isRequired: false }],
 		},
@@ -112,7 +111,6 @@ export function SurveyModalForm({
 			title: initialData?.title || "",
 			description: initialData?.description || "",
 			theme: initialData?.theme || "default",
-			isPublic: initialData?.isPublic ?? false,
 			isPublished: initialData?.isPublished ?? false,
 			items: defaultItems,
 		});
@@ -210,22 +208,6 @@ export function SurveyModalForm({
 				/>
 
 				<div className="flex gap-4">
-					<FormField
-						control={form.control}
-						name="isPublic"
-						render={({ field }) => (
-							<FormItem className="flex items-center gap-2">
-								<FormControl>
-									<Switch
-										checked={field.value}
-										onCheckedChange={field.onChange}
-									/>
-								</FormControl>
-								<FormLabel>公開設定</FormLabel>
-							</FormItem>
-						)}
-					/>
-
 					<FormField
 						control={form.control}
 						name="isPublished"
