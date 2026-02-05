@@ -19,7 +19,11 @@ import {
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
-import { type SurveyFormValues, surveyFormSchema } from "@/lib/validations";
+import {
+	type SurveyFormValues,
+	type SurveyItemFormValues,
+	surveyFormSchema,
+} from "@/lib/validations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Plus, X, GripVertical, Eye } from "lucide-react";
 import { useEffect, useState } from "react";
@@ -84,18 +88,25 @@ export function SurveyModalForm({
 		}
 
 		// Dateオブジェクトを除外してitemsをマッピング（Hydrationエラーを防ぐ）
-		const defaultItems = initialData?.items && initialData.items.length > 0
-			? initialData.items.map((item) => ({
-				id: item.id,
-				surveyId: item.surveyId,
-				question: item.question || "",
-				questionType: item.questionType || "text",
-				options: item.options,
-				isRequired: item.isRequired ?? false,
-				order: item.order || "0",
-				// createdAtとupdatedAtは除外（Hydrationエラーを防ぐ）
-			}))
-			: [{ question: "", questionType: "text", isRequired: false }];
+		const defaultItems: SurveyItemFormValues[] =
+			initialData?.items && initialData.items.length > 0
+				? initialData.items.map((item) => ({
+						id: item.id,
+						surveyId: item.surveyId,
+						question: item.question || "",
+						questionType: (item.questionType ?? "text") as SurveyItemFormValues["questionType"],
+						options: item.options,
+						isRequired: item.isRequired ?? false,
+						order: item.order || "0",
+						// createdAtとupdatedAtは除外（Hydrationエラーを防ぐ）
+					}))
+				: [
+						{
+							question: "",
+							questionType: "text" as const,
+							isRequired: false,
+						},
+					];
 
 		form.reset({
 			title: initialData?.title || "",
@@ -105,8 +116,7 @@ export function SurveyModalForm({
 			isPublished: initialData?.isPublished ?? false,
 			items: defaultItems,
 		});
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [isOpen, initialData?.id]);
+	}, [isOpen, initialData, form]);
 
 	const handleSubmit = async (data: SurveyFormValues) => {
 		setIsSubmitting(true);
