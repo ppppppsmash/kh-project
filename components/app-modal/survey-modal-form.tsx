@@ -30,20 +30,12 @@ import { useEffect, useState } from "react";
 import { useForm, useFieldArray } from "react-hook-form";
 import Link from "next/link";
 
-const themes = [
-	{ value: "default", label: "デフォルト" },
-	{ value: "blue", label: "ブルー" },
-	{ value: "green", label: "グリーン" },
-	{ value: "purple", label: "パープル" },
-	{ value: "orange", label: "オレンジ" },
-];
-
 const questionTypes = [
-	{ value: "text", label: "テキスト" },
-	{ value: "textarea", label: "テキストエリア" },
-	{ value: "select", label: "セレクト" },
-	{ value: "radio", label: "ラジオボタン" },
-	{ value: "checkbox", label: "チェックボックス" },
+	{ value: "text", label: "Text" },
+	{ value: "textarea", label: "Textarea" },
+	{ value: "select", label: "Select" },
+	{ value: "radio", label: "Radio" },
+	{ value: "checkbox", label: "Checkbox" },
 ];
 
 interface SurveyModalFormProps {
@@ -177,31 +169,6 @@ export function SurveyModalForm({
 									rows={3}
 								/>
 							</FormControl>
-							<FormMessage />
-						</FormItem>
-					)}
-				/>
-
-				<FormField
-					control={form.control}
-					name="theme"
-					render={({ field }) => (
-						<FormItem>
-							<FormLabel>テーマ</FormLabel>
-							<Select onValueChange={field.onChange} value={field.value}>
-								<FormControl>
-									<SelectTrigger>
-										<SelectValue placeholder="テーマを選択" />
-									</SelectTrigger>
-								</FormControl>
-								<SelectContent>
-									{themes.map((theme) => (
-										<SelectItem key={theme.value} value={theme.value}>
-											{theme.label}
-										</SelectItem>
-									))}
-								</SelectContent>
-							</Select>
 							<FormMessage />
 						</FormItem>
 					)}
