@@ -51,6 +51,10 @@ const Squares: React.FC<SquaresProps> = ({
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+      // 常にダーク表示するため、最初に暗い背景で塗りつぶす（ライトモードの影響を受けない）
+      ctx.fillStyle = "#060010";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
       const startX = Math.floor(gridOffset.current.x / squareSize) * squareSize;
       const startY = Math.floor(gridOffset.current.y / squareSize) * squareSize;
 
