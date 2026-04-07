@@ -49,8 +49,12 @@ export const TaskModalForm = ({
 	const [showConfetti, setShowConfetti] = useState(false);
 	const queryClient = useQueryClient();
 	const [isInitialLoad, setIsInitialLoad] = useState(true);
-	
-	const STORAGE_KEY = "task-form-draft";
+
+	// タスクごとにストレージキーを分離（新規: :new、編集: :タスクID）
+	const STORAGE_PREFIX = "task-form-draft";
+	const storageKey = isEdit
+		? `${STORAGE_PREFIX}:${defaultValues?.id}`
+		: `${STORAGE_PREFIX}:new`;
 
 	const form = useForm<TaskFormValues>({
 		resolver: zodResolver(taskFormSchema),
@@ -68,46 +72,39 @@ export const TaskModalForm = ({
 
 	// 一時保存をクリア
 	const clearDraft = useCallback(() => {
-		localStorage.removeItem(STORAGE_KEY);
-	}, []);
+		localStorage.removeItem(storageKey);
+	}, [storageKey]);
 
 	// 一時保存を読み込み
 	const loadDraft = useCallback((): Partial<TaskFormValues> | null => {
 		if (typeof window === "undefined") return null;
 		try {
-			const saved = localStorage.getItem(STORAGE_KEY);
+			const saved = localStorage.getItem(storageKey);
 			if (saved) {
 				const parsed = JSON.parse(saved);
-				// Date型のフィールドを復元
-				if (parsed.startedAt) {
-					parsed.startedAt = new Date(parsed.startedAt);
-				}
-				if (parsed.dueDate) {
-					parsed.dueDate = new Date(parsed.dueDate);
-				}
-				if (parsed.completedAt) {
-					parsed.completedAt = new Date(parsed.completedAt);
-				}
+				if (parsed.startedAt) parsed.startedAt = new Date(parsed.startedAt);
+				if (parsed.dueDate) parsed.dueDate = new Date(parsed.dueDate);
+				if (parsed.completedAt) parsed.completedAt = new Date(parsed.completedAt);
 				return parsed;
 			}
 		} catch (error) {
 			console.error("一時保存の読み込みに失敗しました:", error);
 		}
 		return null;
-	}, []);
+	}, [storageKey]);
 
 	// 一時保存
 	const saveDraft = useCallback((data: Partial<TaskFormValues>, showToast = false) => {
 		if (typeof window === "undefined") return;
 		try {
-			localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+			localStorage.setItem(storageKey, JSON.stringify(data));
 			if (showToast) {
 				CustomToast.info("一時保存しました");
 			}
 		} catch (error) {
 			console.error("一時保存に失敗しました:", error);
 		}
-	}, []);
+	}, [storageKey]);
 
 	const handleSubmit = async (data: TaskFormValues) => {
 		setIsSubmitting(true);
@@ -148,40 +145,37 @@ export const TaskModalForm = ({
 
 	//onsole.log(form.formState.errors);
 
-	// モーダルを開く際に一時保存があれば復元
+	// モーダルを開く際にフォームをリセット
 	useEffect(() => {
-		if (isOpen) {
-			setIsInitialLoad(true);
-			const draft = loadDraft();
-			
-			// 編集モードの場合はdefaultValuesを優先、新規登録の場合は一時保存を優先かな
-			const initialValues = isEdit 
-				? defaultValues 
-				: (draft || defaultValues);
-			
-			form.reset({
-				taskId: initialValues?.taskId || "",
-				title: initialValues?.title || "",
-				content: initialValues?.content || "",
-				assignee: initialValues?.assignee || "",
-				startedAt: initialValues?.startedAt || new Date(),
-				dueDate: initialValues?.dueDate || undefined,
-				completedAt: initialValues?.completedAt || undefined,
-				progress: initialValues?.progress || "pending",
-				priority: initialValues?.priority || undefined,
-				progressDetails: initialValues?.progressDetails || "",
-				link: initialValues?.link || "",
-				notes: initialValues?.notes || "",
-				categoryId: initialValues?.categoryId || undefined,
-				tabId: initialValues?.tabId || undefined,
-			});
-			
-			// 初回ロード後、少し遅延させてから監視を開始
-			setTimeout(() => {
-				setIsInitialLoad(false);
-			}, 500);
-		}
-	}, [isOpen, defaultValues, form, isEdit, loadDraft]);
+		if (!isOpen) return;
+		setIsInitialLoad(true);
+
+		// ドラフトがあればドラフト優先、なければdefaultValues（編集時）or 空（新規時）
+		const draft = loadDraft();
+		const initialValues = draft || defaultValues || undefined;
+
+		form.reset({
+			taskId: initialValues?.taskId || "",
+			title: initialValues?.title || "",
+			content: initialValues?.content || "",
+			assignee: initialValues?.assignee || "",
+			startedAt: initialValues?.startedAt || new Date(),
+			dueDate: initialValues?.dueDate || undefined,
+			completedAt: initialValues?.completedAt || undefined,
+			progress: initialValues?.progress || "pending",
+			priority: initialValues?.priority || undefined,
+			progressDetails: initialValues?.progressDetails || "",
+			link: initialValues?.link || "",
+			notes: initialValues?.notes || "",
+			categoryId: initialValues?.categoryId || undefined,
+			tabId: initialValues?.tabId || undefined,
+		});
+
+		// 初回ロード後、少し遅延させてから監視を開始
+		setTimeout(() => {
+			setIsInitialLoad(false);
+		}, 500);
+	}, [isOpen, defaultValues, form, loadDraft]);
 
 	const handleAddCategory = async () => {
 		if (newCategory && !categories.some(c => c.name === newCategory)) {
@@ -202,25 +196,24 @@ export const TaskModalForm = ({
 		}
 	};
 
-	// フォームの値を監視して、変更があったら一時保存（デバウンス付き）
+	// フォームの値を監視して、変更があったら一時保存
 	useEffect(() => {
 		if (!isOpen || isInitialLoad) return;
-		
+
 		let timeoutId: NodeJS.Timeout;
-		
+
 		const saveWithDebounce = () => {
 			clearTimeout(timeoutId);
 			timeoutId = setTimeout(() => {
 				const currentValues = form.getValues();
 				if (currentValues.title || currentValues.content || currentValues.assignee) {
-					saveDraft(currentValues, false); // toastは表示しない
+					saveDraft(currentValues, false);
 				}
-			}, 1000); // 1秒後に保存
+			}, 1000);
 		};
-		
-		// フォームの変更を監視
+
 		const subscription = form.watch(saveWithDebounce);
-		
+
 		return () => {
 			clearTimeout(timeoutId);
 			subscription.unsubscribe();
@@ -228,7 +221,6 @@ export const TaskModalForm = ({
 	}, [isOpen, isInitialLoad, form, saveDraft]);
 
 	const handleClose = () => {
-		// モーダルを閉じる際に一時保存
 		const formValues = form.getValues();
 		if (formValues.title || formValues.content || formValues.assignee) {
 			saveDraft(formValues, true);
@@ -277,7 +269,7 @@ export const TaskModalForm = ({
 				showClearButton={true}
 				form={form}
 			>
-				<div className="flex gap-x-10 items-start">
+				<div className="flex gap-4 items-start">
 					<div className="space-y-2 w-full">
 						<Label htmlFor="title">
 							項目名<span className="text-red-500">*</span>
@@ -309,7 +301,7 @@ export const TaskModalForm = ({
 					)}
 				</div>
 
-				<div className="flex gap-x-10 items-start justify-between">
+				<div className="flex gap-4 items-start justify-between">
 					<div className="space-y-2 w-3/4">
 						<Label htmlFor="assignee">
 							担当者<span className="text-red-500">*</span>
@@ -345,7 +337,7 @@ export const TaskModalForm = ({
 					</div>
 				</div>
 
-				<div className="flex gap-x-10 items-start">
+				<div className="flex gap-4 items-start">
 					<div className="space-y-2 w-full">
 						<Label htmlFor="startedAt">
 							起票日<span className="text-red-500">*</span>
@@ -404,7 +396,7 @@ export const TaskModalForm = ({
 					</div>
 				</div>
 
-				<div className="flex gap-x-12 items-start justify-between">
+				<div className="flex gap-4 items-start justify-between">
 					<div className="space-y-2">
 						<Label htmlFor="progress">進捗状況</Label>
 						<Select

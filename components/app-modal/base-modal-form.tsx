@@ -57,7 +57,7 @@ export const BaseModalForm = ({
 			>
 				<Dialog open={isOpen} onOpenChange={onClose}>
 					
-						<DialogContent className="sm:max-w-2xl max-w-full max-h-[90vh] overflow-y-auto p-0">
+						<DialogContent className="sm:max-w-2xl max-w-full max-h-[90vh] overflow-y-auto overflow-x-hidden p-0">
 							<div 
 								className="cursor-move select-none bg-muted/50 border-b border-border hover:bg-muted/70 transition-colors duration-200 p-4 rounded-t-lg"
 								onMouseDown={(e) => {
