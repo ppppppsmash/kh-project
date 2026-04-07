@@ -1,3 +1,4 @@
+import type React from "react";
 import {
 	IconCamera,
 	IconUsersGroup,
@@ -18,6 +19,13 @@ import {
 } from "@tabler/icons-react";
 
 // ナビゲーションの設定
+type NavItem = {
+	title: string;
+	url: string;
+	icon: React.ElementType;
+	items?: { title: string; url: string }[];
+};
+
 export const navConfig = {
 	navMain: [
 		{
@@ -90,7 +98,7 @@ export const navConfig = {
 		// 	url: "/superadmin/club-activity",
 		// 	icon: IconConfetti,
 		// },
-	],
+	] as NavItem[],
 	navClouds: [
 		{
 			title: "Capture",
