@@ -60,6 +60,8 @@ export const filterTask = (
 					return statusFilter === "未着手";
 				case "inProgress":
 					return statusFilter === "進行中";
+				case "completed":
+					return statusFilter === "完了";
 				default:
 					return false;
 			}
@@ -92,6 +94,7 @@ export const getTaskStatusFilters = () => [
 	"進捗状況:すべて",
 	"未着手",
 	"進行中",
+	"完了",
 ];
 
 export const getTaskPriorityFilters = () => [
