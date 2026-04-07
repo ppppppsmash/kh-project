@@ -1,7 +1,7 @@
 "use client";
 
-import { getQA } from "@/actions/qa";
 import { BaseModalForm } from "@/components/app-modal/base-modal-form";
+import { useGetQa } from "@/components/app-table/hooks/use-table-data";
 import { Button } from "@/components/ui/button";
 import {
 	FormControl,
@@ -22,21 +22,12 @@ import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { formatDateForInput } from "@/lib/utils";
 import { type QaFormValues, qaFormSchema } from "@/lib/validations";
+import { qaDefaultCategories } from "@/config";
+import { useModalFormSubmit } from "@/hooks/use-modal-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useQuery } from "@tanstack/react-query";
 import { Plus, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-
-// 固定のカテゴリーリスト
-const defaultCategories = [
-	"現場",
-	"経費",
-	"福利厚生",
-	"休暇",
-	"週報",
-	"その他",
-];
 
 interface QaModalFormProps {
 	type: string;
@@ -53,22 +44,18 @@ export function QaModalForm({
 	onSubmit,
 	initialData,
 }: QaModalFormProps) {
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [newCategory, setNewCategory] = useState("");
 	const [showNewCategoryInput, setShowNewCategoryInput] = useState(false);
 	const [tempCategories, setTempCategories] = useState<string[]>([]);
 
-	const { data: qaItems = [] } = useQuery({
-		queryKey: ["qa"],
-		queryFn: getQA,
-	});
+	const { data: qaItems = [] } = useGetQa();
 
 	// データベースから取得したカテゴリーと固定のカテゴリーを組み合わせる
 	const dbCategories = Array.from(
 		new Set(qaItems.map((item) => item.category)),
 	).filter(Boolean);
 	const categories = Array.from(
-		new Set([...defaultCategories, ...dbCategories, ...tempCategories]),
+		new Set([...qaDefaultCategories, ...dbCategories, ...tempCategories]),
 	);
 
 	const form = useForm<QaFormValues>({
@@ -79,6 +66,7 @@ export function QaModalForm({
 	});
 
 	const isEdit = !!initialData;
+	const { isSubmitting, handleSubmit } = useModalFormSubmit(form, onSubmit, onClose);
 
 	// モーダルが閉じられた時に一時的なカテゴリーをリセット
 	useEffect(() => {
@@ -102,19 +90,6 @@ export function QaModalForm({
 			});
 		}
 	}, [isOpen, initialData, form.reset]);
-
-	const handleSubmit = async (data: QaFormValues) => {
-		setIsSubmitting(true);
-		try {
-			await onSubmit(data);
-			form.reset();
-			onClose();
-		} catch (error) {
-			console.error("QAの登録に失敗しました:", error);
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
 
 	const handleAddCategory = () => {
 		if (newCategory && !categories.includes(newCategory)) {

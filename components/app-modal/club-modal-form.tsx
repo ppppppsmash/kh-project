@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { type ClubFormValues, clubFormSchema } from "@/lib/validations";
+import { useModalFormSubmit } from "@/hooks/use-modal-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -31,32 +32,25 @@ export const ClubModalForm = ({
 	onSubmit,
 	defaultValues,
 }: ClubModalFormProps) => {
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const isEdit = !!defaultValues;
 
 	const form = useForm<ClubFormValues>({
 		resolver: zodResolver(clubFormSchema),
 	});
 
-	const handleSubmit = async (data: ClubFormValues) => {
-		setIsSubmitting(true);
-		try {
-			const clubData: ClubFormValues = {
+	const { isSubmitting, handleSubmit } = useModalFormSubmit(
+		form,
+		async (data) => {
+			await onSubmit({
 				...data,
 				memberCount: data.memberCount || "",
 				status: data.status || "active",
 				location: data.location || "",
 				detail: data.detail || "",
-			};
-			await onSubmit(clubData);
-			form.reset();
-			onClose();
-		} catch (error) {
-			console.error("登録に失敗しました:", error);
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
+			});
+		},
+		onClose,
+	);
 
 	// モーダルが開かれたときにフォームをリセット
 	useEffect(() => {

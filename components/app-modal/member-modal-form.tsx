@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { type MemberFormValues, memberFormSchema } from "@/lib/validations";
+import { useModalFormSubmit } from "@/hooks/use-modal-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -25,30 +26,19 @@ export const UserModalForm = ({
 	defaultValues,
 	isOpen,
 }: UserModalFormProps) => {
-	const [isSubmitting, setIsSubmitting] = useState(false);
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
 	const form = useForm<MemberFormValues>({
 		resolver: zodResolver(memberFormSchema),
 	});
 
-	const handleSubmit = async (data: MemberFormValues) => {
-		setIsSubmitting(true);
-
-		try {
-			const memberData = {
-				...data,
-				photoFile: selectedFile || undefined,
-			};
-			await onSubmit(memberData);
-			form.reset();
-			onClose();
-		} catch (error) {
-			console.error("メンバー情報の登録に失敗しました:", error);
-		} finally {
-			setIsSubmitting(false);
-		}
-	};
+	const { isSubmitting, handleSubmit } = useModalFormSubmit(
+		form,
+		async (data) => {
+			await onSubmit({ ...data, photoFile: selectedFile || undefined });
+		},
+		onClose,
+	);
 
 	useEffect(() => {
 		if (isOpen) {
