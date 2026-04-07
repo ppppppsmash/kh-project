@@ -35,21 +35,21 @@ export const navConfig = {
 		// 	url: "/superadmin/organization",
 		// 	icon: IconUsersGroup,
 		// },
-		{
-			title: "メンバー",
-			url: "/superadmin/member",
-			icon: IconUser,
-			items: [
-				{
-					title: "自己紹介",
-					url: "/superadmin/member/intro",
-				},
-				{
-					title: "メンバー管理",
-					url: "/superadmin/member/member-list",
-				},
-			],
-		},
+		// {
+		// 	title: "メンバー",
+		// 	url: "/superadmin/member",
+		// 	icon: IconUser,
+		// 	items: [
+		// 		{
+		// 			title: "自己紹介",
+		// 			url: "/superadmin/member/intro",
+		// 		},
+		// 		{
+		// 			title: "メンバー管理",
+		// 			url: "/superadmin/member/member-list",
+		// 		},
+		// 	],
+		// },
 		{
 			title: "タスク管理",
 			url: "/superadmin/task",

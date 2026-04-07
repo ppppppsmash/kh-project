@@ -177,17 +177,17 @@ export default function DashboardPage() {
 	}
 
 	return (
-		<div className="space-y-8">
-			<div className="flex justify-between items-center mb-6">
+		<div className="flex flex-col gap-6 h-[calc(100svh-var(--header-height)-2rem)]">
+			<div className="flex justify-between items-center shrink-0">
 				<PageTitle>{getNavTitle("/superadmin/dashboard")}</PageTitle>
 				<div className="text-sm text-muted-foreground">
 					ようこそ、{session?.user?.name}さん
 				</div>
 			</div>
 
-			<div className="flex flex-col gap-2">
-				<h3 className="text-lg font-bold">操作履歴</h3>
-				<div className="flex flex-col gap-2 max-h-[40svh] overflow-y-auto">
+			<div className="flex flex-col gap-2 flex-1 min-h-0">
+				<h3 className="text-lg font-bold shrink-0">操作履歴</h3>
+				<div className="flex flex-col gap-2 overflow-y-auto flex-1 min-h-0">
 					{userActivity?.map((activity) => (
 						<div key={activity.id} className="flex items-start gap-4 text-sm p-3 bg-muted/30 rounded-lg">
 							<div className="flex gap-4 items-start justify-between w-full">
@@ -319,7 +319,7 @@ export default function DashboardPage() {
 				</div>
 			</div>
 
-			<div className="space-y-3">
+			<div className="space-y-3 shrink-0">
 				<div className="flex items-baseline justify-between">
 					<h3 className="text-lg font-bold">タスク状況</h3>
 					<span className="text-xs text-muted-foreground tabular-nums">
