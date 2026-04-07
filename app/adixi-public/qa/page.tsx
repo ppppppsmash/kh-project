@@ -1,10 +1,10 @@
 "use client";
 
-import { getQA } from "@/actions/qa";
 import { createQA } from "@/actions/qa";
 import { AddButton } from "@/components/add-button";
 import { getCategoryBadgeVariant } from "@/components/app-accordion-table/render/QAItem";
 import { QaModalForm } from "@/components/app-modal/qa-modal-form";
+import { useGetQa } from "@/components/app-table/hooks/use-table-data";
 import {
 	Accordion,
 	AccordionContent,
@@ -43,24 +43,14 @@ import {
 	TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useModal } from "@/hooks/use-modal";
+import { useQaCategories } from "@/hooks/use-qa-categories";
 import { useSubmit } from "@/lib/submitHandler";
 import { formatDate } from "@/lib/utils";
 import type { QaFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
-import { useQuery } from "@tanstack/react-query";
 import { Filter, Search } from "lucide-react";
 import { useSession } from "next-auth/react";
-import { useMemo, useState } from "react";
-
-// 固定のカテゴリーリスト
-const defaultCategories = [
-	"現場",
-	"経費",
-	"福利厚生",
-	"休暇",
-	"週報",
-	"その他",
-];
+import { useState } from "react";
 
 export default function QAPage() {
 	const { data: session, status } = useSession();
@@ -75,21 +65,8 @@ export default function QAPage() {
 
 	const role = session?.user?.role;
 
-	const { data: qaItems = [] } = useQuery({
-		queryKey: ["qa"],
-		queryFn: getQA,
-	});
-
-	// カテゴリーリストを計算
-	const categories = useMemo(() => {
-		const dbCategories = Array.from(
-			new Set(qaItems.map((item) => item.category)),
-		)
-			.filter(Boolean)
-			.filter((category) => !defaultCategories.includes(category));
-
-		return ["全て", ...defaultCategories, ...dbCategories];
-	}, [qaItems]);
+	const { data: qaItems = [] } = useGetQa();
+	const categories = useQaCategories(qaItems, { includeAll: true });
 
 	// 回答済みの質問のみをフィルタリング
 	//const answeredQAItems = qaItems.filter((item) => item.isPublic)

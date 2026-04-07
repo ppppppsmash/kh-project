@@ -175,6 +175,16 @@ export const navConfig = {
 	],
 };
 
+// QAのデフォルトカテゴリー
+export const qaDefaultCategories = [
+	"現場",
+	"経費",
+	"福利厚生",
+	"休暇",
+	"週報",
+	"その他",
+];
+
 // 部活動のステータスの設定
 export const statusConfig = {
 	active: { label: "活動中", color: "bg-green-100 text-green-800" },
