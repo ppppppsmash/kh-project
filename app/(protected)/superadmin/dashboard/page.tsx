@@ -18,7 +18,6 @@ import {
 import { useSession } from "next-auth/react";
 import { getNavTitle } from "@/config";
 import { PointerHighlight } from "@/components/animation-ui/pointer-highlight";
-import { Highlighter } from "@/components/animation-ui/high-lighter-text";
 
 export default function DashboardPage() {
 	const { data: session } = useSession();
@@ -265,43 +264,31 @@ export default function DashboardPage() {
 																		}
 																		
 																		return changes.length > 0 ? (
-																			<div className="space-y-1">
+																			<div className="space-y-1.5">
 																				{changes.map((change, index) => (
-																					<div key={`change-${change.fieldName}-${index}`} className="flex items-center gap-2">
-																						<span className="text-blue-600">•</span>
-																						<span>
-																							{change.type === 'create' && (
-																								<>
-																									<span>{change.fieldName}が</span>
-																									<Highlighter action="underline" color="#ffd1dc" strokeWidth={1.5} animationDuration={600} iterations={2} padding={2} multiline={true}>
-																										<span className="font-bold">{" "}{formatValue(change.newValue)}{" "}</span>
-																									</Highlighter>
-																									<span>に設定されました</span>
-																								</>
-																							)}
-																							{change.type === 'delete' && (
-																								<>
-																									<span>{change.fieldName}が</span>
-																									<Highlighter action="underline" color="#ffd1dc" strokeWidth={1.5} animationDuration={600} iterations={2} padding={2} multiline={true}>
-																										<span className="font-bold">{" "}{formatValue(change.oldValue)}{" "}</span>
-																									</Highlighter>
-																									<span>から削除されました</span>
-																								</>
-																							)}
-																							{change.type === 'update' && (
-																								<>
-																									<span>{change.fieldName}が</span>
-																									<Highlighter action="underline" color="#ffd1dc" strokeWidth={1.5} animationDuration={600} iterations={2} padding={2} multiline={true}>
-																										<span className="font-bold">{" "}{formatValue(change.oldValue)}{" "}</span>
-																									</Highlighter>
-																									<span>から</span>
-																									<Highlighter action="underline" color="#87CEFA">
-																										<span className="font-bold">{" "}{formatValue(change.newValue)}{" "}</span>
-																									</Highlighter>
-																									<span>に更新されました</span>
-																								</>
-																							)}
-																						</span>
+																					<div key={`change-${change.fieldName}-${index}`} className="flex items-baseline gap-2 leading-relaxed flex-wrap">
+																						<span className="text-muted-foreground shrink-0">{change.fieldName}:</span>
+																						{change.type === 'create' && (
+																							<span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded text-xs font-medium break-all">
+																								+ {formatValue(change.newValue)}
+																							</span>
+																						)}
+																						{change.type === 'delete' && (
+																							<span className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-1.5 py-0.5 rounded text-xs font-medium line-through break-all">
+																								{formatValue(change.oldValue)}
+																							</span>
+																						)}
+																						{change.type === 'update' && (
+																							<span className="inline-flex items-center gap-1.5 flex-wrap">
+																								<span className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-1.5 py-0.5 rounded text-xs line-through break-all">
+																									{formatValue(change.oldValue)}
+																								</span>
+																								<span className="text-muted-foreground">→</span>
+																								<span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded text-xs font-medium break-all">
+																									{formatValue(change.newValue)}
+																								</span>
+																							</span>
+																						)}
 																					</div>
 																				))}
 																			</div>
