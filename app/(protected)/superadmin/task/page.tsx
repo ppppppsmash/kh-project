@@ -32,7 +32,7 @@ import { useState } from "react";
 import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Plus, X, RotateCcw } from "lucide-react";
 import { DeleteTabDialog } from "@/components/app-modal/delete-tab-dialog";
-import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
+import { PageTitle } from "@/components/animation-ui/page-title"
 import { getNavTitle } from "@/config";
 import { exportFilteredTasksToCSV } from "@/lib/csv-export";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -368,14 +368,7 @@ export default function TaskPage() {
 	return (
 		<div className="mx-auto">
 			<div className="flex justify-between items-center mb-4">
-				<h2 className="text-3xl font-bold">
-					<PointerHighlight
-						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
-						pointerClassName="text-purple-500"
-					>
-						<span className="relative z-10">{getNavTitle("/superadmin/task")}</span>
-					</PointerHighlight>
-				</h2>
+				<PageTitle>{getNavTitle("/superadmin/task")}</PageTitle>
 			</div>
 
 			<Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4">

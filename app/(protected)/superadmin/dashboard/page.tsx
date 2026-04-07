@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 import { useSession } from "next-auth/react";
 import { getNavTitle } from "@/config";
-import { PointerHighlight } from "@/components/animation-ui/pointer-highlight";
+import { PageTitle } from "@/components/animation-ui/page-title";
 import { motion } from "motion/react";
 
 export default function DashboardPage() {
@@ -157,14 +157,7 @@ export default function DashboardPage() {
 		return (
 			<div className="space-y-8">
 				<div className="flex justify-between items-center mb-6">
-					<h2 className="text-3xl font-bold">
-						<PointerHighlight
-							rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
-							pointerClassName="text-purple-500"
-						>
-							<span className="relative z-10">{getNavTitle("/superadmin/dashboard")}</span>
-						</PointerHighlight>
-					</h2>
+					<PageTitle>{getNavTitle("/superadmin/dashboard")}</PageTitle>
 					<div className="text-sm text-muted-foreground">
 						<Skeleton className="w-24 h-4" />
 						<Skeleton className="w-24 h-4" />
@@ -186,14 +179,7 @@ export default function DashboardPage() {
 	return (
 		<div className="space-y-8">
 			<div className="flex justify-between items-center mb-6">
-				<h2 className="text-3xl font-bold">
-					<PointerHighlight
-						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
-						pointerClassName="text-purple-500"
-					>
-						<span className="relative z-10">{getNavTitle("/superadmin/dashboard")}</span>
-					</PointerHighlight>
-				</h2>
+				<PageTitle>{getNavTitle("/superadmin/dashboard")}</PageTitle>
 				<div className="text-sm text-muted-foreground">
 					ようこそ、{session?.user?.name}さん
 				</div>

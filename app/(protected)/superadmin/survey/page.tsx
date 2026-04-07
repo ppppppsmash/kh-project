@@ -24,7 +24,7 @@ import { IconExternalLink } from "@tabler/icons-react";
 import { BarChart3 } from "lucide-react";
 import { useQueryClient } from "@tanstack/react-query";
 import Link from "next/link";
-import { PointerHighlight } from "@/components/animation-ui/pointer-highlight";
+import { PageTitle } from "@/components/animation-ui/page-title";
 import { navConfig } from "@/config";
 
 const surveyColumns = [
@@ -178,17 +178,8 @@ export default function SurveyPage() {
 	return (
 		<div className="mx-auto">
 			<div className="mb-8 flex items-center justify-between">
-				<h2 className="text-3xl font-bold">
-					<PointerHighlight
-						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
-						pointerClassName="text-purple-500"
-					>
-						<span className="relative z-10">
-							{navConfig.navMain.find((item) => item.url === "/superadmin/survey")
-								?.title || "アンケート管理"}
-						</span>
-					</PointerHighlight>
-				</h2>
+				<PageTitle>{navConfig.navMain.find((item) => item.url === "/superadmin/survey")
+								?.title || "アンケート管理"}</PageTitle>
 				<Button onClick={handleAdd} className="flex items-center gap-2">
 					<Plus className="h-4 w-4" />
 					新規アンケート作成

@@ -9,7 +9,7 @@ import type { MemberFormValues } from "@/lib/validations";
 import { FilePenLine } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
-import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
+import { PageTitle } from "@/components/animation-ui/page-title"
 import { getNavTitle } from "@/config";
 
 export default function MemberListPage() {
@@ -32,14 +32,7 @@ export default function MemberListPage() {
 	return (
 		<div className="mx-auto">
 			<div className="flex justify-between items-center mb-6">
-				<h2 className="text-3xl font-bold">
-					<PointerHighlight
-						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
-						pointerClassName="text-purple-500"
-					>
-						<span className="relative z-10">{getNavTitle("/superadmin/member/member-list")}</span>
-					</PointerHighlight>
-				</h2>
+				<PageTitle>{getNavTitle("/superadmin/member/member-list")}</PageTitle>
 			</div>
 			<div className="space-y-8">
 				<Button variant="outline">

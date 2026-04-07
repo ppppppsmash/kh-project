@@ -10,7 +10,7 @@ import { useModal } from "@/hooks/use-modal";
 import { useSubmit } from "@/lib/submitHandler";
 import type { MemberFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
-import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
+import { PageTitle } from "@/components/animation-ui/page-title"
 import { getNavTitle } from "@/config";
 
 export default function UserPage() {
@@ -41,14 +41,7 @@ export default function UserPage() {
 	return (
 		<div className="mx-auto">
 			<div className="flex justify-between items-center mb-6">
-				<h2 className="text-3xl font-bold">
-					<PointerHighlight
-						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
-						pointerClassName="text-purple-500"
-					>
-						<span className="relative z-10">{getNavTitle("/superadmin/member/intro")}</span>
-					</PointerHighlight>
-				</h2>
+				<PageTitle>{getNavTitle("/superadmin/member/intro")}</PageTitle>
 				<EditButton text="編集" onClick={handleEdit} />
 			</div>
 			<div className="space-y-8 overflow-y-auto h-[calc(100svh-100px)]">
