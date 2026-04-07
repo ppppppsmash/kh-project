@@ -2,9 +2,8 @@
 
 import type * as React from "react";
 import { NavMain } from "@/components/app-sidebar/nav-main";
-// import { NavSecondary } from "@/components/app-sidebar/nav-secondary";
-// import { NavDocuments } from "@/components/app-sidebar/nav-document";
 import { NavUser } from "@/components/app-sidebar/nav-user";
+import { OnlineUsers } from "@/components/app-sidebar/online-users";
 import {
 	Sidebar,
 	SidebarContent,
@@ -14,6 +13,7 @@ import {
 	SidebarMenuButton,
 	SidebarMenuItem,
 	SidebarRail,
+	SidebarSeparator,
 } from "@/components/ui/sidebar";
 import { navConfig } from "@/config";
 import Image from "next/image";
@@ -40,10 +40,10 @@ export const AppSidebar = ({
 			</SidebarHeader>
 			<SidebarContent>
 				<NavMain items={navConfig.navMain} />
-				{/* <NavDocuments items={navConfig.documents} /> */}
-				{/* <NavSecondary items={navConfig.navSecondary} className="mt-auto" /> */}
 			</SidebarContent>
 			<SidebarFooter>
+				<OnlineUsers />
+				<SidebarSeparator />
 				<NavUser />
 			</SidebarFooter>
 			<SidebarRail />

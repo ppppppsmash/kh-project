@@ -31,6 +31,7 @@ export const users = pgTable("users", {
 	freeText: varchar("free_text", { length: 255 }),
 	photoUrl: varchar("photo_url", { length: 255 }),
 	isActive: boolean("is_active").default(true),
+	lastSeenAt: timestamp("last_seen_at", { withTimezone: true, mode: "date" }),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
 		.notNull()
 		.defaultNow(),
