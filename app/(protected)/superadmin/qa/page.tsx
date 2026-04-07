@@ -23,7 +23,7 @@ import type { QaFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSession } from "next-auth/react";
 import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
-import { navConfig } from "@/config";
+import { getNavTitle } from "@/config";
 import { exportFilteredQaToCSV } from "@/lib/csv-export";
 
 export default function AdminQAPage() {
@@ -106,7 +106,7 @@ export default function AdminQAPage() {
 						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
 						pointerClassName="text-purple-500"
 					>
-						<span className="relative z-10">{navConfig.navMain[4].title}</span>
+						<span className="relative z-10">{getNavTitle("/superadmin/qa")}</span>
 					</PointerHighlight>
 				</h2>
 			</div>

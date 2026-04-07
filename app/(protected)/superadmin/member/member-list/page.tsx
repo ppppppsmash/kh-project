@@ -10,7 +10,7 @@ import { FilePenLine } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
-import { navConfig } from "@/config";
+import { getNavTitle } from "@/config";
 
 export default function MemberListPage() {
 	const { data: users, isLoading } = useGetUserList();
@@ -37,7 +37,7 @@ export default function MemberListPage() {
 						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
 						pointerClassName="text-purple-500"
 					>
-						<span className="relative z-10">{navConfig.navMain[2].items?.[1]?.title || ""}</span>
+						<span className="relative z-10">{getNavTitle("/superadmin/member/member-list")}</span>
 					</PointerHighlight>
 				</h2>
 			</div>

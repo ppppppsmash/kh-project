@@ -26,7 +26,6 @@ import type { ClubFormValues } from "@/lib/validations";
 import { useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { navConfig } from "@/config";
 import { PointerHighlight } from "@/components/animation-ui/pointer-highlight";
 
 export default function ClubActivityPage() {
@@ -97,7 +96,7 @@ export default function ClubActivityPage() {
 						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
 						pointerClassName="text-purple-500"
 					>
-						<span className="relative z-10">{navConfig.navMain[5].title}</span>
+						<span className="relative z-10">部活動</span>
 					</PointerHighlight>
 				</h2>
 				<AddButton text="新規部活動登録" onClick={handleAdd} />

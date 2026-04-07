@@ -175,6 +175,18 @@ export const navConfig = {
 	],
 };
 
+// URLからナビゲーション項目のタイトルを取得
+export const getNavTitle = (url: string): string => {
+	for (const item of navConfig.navMain) {
+		if (item.url === url) return item.title;
+		if ("items" in item && item.items) {
+			const sub = item.items.find((sub) => sub.url === url);
+			if (sub) return sub.title;
+		}
+	}
+	return "";
+};
+
 // QAのデフォルトカテゴリー
 export const qaDefaultCategories = [
 	"現場",

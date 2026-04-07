@@ -33,7 +33,7 @@ import { Tabs, TabsContent } from "@/components/ui/tabs";
 import { Plus, X, RotateCcw } from "lucide-react";
 import { DeleteTabDialog } from "@/components/app-modal/delete-tab-dialog";
 import { PointerHighlight } from "@/components/animation-ui/pointer-highlight"
-import { navConfig } from "@/config";
+import { getNavTitle } from "@/config";
 import { exportFilteredTasksToCSV } from "@/lib/csv-export";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -373,7 +373,7 @@ export default function TaskPage() {
 						rectangleClassName="bg-neutral-200 dark:bg-neutral-700 border-neutral-300 dark:border-neutral-600"
 						pointerClassName="text-purple-500"
 					>
-						<span className="relative z-10">{navConfig.navMain[3].title}</span>
+						<span className="relative z-10">{getNavTitle("/superadmin/task")}</span>
 					</PointerHighlight>
 				</h2>
 			</div>
