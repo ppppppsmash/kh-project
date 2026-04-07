@@ -20,14 +20,7 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-	PaginationLink,
-	PaginationNext,
-	PaginationPrevious,
-} from "@/components/ui/pagination";
+import { TablePagination } from "@/components/ui/table-pagination";
 import {
 	Select,
 	SelectContent,
@@ -229,56 +222,13 @@ export default function QAPage() {
 				</div>
 
 				{totalPages > 1 && (
-					<Pagination className="mt-4">
-						<PaginationContent>
-							<PaginationItem>
-								<PaginationPrevious
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										if (currentPage > 1) setCurrentPage(currentPage - 1);
-									}}
-									className={
-										currentPage === 1 ? "pointer-events-none opacity-50" : ""
-									}
-								/>
-							</PaginationItem>
-
-							{Array.from({ length: totalPages }).map((_, i) => {
-								const pageNumber = i + 1;
-								return (
-									<PaginationItem key={pageNumber}>
-										<PaginationLink
-											href="#"
-											onClick={(e) => {
-												e.preventDefault();
-												setCurrentPage(pageNumber);
-											}}
-											isActive={currentPage === pageNumber}
-										>
-											{pageNumber}
-										</PaginationLink>
-									</PaginationItem>
-								);
-							})}
-
-							<PaginationItem>
-								<PaginationNext
-									href="#"
-									onClick={(e) => {
-										e.preventDefault();
-										if (currentPage < totalPages)
-											setCurrentPage(currentPage + 1);
-									}}
-									className={
-										currentPage === totalPages
-											? "pointer-events-none opacity-50"
-											: ""
-									}
-								/>
-							</PaginationItem>
-						</PaginationContent>
-					</Pagination>
+					<TablePagination
+						currentPage={currentPage}
+						totalPages={totalPages}
+						totalItems={filteredQA.length}
+						itemsPerPage={itemsPerPage}
+						onPageChange={setCurrentPage}
+					/>
 				)}
 			</>
 

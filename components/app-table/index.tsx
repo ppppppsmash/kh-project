@@ -23,14 +23,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import {
-	Pagination,
-	PaginationContent,
-	PaginationItem,
-	PaginationLink,
-	PaginationNext,
-	PaginationPrevious,
-} from "@/components/ui/pagination";
+import { TablePagination } from "@/components/ui/table-pagination";
 import { ITEMS_PER_PAGE_OPTIONS, useTableStore } from "@/lib/store/table-store";
 import { getPaginated, getTotalPages } from "@/lib/utils";
 import {
@@ -473,45 +466,13 @@ export function AppTable<T>({
 				</div>
 			</div>
 
-			{/* ページネーション */}
-			<div className="flex items-center justify-between mt-4">
-				<div className="text-sm text-muted-foreground">
-					{filteredData.length}件中 {(currentPage - 1) * itemsPerPage + 1}-
-					{Math.min(currentPage * itemsPerPage, filteredData.length)}件を表示
-				</div>
-				<div className="flex items-center space-x-2">
-					<Pagination>
-						<PaginationContent>
-							<PaginationItem>
-								<PaginationPrevious
-									onClick={() =>
-										setCurrentPage((prev) => Math.max(prev - 1, 1))
-									}
-								/>
-							</PaginationItem>
-							{Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-								<PaginationItem key={page}>
-									<PaginationLink
-										isActive={page === currentPage}
-										onClick={() => setCurrentPage(page)}
-									>
-										{page}
-									</PaginationLink>
-								</PaginationItem>
-							))}
-							<PaginationItem>
-								<PaginationNext
-									onClick={() =>
-										setCurrentPage((prev) =>
-											Math.min(prev + 1, totalPages),
-										)
-									}
-								/>
-							</PaginationItem>
-						</PaginationContent>
-					</Pagination>
-				</div>
-			</div>
+			<TablePagination
+				currentPage={currentPage}
+				totalPages={totalPages}
+				totalItems={filteredData.length}
+				itemsPerPage={itemsPerPage}
+				onPageChange={setCurrentPage}
+			/>
 		</div>
 	);
 }
