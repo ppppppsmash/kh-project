@@ -6,25 +6,7 @@ import type { TaskFormValues } from "@/lib/validations";
 import { desc, eq, sql } from "drizzle-orm";
 import { sendSlackMessage } from "@/lib/slackMessage";
 import { logTaskActivity } from "./user-activity";
-import { auth } from "@/auth";
-
-// 現在のユーザ情報を取得する関数
-const getCurrentUser = async () => {
-	try {
-		const session = await auth();
-		if (!session?.user?.id || !session?.user?.name) {
-			throw new Error("User session not found");
-		}
-		return { 
-			userId: session.user.id, 
-			userName: session.user.name 
-		};
-	} catch (error) {
-		console.error("Error getting current user:", error);
-		// デフォルト値を返す（実際の運用では適切なエラーハンドリングが必要）
-		return { userId: "unknown", userName: "不明なユーザー" };
-	}
-};
+import { getCurrentUser } from "./auth-helper";
 
 export const getTasks = async (): Promise<TaskFormValues[]> => {
 	const result = await db.select().from(tasks).orderBy(desc(tasks.taskId));

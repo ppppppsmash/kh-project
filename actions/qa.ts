@@ -1,11 +1,11 @@
 "use server";
 
-import { auth } from "@/auth";
 import { db } from "@/db";
 import { qa } from "@/db/schema/qa";
 import type { QaFormValues } from "@/lib/validations";
 import { desc, eq } from "drizzle-orm";
 import { logQaActivity } from "./user-activity";
+import { getCurrentUser } from "./auth-helper";
 
 export const getQA = async (): Promise<QaFormValues[]> => {
 	const qaData = await db.select().from(qa);
@@ -21,9 +21,7 @@ export const getQA = async (): Promise<QaFormValues[]> => {
 };
 
 export const createQA = async (data: QaFormValues) => {
-	const session = await auth();
-	const currentUser = session?.user?.name;
-	const currentUserId = session?.user?.id;
+	const { userId: currentUserId, userName: currentUser } = await getCurrentUser();
 
 	// 最新のquestionCodeを取得
 	const lastQaRecord = await db
@@ -85,9 +83,7 @@ export const createQA = async (data: QaFormValues) => {
 };
 
 export const updateQA = async (id: string, data: QaFormValues) => {
-	const session = await auth();
-	const currentUser = session?.user?.name;
-	const currentUserId = session?.user?.id;
+	const { userId: currentUserId, userName: currentUser } = await getCurrentUser();
 
 	// 更新前のQA情報を取得（変更内容の比較用）
 	let oldQaData = null;
@@ -173,10 +169,8 @@ export const deleteQA = async (id: string) => {
 	const deletedQA = await db.delete(qa).where(eq(qa.id, id));
 
 	// ユーザ操作履歴を記録
-	const session = await auth();
-	const currentUser = session?.user?.name;
-	const currentUserId = session?.user?.id;
-	
+	const { userId: currentUserId, userName: currentUser } = await getCurrentUser();
+
 	if (currentUserId && currentUser) {
 		try {
 			await logQaActivity(

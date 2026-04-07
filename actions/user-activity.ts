@@ -70,121 +70,46 @@ export const createUserActivity = async (data: CreateUserActivityInput) => {
 	return newActivity;
 };
 
-// タスク操作のユーザ操作履歴を記録するヘルパー関数
+// ユーザ操作履歴を記録する汎用ヘルパー関数
+export const logActivity = async (
+	userId: string,
+	userName: string,
+	action: UserActivityFormValues["action"],
+	resourceType: UserActivityFormValues["resourceType"],
+	resourceId?: string,
+	resourceName?: string,
+	details?: Record<string, unknown>
+) => {
+	try {
+		await createUserActivity({
+			userId,
+			userName,
+			action,
+			resourceType,
+			resourceId,
+			resourceName,
+			resourceDetails: details ? JSON.stringify(details) : undefined,
+		});
+	} catch (error) {
+		console.error(`Error logging ${resourceType} activity:`, error);
+		// ログ記録の失敗は本体操作を妨げないようにする
+	}
+};
+
+// 後方互換のエイリアス
 export const logTaskActivity = async (
-	userId: string,
-	userName: string,
+	userId: string, userName: string,
 	action: "task_create" | "task_update" | "task_delete",
-	taskId?: string,
-	taskTitle?: string,
-	details?: Record<string, unknown>
-) => {
-	try {
-		await createUserActivity({
-			userId,
-			userName,
-			action,
-			resourceType: "task",
-			resourceId: taskId,
-			resourceName: taskTitle,
-			resourceDetails: details ? JSON.stringify(details) : undefined,
-		});
-	} catch (error) {
-		console.error("Error logging task activity:", error);
-		// ログ記録の失敗はタスク操作を妨げないようにする
-	}
-};
+	taskId?: string, taskTitle?: string, details?: Record<string, unknown>
+) => logActivity(userId, userName, action, "task", taskId, taskTitle, details);
 
-// QA操作のユーザ操作履歴を記録するヘルパー関数
 export const logQaActivity = async (
-	userId: string,
-	userName: string,
+	userId: string, userName: string,
 	action: "qa_create" | "qa_update" | "qa_delete",
-	qaId?: string,
-	qaQuestion?: string,
-	details?: Record<string, unknown>
-) => {
-	try {
-		await createUserActivity({
-			userId,
-			userName,
-			action,
-			resourceType: "qa",
-			resourceId: qaId,
-			resourceName: qaQuestion,
-			resourceDetails: details ? JSON.stringify(details) : undefined,
-		});
-	} catch (error) {
-		console.error("Error logging QA activity:", error);
-		// ログ記録の失敗はQA操作を妨げないようにする
-	}
-};
+	qaId?: string, qaQuestion?: string, details?: Record<string, unknown>
+) => logActivity(userId, userName, action, "qa", qaId, qaQuestion, details);
 
-// メンバー操作のユーザ操作履歴を記録するヘルパー関数
-export const logMemberActivity = async (
-	userId: string,
-	userName: string,
-	action: "member_create" | "member_update" | "member_delete",
-	memberId?: string,
-	memberName?: string,
-	details?: Record<string, unknown>
-) => {
-	try {
-		await createUserActivity({
-			userId,
-			userName,
-			action,
-			resourceType: "member",
-			resourceId: memberId,
-			resourceName: memberName,
-			resourceDetails: details ? JSON.stringify(details) : undefined,
-		});
-	} catch (error) {
-		console.error("Error logging member activity:", error);
-		// ログ記録の失敗はメンバー操作を妨げないようにする
-	}
-};
-
-// 部活動操作のユーザ操作履歴を記録するヘルパー関数
-export const logClubActivity = async (
-	userId: string,
-	userName: string,
-	action: "club_create" | "club_update" | "club_delete",
-	clubId?: string,
-	clubName?: string,
-	details?: Record<string, unknown>
-) => {
-	try {
-		await createUserActivity({
-			userId,
-			userName,
-			action,
-			resourceType: "club",
-			resourceId: clubId,
-			resourceName: clubName,
-			resourceDetails: details ? JSON.stringify(details) : undefined,
-		});
-	} catch (error) {
-		console.error("Error logging club activity:", error);
-		// ログ記録の失敗は部活動操作を妨げないようにする
-	}
-};
-
-// ログイン・ログアウトのユーザ操作履歴を記録するヘルパー関数
 export const logAuthActivity = async (
-	userId: string,
-	userName: string,
+	userId: string, userName: string,
 	action: "login" | "logout"
-) => {
-	try {
-		await createUserActivity({
-			userId,
-			userName,
-			action,
-			resourceType: action,
-		});
-	} catch (error) {
-		console.error("Error logging auth activity:", error);
-		// ログ記録の失敗は認証操作を妨げないようにする
-	}
-};
+) => logActivity(userId, userName, action, action);
