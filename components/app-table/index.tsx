@@ -25,7 +25,7 @@ import {
 } from "@/components/ui/table";
 import { TablePagination } from "@/components/ui/table-pagination";
 import { ITEMS_PER_PAGE_OPTIONS, useTableStore } from "@/lib/store/table-store";
-import { getPaginated, getTotalPages } from "@/lib/utils";
+import { cn, getPaginated, getTotalPages } from "@/lib/utils";
 import {
 	ArrowUpDown,
 	ChevronDown,
@@ -275,48 +275,78 @@ export function AppTable<T>({
 							</div>
 						)}
 						{toolBar?.researchStatusFilter && (
-							<div className="flex items-center gap-2">
-								<Select value={statusFilter} onValueChange={handleStatusFilterChange}>
-									<SelectTrigger className="w-[180px] border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-950/20">
-										<div className="flex items-center gap-2">
-											<Filter className="h-4 w-4 text-blue-600 dark:text-blue-400" />
-											<SelectValue placeholder="ステータスでフィルター" />
-										</div>
-									</SelectTrigger>
-									<SelectContent>
-										{toolBar.researchStatusFilter?.map((status) => (
-											<SelectItem key={status} value={status}>
+							<Select value={statusFilter} onValueChange={handleStatusFilterChange}>
+								<SelectTrigger className="w-[160px]">
+									<Filter className="h-3.5 w-3.5 text-muted-foreground" />
+									<SelectValue placeholder="進捗状況" />
+								</SelectTrigger>
+								<SelectContent>
+									{toolBar.researchStatusFilter?.map((status) => (
+										<SelectItem key={status} value={status}>
+											<span className="flex items-center gap-2">
+												{status !== "進捗状況:すべて" && (
+													<span className={cn(
+														"h-2 w-2 rounded-full",
+														status === "未着手" && "bg-gray-500",
+														status === "進行中" && "bg-blue-500",
+														status === "完了" && "bg-green-500",
+													)} />
+												)}
 												{status}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</div>
+											</span>
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 						)}
 						{toolBar?.researchPriorityFilter && (
-							<div className="flex items-center gap-2">
-								<Select value={priorityFilter} onValueChange={handlePriorityFilterChange}>
-									<SelectTrigger className="w-[180px] border-orange-200 bg-orange-50 dark:border-orange-700 dark:bg-orange-950/20">
-										<div className="flex items-center gap-2">
-											<Filter className="h-4 w-4 text-orange-600 dark:text-orange-400" />
-											<SelectValue placeholder="優先度でフィルター" />
-										</div>
-									</SelectTrigger>
-									<SelectContent>
-										{toolBar.researchPriorityFilter?.map((priority) => (
-											<SelectItem key={priority} value={priority}>
+							<Select value={priorityFilter} onValueChange={handlePriorityFilterChange}>
+								<SelectTrigger className="w-[160px]">
+									<Filter className="h-3.5 w-3.5 text-muted-foreground" />
+									<SelectValue placeholder="優先度" />
+								</SelectTrigger>
+								<SelectContent>
+									{toolBar.researchPriorityFilter?.map((priority) => (
+										<SelectItem key={priority} value={priority}>
+											<span className="flex items-center gap-2">
+												{priority !== "優先度:すべて" && (
+													<span className={cn(
+														"h-2 w-2 rounded-full",
+														priority === "高" && "bg-red-500",
+														priority === "中" && "bg-orange-500",
+														priority === "低" && "bg-blue-400",
+														priority === "未設定" && "bg-gray-300 dark:bg-gray-600",
+													)} />
+												)}
 												{priority}
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</div>
+											</span>
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
 						)}
-						{(searchQuery || statusFilter !== "進捗状況:すべて" || priorityFilter !== "優先度:すべて" || 
+						<Select
+							value={String(itemsPerPage)}
+							onValueChange={(value) => setItemsPerPage(Number(value))}
+						>
+							<SelectTrigger className="w-[100px]">
+								<SelectValue placeholder="表示件数" />
+							</SelectTrigger>
+							<SelectContent>
+								{ITEMS_PER_PAGE_OPTIONS.map((option) => (
+									<SelectItem key={option} value={String(option)}>
+										{option}件
+									</SelectItem>
+								))}
+							</SelectContent>
+						</Select>
+
+						{(searchQuery || statusFilter !== "進捗状況:すべて" || priorityFilter !== "優先度:すべて" ||
 							(currentSort && (currentSort.key !== sort?.key || currentSort.order !== sort?.order))) && (
 							<Button
-								variant="outline"
+								variant="ghost"
 								size="sm"
+								className="text-muted-foreground hover:text-foreground"
 								onClick={() => {
 									setSearchQuery("");
 									handleStatusFilterChange("進捗状況:すべて");
@@ -330,22 +360,6 @@ export function AppTable<T>({
 								リセット
 							</Button>
 						)}
-
-						<Select
-							value={String(itemsPerPage)}
-							onValueChange={(value) => setItemsPerPage(Number(value))}
-						>
-							<SelectTrigger className="w-[120px]">
-								<SelectValue placeholder="表示件数" />
-							</SelectTrigger>
-							<SelectContent>
-								{ITEMS_PER_PAGE_OPTIONS.map((option) => (
-									<SelectItem key={option} value={String(option)}>
-										{option}件
-									</SelectItem>
-								))}
-							</SelectContent>
-						</Select>
 
 						{csvButton && (
 							<CSVButton
