@@ -1,13 +1,10 @@
 "use client";
 
 import {
-	useGetClubActivities,
 	useGetUserActivity,
 	useGetTaskStats,
 } from "@/components/app-table/hooks/use-table-data";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { ClubFormValues } from "@/lib/validations";
 import {
 	Activity,
 	User,
@@ -18,17 +15,13 @@ import {
 import { useSession } from "next-auth/react";
 import { getNavTitle } from "@/config";
 import { PointerHighlight } from "@/components/animation-ui/pointer-highlight";
+import { motion } from "motion/react";
 
 export default function DashboardPage() {
 	const { data: session } = useSession();
 	const { data: userActivity, isLoading: isUserActivityLoading } =
 		useGetUserActivity();
-	const { data: clubs } = useGetClubActivities();
 	const { taskStats, isLoading: isTaskStatsLoading } = useGetTaskStats();
-
-	const getStatusCount = (status: ClubFormValues["status"]) => {
-		return clubs?.filter((club) => club.status === status).length ?? 0;
-	};
 
 	const getActionLabel = (action: string) => {
 		switch (action) {
@@ -207,7 +200,7 @@ export default function DashboardPage() {
 			</div>
 
 			<div className="flex flex-col gap-2">
-				<h3 className="text-lg font-bold">ユーザ操作履歴</h3>
+				<h3 className="text-lg font-bold">操作履歴</h3>
 				<div className="flex flex-col gap-2 max-h-[40svh] overflow-y-auto">
 					{userActivity?.map((activity) => (
 						<div key={activity.id} className="flex items-start gap-4 text-sm p-3 bg-muted/30 rounded-lg">
@@ -266,30 +259,36 @@ export default function DashboardPage() {
 																		return changes.length > 0 ? (
 																			<div className="space-y-1.5">
 																				{changes.map((change, index) => (
-																					<div key={`change-${change.fieldName}-${index}`} className="flex items-baseline gap-2 leading-relaxed flex-wrap">
+																					<motion.div
+																						key={`change-${change.fieldName}-${index}`}
+																						className="flex items-baseline gap-2 leading-relaxed flex-wrap"
+																						initial={{ opacity: 0, x: -8 }}
+																						animate={{ opacity: 1, x: 0 }}
+																						transition={{ duration: 0.25, delay: index * 0.05 }}
+																					>
 																						<span className="text-muted-foreground shrink-0">{change.fieldName}:</span>
 																						{change.type === 'create' && (
-																							<span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded text-xs font-medium break-all">
+																							<span className="bg-foreground/5 text-foreground px-1.5 py-0.5 rounded text-xs font-medium break-all">
 																								+ {formatValue(change.newValue)}
 																							</span>
 																						)}
 																						{change.type === 'delete' && (
-																							<span className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-1.5 py-0.5 rounded text-xs font-medium line-through break-all">
+																							<span className="bg-foreground/5 text-muted-foreground px-1.5 py-0.5 rounded text-xs line-through break-all">
 																								{formatValue(change.oldValue)}
 																							</span>
 																						)}
 																						{change.type === 'update' && (
 																							<span className="inline-flex items-center gap-1.5 flex-wrap">
-																								<span className="bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-400 px-1.5 py-0.5 rounded text-xs line-through break-all">
+																								<span className="bg-foreground/5 text-muted-foreground px-1.5 py-0.5 rounded text-xs line-through break-all">
 																									{formatValue(change.oldValue)}
 																								</span>
 																								<span className="text-muted-foreground">→</span>
-																								<span className="bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 px-1.5 py-0.5 rounded text-xs font-medium break-all">
+																								<span className="bg-foreground/5 text-foreground px-1.5 py-0.5 rounded text-xs font-medium break-all">
 																									{formatValue(change.newValue)}
 																								</span>
 																							</span>
 																						)}
-																					</div>
+																					</motion.div>
 																				))}
 																			</div>
 																		) : (
@@ -303,7 +302,7 @@ export default function DashboardPage() {
 																				const fieldName = getFieldDisplayName(key);
 																				return (
 																					<div key={key} className="flex items-center gap-2">
-																						<span className="text-green-600">•</span>
+																						<span className="text-muted-foreground">•</span>
 																						<span>{fieldName}: {formatValue(value)}</span>
 																					</div>
 																				);
@@ -334,103 +333,62 @@ export default function DashboardPage() {
 				</div>
 			</div>
 
-			<div className="space-y-4">
-				<h3 className="text-lg font-bold">タスク状況</h3>
-				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-					<Card>
-						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">タスク数</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div className="text-2xl font-bold">
-								{taskStats.totalTasks}件
-							</div>
-						</CardContent>
-					</Card>
-					<Card>
-						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">進行中</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div className="text-2xl font-bold">
-								{taskStats.inProgressTasks}件
-							</div>
-						</CardContent>
-					</Card>
-					{/* <Card>
-						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">本日登録数</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div className="text-2xl font-bold">
-								{taskStats.todayTasks}件
-							</div>
-						</CardContent>
-					</Card> */}
-					<Card>
-						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">完了数</CardTitle>
-						</CardHeader>
-						<CardContent>
-							<div className="text-2xl font-bold">
-								{taskStats.completedTasks}件
-							</div>
-						</CardContent>
-					</Card>
+			<div className="space-y-3">
+				<div className="flex items-baseline justify-between">
+					<h3 className="text-lg font-bold">タスク状況</h3>
+					<span className="text-xs text-muted-foreground tabular-nums">
+						全 {taskStats.totalTasks} 件
+					</span>
+				</div>
+				<div className="rounded-lg border divide-y">
+					{[
+						{
+							label: "未着手",
+							count: taskStats.totalTasks - taskStats.inProgressTasks - taskStats.completedTasks,
+							bar: "bg-foreground/15",
+							dot: "bg-foreground/30",
+						},
+						{
+							label: "進行中",
+							count: taskStats.inProgressTasks,
+							bar: "bg-foreground/35",
+							dot: "bg-foreground/55",
+						},
+						{
+							label: "完了",
+							count: taskStats.completedTasks,
+							bar: "bg-foreground/60",
+							dot: "bg-foreground/80",
+						},
+					].map((row, i) => {
+						const pct = taskStats.totalTasks > 0
+							? Math.round((row.count / taskStats.totalTasks) * 100)
+							: 0;
+						return (
+							<motion.div
+								key={row.label}
+								initial={{ opacity: 0, y: 6 }}
+								animate={{ opacity: 1, y: 0 }}
+								transition={{ duration: 0.3, delay: i * 0.1 }}
+								className="flex items-center gap-3 px-4 py-2.5"
+							>
+								<span className={`h-2 w-2 shrink-0 rounded-full ${row.dot}`} />
+								<span className="text-sm w-16">{row.label}</span>
+								<div className="flex-1 h-1.5 rounded-full bg-muted overflow-hidden">
+									<motion.div
+										className={`h-full rounded-full ${row.bar}`}
+										initial={{ width: 0 }}
+										animate={{ width: `${pct}%` }}
+										transition={{ duration: 0.6, delay: 0.2 + i * 0.1, ease: "easeOut" }}
+									/>
+								</div>
+								<span className="text-sm tabular-nums w-8 text-right">{row.count}</span>
+								<span className="text-xs tabular-nums text-muted-foreground w-10 text-right">{pct}%</span>
+							</motion.div>
+						);
+					})}
 				</div>
 			</div>
-
-			{/* <div className="space-y-4">
-				<h3 className="text-lg font-bold">部活動</h3>
-				<div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-					<Card>
-						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">活動中</CardTitle>
-							<Users className="h-4 w-4 text-muted-foreground" />
-						</CardHeader>
-						<CardContent>
-							<div className="text-2xl font-bold">
-								{getStatusCount("active")}
-							</div>
-							<p className="text-xs text-muted-foreground">現在活動中</p>
-						</CardContent>
-					</Card>
-					<Card>
-						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">休止中</CardTitle>
-							<Activity className="h-4 w-4 text-muted-foreground" />
-						</CardHeader>
-						<CardContent>
-							<div className="text-2xl font-bold">
-								{getStatusCount("inactive")}
-							</div>
-							<p className="text-xs text-muted-foreground">一時休止中</p>
-						</CardContent>
-					</Card>
-					<Card>
-						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">承認待ち</CardTitle>
-							<Calendar className="h-4 w-4 text-muted-foreground" />
-						</CardHeader>
-						<CardContent>
-							<div className="text-2xl font-bold">
-								{getStatusCount("pending")}
-							</div>
-							<p className="text-xs text-muted-foreground">承認待ち</p>
-						</CardContent>
-					</Card>
-					<Card>
-						<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-							<CardTitle className="text-sm font-medium">総数</CardTitle>
-							<BarChart3 className="h-4 w-4 text-muted-foreground" />
-						</CardHeader>
-						<CardContent>
-							<div className="text-2xl font-bold">{clubs?.length ?? 0}</div>
-							<p className="text-xs text-muted-foreground">全部活動</p>
-						</CardContent>
-					</Card>
-				</div>
-			</div> */}
 		</div>
 	);
 }
