@@ -28,9 +28,12 @@ import { cn } from "@/lib/utils";
 const SIDEBAR_COOKIE_NAME = "sidebar_state";
 const SIDEBAR_COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 const SIDEBAR_WIDTH = "16rem";
+const SIDEBAR_WIDTH_STORAGE_KEY = "sidebar_width";
 const SIDEBAR_WIDTH_MOBILE = "18rem";
 const SIDEBAR_WIDTH_ICON = "3rem";
 const SIDEBAR_KEYBOARD_SHORTCUT = "b";
+const SIDEBAR_MIN_WIDTH = 200;
+const SIDEBAR_MAX_WIDTH = 480;
 
 type SidebarContextProps = {
 	state: "expanded" | "collapsed";
@@ -40,6 +43,7 @@ type SidebarContextProps = {
 	setOpenMobile: (open: boolean) => void;
 	isMobile: boolean;
 	toggleSidebar: () => void;
+	wrapperRef: React.RefObject<HTMLDivElement | null>;
 };
 
 const SidebarContext = React.createContext<SidebarContextProps | null>(null);
@@ -68,6 +72,15 @@ function SidebarProvider({
 }) {
 	const isMobile = useIsMobile();
 	const [openMobile, setOpenMobile] = React.useState(false);
+	const wrapperRef = React.useRef<HTMLDivElement>(null);
+
+	// localStorage から保存した幅を復元
+	React.useEffect(() => {
+		const saved = localStorage.getItem(SIDEBAR_WIDTH_STORAGE_KEY);
+		if (saved && wrapperRef.current) {
+			wrapperRef.current.style.setProperty("--sidebar-width", `${saved}px`);
+		}
+	}, []);
 
 	// This is the internal state of the sidebar.
 	// We use openProp and setOpenProp for control from outside the component.
@@ -122,6 +135,7 @@ function SidebarProvider({
 			openMobile,
 			setOpenMobile,
 			toggleSidebar,
+			wrapperRef,
 		}),
 		[state, open, setOpen, isMobile, openMobile, toggleSidebar],
 	);
@@ -130,6 +144,7 @@ function SidebarProvider({
 		<SidebarContext.Provider value={contextValue}>
 			<TooltipProvider delayDuration={0}>
 				<div
+					ref={wrapperRef}
 					data-slot="sidebar-wrapper"
 					style={
 						{
@@ -218,7 +233,7 @@ function Sidebar({
 			<div
 				data-slot="sidebar-gap"
 				className={cn(
-					"relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear",
+					"relative w-(--sidebar-width) bg-transparent transition-[width] duration-200 ease-linear group-data-[resizing]/sidebar-wrapper:transition-none",
 					"group-data-[collapsible=offcanvas]:w-0",
 					"group-data-[side=right]:rotate-180",
 					variant === "floating" || variant === "inset"
@@ -229,7 +244,7 @@ function Sidebar({
 			<div
 				data-slot="sidebar-container"
 				className={cn(
-					"fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear md:flex",
+					"fixed inset-y-0 z-10 hidden h-svh w-(--sidebar-width) transition-[left,right,width] duration-200 ease-linear group-data-[resizing]/sidebar-wrapper:transition-none md:flex",
 					side === "left"
 						? "left-0 group-data-[collapsible=offcanvas]:left-[calc(var(--sidebar-width)*-1)]"
 						: "right-0 group-data-[collapsible=offcanvas]:right-[calc(var(--sidebar-width)*-1)]",
@@ -280,7 +295,49 @@ function SidebarTrigger({
 }
 
 function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
-	const { toggleSidebar } = useSidebar();
+	const { toggleSidebar, wrapperRef, state } = useSidebar();
+
+	const handleMouseDown = React.useCallback(
+		(e: React.MouseEvent) => {
+			if (state === "collapsed") {
+				toggleSidebar();
+				return;
+			}
+			e.preventDefault();
+			const wrapper = wrapperRef.current;
+			if (!wrapper) return;
+
+			// ドラッグ中はtransitionを無効化
+			wrapper.setAttribute("data-resizing", "");
+
+			const handleMouseMove = (moveEvent: MouseEvent) => {
+				const newWidth = Math.min(
+					SIDEBAR_MAX_WIDTH,
+					Math.max(SIDEBAR_MIN_WIDTH, moveEvent.clientX),
+				);
+				wrapper.style.setProperty("--sidebar-width", `${newWidth}px`);
+			};
+
+			const handleMouseUp = () => {
+				wrapper.removeAttribute("data-resizing");
+				// 現在の幅を保存
+				const currentWidth = wrapper.style.getPropertyValue("--sidebar-width");
+				if (currentWidth) {
+					localStorage.setItem(SIDEBAR_WIDTH_STORAGE_KEY, String(parseInt(currentWidth)));
+				}
+				document.removeEventListener("mousemove", handleMouseMove);
+				document.removeEventListener("mouseup", handleMouseUp);
+				document.body.style.cursor = "";
+				document.body.style.userSelect = "";
+			};
+
+			document.body.style.cursor = "col-resize";
+			document.body.style.userSelect = "none";
+			document.addEventListener("mousemove", handleMouseMove);
+			document.addEventListener("mouseup", handleMouseUp);
+		},
+		[wrapperRef, state, toggleSidebar],
+	);
 
 	return (
 		<button
@@ -288,12 +345,11 @@ function SidebarRail({ className, ...props }: React.ComponentProps<"button">) {
 			data-slot="sidebar-rail"
 			aria-label="Toggle Sidebar"
 			tabIndex={-1}
-			onClick={toggleSidebar}
-			title="Toggle Sidebar"
+			onDoubleClick={toggleSidebar}
+			onMouseDown={handleMouseDown}
+			title="ドラッグでリサイズ / ダブルクリックで開閉"
 			className={cn(
-				"hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex",
-				"in-data-[side=left]:cursor-w-resize in-data-[side=right]:cursor-e-resize",
-				"[[data-side=left][data-state=collapsed]_&]:cursor-e-resize [[data-side=right][data-state=collapsed]_&]:cursor-w-resize",
+				"hover:after:bg-sidebar-border absolute inset-y-0 z-20 hidden w-4 -translate-x-1/2 transition-all ease-linear group-data-[side=left]:-right-4 group-data-[side=right]:left-0 after:absolute after:inset-y-0 after:left-1/2 after:w-[2px] sm:flex cursor-col-resize",
 				"hover:group-data-[collapsible=offcanvas]:bg-sidebar group-data-[collapsible=offcanvas]:translate-x-0 group-data-[collapsible=offcanvas]:after:left-full",
 				"[[data-side=left][data-collapsible=offcanvas]_&]:-right-2",
 				"[[data-side=right][data-collapsible=offcanvas]_&]:-left-2",

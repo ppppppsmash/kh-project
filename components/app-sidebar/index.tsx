@@ -13,6 +13,7 @@ import {
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
+	SidebarRail,
 } from "@/components/ui/sidebar";
 import { navConfig } from "@/config";
 import Image from "next/image";
@@ -45,6 +46,7 @@ export const AppSidebar = ({
 			<SidebarFooter>
 				<NavUser />
 			</SidebarFooter>
+			<SidebarRail />
 		</Sidebar>
 	);
 };
