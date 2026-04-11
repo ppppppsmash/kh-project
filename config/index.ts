@@ -14,7 +14,6 @@ import {
 	IconSearch,
 	IconSettings,
 	IconUser,
-	IconBell,
 	IconFilePencil,
 } from "@tabler/icons-react";
 
@@ -73,11 +72,6 @@ export const navConfig = {
 			url: "/superadmin/survey",
 			icon: IconFilePencil,
 		},
-		{
-			title: "災害通知",
-			url: "/superadmin/disaster-notification",
-			icon: IconBell,
-		}
 		// {
 		//   title: "チーム",
 		//   url: "/team",
