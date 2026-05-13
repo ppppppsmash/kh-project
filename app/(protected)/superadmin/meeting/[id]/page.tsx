@@ -10,12 +10,12 @@ import {
 } from "@/actions/meeting";
 import { AddButton } from "@/components/add-button";
 import { AgendaItemModalForm } from "@/components/app-modal/agenda-item-modal-form";
+import { StatusLabel } from "@/components/meeting/status-label";
 import {
 	useGetAgendaItems,
 	useGetUserList,
 } from "@/components/app-table/hooks/use-table-data";
 import { PageTitle } from "@/components/animation-ui/page-title";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
 	Card,
@@ -54,12 +54,6 @@ import {
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-
-const statusBadge: Record<string, { label: string; className: string }> = {
-	not_started: { label: "未", className: "bg-gray-100 text-gray-800" },
-	in_progress: { label: "進行中", className: "bg-blue-100 text-blue-800" },
-	done: { label: "完了", className: "bg-green-100 text-green-800" },
-};
 
 export default function MeetingDetailPage() {
 	const params = useParams<{ id: string }>();
@@ -221,9 +215,6 @@ export default function MeetingDetailPage() {
 			) : (
 				<ol className="space-y-3">
 					{items.map((item, index) => {
-						const status =
-							statusBadge[item.status ?? "not_started"] ??
-							statusBadge.not_started;
 						const presenter = item.presenterId
 							? userMap.get(item.presenterId)
 							: null;
@@ -240,12 +231,16 @@ export default function MeetingDetailPage() {
 													{item.title}
 												</CardTitle>
 											</div>
-											<div className="flex items-center gap-2">
-												<Badge className={status.className}>
-													{status.label}
-												</Badge>
+											<div className="flex items-center gap-3">
+												<StatusLabel
+													type="agenda"
+													value={item.status}
+													iconSize="sm"
+												/>
 												{presenter && (
-													<Badge variant="outline">{presenter.name}</Badge>
+													<span className="text-sm text-muted-foreground">
+														担当: {presenter.name}
+													</span>
 												)}
 											</div>
 										</div>

@@ -7,6 +7,7 @@ import {
 } from "@/actions/meeting";
 import { AddButton } from "@/components/add-button";
 import { MeetingModalForm } from "@/components/app-modal/meeting-modal-form";
+import { StatusLabel } from "@/components/meeting/status-label";
 import {
 	useGetMeetings,
 	useGetQa,
@@ -52,21 +53,6 @@ import { Copy, Eye, Pencil, Trash2 } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
-const statusLabel: Record<string, { label: string; className: string }> = {
-	scheduled: { label: "予定", className: "bg-gray-100 text-gray-800" },
-	in_progress: { label: "進行中", className: "bg-blue-100 text-blue-800" },
-	done: { label: "終了", className: "bg-green-100 text-green-800" },
-};
-
-const agendaStatusBadge: Record<
-	string,
-	{ label: string; className: string }
-> = {
-	not_started: { label: "未", className: "bg-gray-100 text-gray-800" },
-	in_progress: { label: "進行中", className: "bg-blue-100 text-blue-800" },
-	done: { label: "完了", className: "bg-green-100 text-green-800" },
-};
-
 const renderBlock = (
 	item: AgendaItemFormValues,
 	taskMap: Map<string | undefined, TaskFormValues>,
@@ -89,16 +75,13 @@ const renderBlock = (
 			</div>
 		);
 	}
-	const status =
-		agendaStatusBadge[item.status ?? "not_started"] ??
-		agendaStatusBadge.not_started;
 	const linkedTask = item.linkedTaskId ? taskMap.get(item.linkedTaskId) : null;
 	const linkedQa = item.linkedQaId ? qaMap.get(item.linkedQaId) : null;
 	return (
 		<div key={item.id} className="rounded-md border bg-card p-3">
 			<div className="flex items-start justify-between gap-2">
 				<p className="text-sm font-medium">{item.title}</p>
-				<Badge className={status.className}>{status.label}</Badge>
+				<StatusLabel type="agenda" value={item.status} iconSize="sm" />
 			</div>
 			{item.description && (
 				<p className="mt-1 text-xs text-muted-foreground">
@@ -106,33 +89,25 @@ const renderBlock = (
 				</p>
 			)}
 			{(linkedTask || linkedQa) && (
-				<div className="mt-2 flex flex-wrap gap-2">
+				<div className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-xs text-muted-foreground">
 					{linkedTask && (
 						<button
 							type="button"
 							onClick={() => onTaskClick(linkedTask)}
-							className="text-xs"
+							className="hover:text-foreground"
 						>
-							<Badge
-								variant="secondary"
-								className="cursor-pointer hover:bg-secondary/80"
-							>
-								Task: {linkedTask.title}
-							</Badge>
+							<span className="mr-1 uppercase tracking-wide">task</span>
+							{linkedTask.title}
 						</button>
 					)}
 					{linkedQa && (
 						<button
 							type="button"
 							onClick={() => onQaClick(linkedQa)}
-							className="text-xs"
+							className="hover:text-foreground"
 						>
-							<Badge
-								variant="secondary"
-								className="cursor-pointer hover:bg-secondary/80"
-							>
-								QA: {linkedQa.question}
-							</Badge>
+							<span className="mr-1 uppercase tracking-wide">qa</span>
+							{linkedQa.question}
 						</button>
 					)}
 				</div>
@@ -402,8 +377,6 @@ export default function MeetingListPage() {
 			) : (
 				<div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
 					{meetings.map((m) => {
-						const status =
-							statusLabel[m.status ?? "scheduled"] ?? statusLabel.scheduled;
 						return (
 							<Card key={m.id} className="flex flex-col">
 								<CardHeader>
@@ -416,7 +389,7 @@ export default function MeetingListPage() {
 												{m.title}
 											</Link>
 										</CardTitle>
-										<Badge className={status.className}>{status.label}</Badge>
+										<StatusLabel type="meeting" value={m.status} iconSize="sm" />
 									</div>
 									{m.scheduledAt && (
 										<p className="text-xs text-muted-foreground">

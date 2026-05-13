@@ -2,67 +2,10 @@ import { getPublicMeetingByToken } from "@/actions/meeting";
 import { getQA } from "@/actions/qa";
 import { getTasks } from "@/actions/task";
 import { getUserList } from "@/actions/user";
+import { StatusLabel } from "@/components/meeting/status-label";
 import { formatDate } from "@/lib/utils";
 import type { AgendaItemFormValues } from "@/lib/validations";
-import { CircleCheck, CircleDashed, Circle } from "lucide-react";
 import { notFound } from "next/navigation";
-
-const agendaStatus: Record<
-	string,
-	{ label: string; Icon: React.ElementType; colorClass: string }
-> = {
-	not_started: {
-		label: "未着手",
-		Icon: Circle,
-		colorClass: "text-muted-foreground",
-	},
-	in_progress: {
-		label: "進行中",
-		Icon: CircleDashed,
-		colorClass: "text-blue-500",
-	},
-	done: {
-		label: "完了",
-		Icon: CircleCheck,
-		colorClass: "text-emerald-500",
-	},
-};
-
-const meetingStatus: Record<
-	string,
-	{ label: string; Icon: React.ElementType; colorClass: string }
-> = {
-	scheduled: {
-		label: "予定",
-		Icon: Circle,
-		colorClass: "text-muted-foreground",
-	},
-	in_progress: {
-		label: "進行中",
-		Icon: CircleDashed,
-		colorClass: "text-blue-500",
-	},
-	done: {
-		label: "終了",
-		Icon: CircleCheck,
-		colorClass: "text-emerald-500",
-	},
-};
-
-const StatusLabel = ({
-	Icon,
-	colorClass,
-	label,
-}: {
-	Icon: React.ElementType;
-	colorClass: string;
-	label: string;
-}) => (
-	<span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
-		<Icon className={`h-4 w-4 ${colorClass}`} strokeWidth={2} />
-		{label}
-	</span>
-);
 
 type LookupMaps = {
 	userMap: Map<string | undefined, { name?: string }>;
@@ -77,8 +20,6 @@ const AgendaBlock = ({
 	item: AgendaItemFormValues;
 	maps: LookupMaps;
 }) => {
-	const status =
-		agendaStatus[item.status ?? "not_started"] ?? agendaStatus.not_started;
 	const presenter = item.presenterId ? maps.userMap.get(item.presenterId) : null;
 	const linkedTask = item.linkedTaskId
 		? maps.taskMap.get(item.linkedTaskId)
@@ -88,11 +29,7 @@ const AgendaBlock = ({
 		<section className="py-4">
 			<div className="flex items-center gap-3 flex-wrap">
 				<h3 className="text-xl font-semibold">{item.title}</h3>
-				<StatusLabel
-					Icon={status.Icon}
-					colorClass={status.colorClass}
-					label={status.label}
-				/>
+				<StatusLabel type="agenda" value={item.status} />
 				{presenter?.name && (
 					<span className="text-sm text-muted-foreground">
 						担当: {presenter.name}
@@ -188,9 +125,6 @@ export default async function PublicMeetingPage({
 		}
 	});
 
-	const mtgStatus =
-		meetingStatus[meeting.status ?? "scheduled"] ?? meetingStatus.scheduled;
-
 	const renderItem = (item: AgendaItemFormValues) => {
 		if (item.type === "memo") {
 			return <MemoBlock key={item.id} item={item} />;
@@ -202,11 +136,7 @@ export default async function PublicMeetingPage({
 		<article className="mx-auto max-w-3xl px-6 py-10">
 			<header className="mb-8 border-b pb-6">
 				<div className="mb-3 flex items-center gap-4">
-					<StatusLabel
-						Icon={mtgStatus.Icon}
-						colorClass={mtgStatus.colorClass}
-						label={mtgStatus.label}
-					/>
+					<StatusLabel type="meeting" value={meeting.status} />
 					{meeting.scheduledAt && (
 						<time className="text-sm text-muted-foreground">
 							{formatDate(
