@@ -20,6 +20,7 @@ const GOOGLE_ADMIN_EMAIL_DOMAIN = process.env
 	.GOOGLE_ADMIN_EMAIL_DOMAIN as string;
 
 export const { auth, handlers } = NextAuth({
+	trustHost: true,
 	providers: [
 		GoogleProvider({
 			clientId: process.env.GOOGLE_CLIENT_ID,
