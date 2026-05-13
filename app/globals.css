@@ -671,3 +671,18 @@ body {
 		background: oklch(0.1 0 0 / 0.9);
 	}
 }
+
+/* datetime-local input: pin calendar icon to the far right */
+input[type="datetime-local"] {
+	position: relative;
+	padding-right: 2.5rem;
+}
+input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+	position: absolute;
+	right: 0.75rem;
+	top: 50%;
+	transform: translateY(-50%);
+	margin: 0;
+	padding: 0;
+	cursor: pointer;
+}

@@ -749,7 +749,7 @@ export function MeetingModalForm({
 					)}
 				/>
 
-				<div className="grid grid-cols-2 gap-4">
+				<div className="flex gap-4">
 					<FormField
 						control={form.control}
 						name="scheduledAt"
@@ -759,6 +759,7 @@ export function MeetingModalForm({
 								<FormControl>
 									<Input
 										type="datetime-local"
+										className="w-[220px]"
 										value={toDateTimeLocalString(field.value)}
 										onChange={(e) => {
 											field.onChange(
@@ -780,7 +781,7 @@ export function MeetingModalForm({
 								<FormLabel>ステータス</FormLabel>
 								<Select onValueChange={field.onChange} value={field.value}>
 									<FormControl>
-										<SelectTrigger>
+										<SelectTrigger className="w-[140px]">
 											<SelectValue />
 										</SelectTrigger>
 									</FormControl>
