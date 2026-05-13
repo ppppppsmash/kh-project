@@ -16,6 +16,12 @@ export default async function middleware(request: NextRequest) {
 	const isAdixiPublicPage =
 		request.nextUrl.pathname.startsWith("/adixi-public");
 	const isExternalPage = request.nextUrl.pathname.startsWith("/external");
+	const isSharePage = request.nextUrl.pathname.startsWith("/share");
+
+	// /share/* は完全公開（誰でもアクセス可能）
+	if (isSharePage) {
+		return NextResponse.next();
+	}
 
 	// ルートページは外部QAページにリダイレクト
 	if (isRoot) {

@@ -372,7 +372,9 @@ export default function MeetingListPage() {
 
 	const handleCopyShareUrl = (shareToken?: string) => {
 		if (!shareToken) return;
-		const url = `${process.env.NEXT_PUBLIC_SHARE_URL || ""}/meeting/${shareToken}`;
+		const origin =
+			typeof window !== "undefined" ? window.location.origin : "";
+		const url = `${origin}/share/meeting/${shareToken}`;
 		navigator.clipboard.writeText(url);
 		CustomToast.success("共有 URL をコピーしました");
 	};

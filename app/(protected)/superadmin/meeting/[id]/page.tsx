@@ -138,8 +138,10 @@ export default function MeetingDetailPage() {
 		invalidate();
 	};
 
+	const origin =
+		typeof window !== "undefined" ? window.location.origin : "";
 	const shareUrl = meeting?.shareToken
-		? `${process.env.NEXT_PUBLIC_SHARE_URL || ""}/meeting/${meeting.shareToken}`
+		? `${origin}/share/meeting/${meeting.shareToken}`
 		: "";
 
 	const handleCopyShareUrl = () => {
