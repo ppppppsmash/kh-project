@@ -25,6 +25,7 @@ interface BaseModalFormProps {
 	isEdit?: boolean;
 	onClear?: () => void;
 	showClearButton?: boolean;
+	maxWidthClass?: string;
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	form: UseFormReturn<any>;
 }
@@ -40,6 +41,7 @@ export const BaseModalForm = ({
 	isEdit = false,
 	onClear,
 	showClearButton = false,
+	maxWidthClass = "sm:max-w-2xl",
 	form,
 }: BaseModalFormProps) => {
 	const x = useMotionValue(0);
@@ -57,9 +59,9 @@ export const BaseModalForm = ({
 			>
 				<Dialog open={isOpen} onOpenChange={onClose}>
 					
-						<DialogContent className="sm:max-w-2xl max-w-full max-h-[90vh] overflow-y-auto overflow-x-hidden p-0">
-							<div 
-								className="cursor-move select-none bg-muted/50 border-b border-border hover:bg-muted/70 transition-colors duration-200 p-4 rounded-t-lg"
+						<DialogContent className={`${maxWidthClass} max-w-full max-h-[90vh] overflow-hidden p-0 flex flex-col`}>
+							<div
+								className="cursor-move select-none bg-muted/50 border-b border-border hover:bg-muted/70 transition-colors duration-200 p-4 rounded-t-lg flex-shrink-0"
 								onMouseDown={(e) => {
 									// ヘッダー部分でのマウスダウンのみでドラッグを開始
 									const target = e.target as HTMLElement;
@@ -67,19 +69,19 @@ export const BaseModalForm = ({
 										e.preventDefault();
 										const startX = e.clientX - x.get();
 										const startY = e.clientY - y.get();
-										
+
 										const handleMouseMove = (moveEvent: MouseEvent) => {
 											const newX = moveEvent.clientX - startX;
 											const newY = moveEvent.clientY - startY;
 											x.set(newX);
 											y.set(newY);
 										};
-										
+
 										const handleMouseUp = () => {
 											document.removeEventListener('mousemove', handleMouseMove);
 											document.removeEventListener('mouseup', handleMouseUp);
 										};
-										
+
 										document.addEventListener('mousemove', handleMouseMove);
 										document.addEventListener('mouseup', handleMouseUp);
 									}
@@ -90,28 +92,31 @@ export const BaseModalForm = ({
 									<DialogTitle className="text-lg font-semibold">{title}</DialogTitle>
 								</div>
 							</div>
-							<div className="p-6">
-								<Form {...form}>
-									<form onSubmit={onSubmit} className="space-y-4">
+							<Form {...form}>
+								<form
+									onSubmit={onSubmit}
+									className="flex flex-col flex-1 min-h-0"
+								>
+									<div className="flex-1 overflow-y-auto px-6 pt-6">
 										{children}
-										<div className="flex justify-between items-center">
-											{showClearButton && onClear && (
-												<Button type="button" variant="outline" onClick={onClear}>
-													クリア
-												</Button>
-											)}
-											<div className="flex justify-end space-x-2 ml-auto">
-												<Button type="button" variant="outline" onClick={onClose}>
-													キャンセル
-												</Button>
-												<Button type="submit" disabled={isSubmitting}>
-													{isSubmitting ? "処理中..." : isEdit ? "更新" : submitText}
-												</Button>
-											</div>
+									</div>
+									<div className="flex justify-between items-center border-t bg-background px-6 py-3 flex-shrink-0">
+										{showClearButton && onClear && (
+											<Button type="button" variant="outline" onClick={onClear}>
+												クリア
+											</Button>
+										)}
+										<div className="flex justify-end space-x-2 ml-auto">
+											<Button type="button" variant="outline" onClick={onClose}>
+												キャンセル
+											</Button>
+											<Button type="submit" disabled={isSubmitting}>
+												{isSubmitting ? "処理中..." : isEdit ? "更新" : submitText}
+											</Button>
 										</div>
-									</form>
-								</Form>
-							</div>
+									</div>
+								</form>
+							</Form>
 						</DialogContent>
 				</Dialog>
 			</motion.div>
