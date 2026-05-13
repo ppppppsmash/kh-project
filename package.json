@@ -14,6 +14,7 @@
 	},
 	"dependencies": {
 		"@auth/drizzle-adapter": "^1.9.0",
+		"@aws-sdk/client-s3": "^3.1045.0",
 		"@hookform/resolvers": "^5.0.1",
 		"@radix-ui/react-accordion": "^1.2.8",
 		"@radix-ui/react-avatar": "^1.1.4",
@@ -36,7 +37,6 @@
 		"@slack/webhook": "^7.0.5",
 		"@tabler/icons-react": "^3.31.0",
 		"@tanstack/react-query": "^5.74.3",
-		"@vercel/blob": "^1.0.0",
 		"canvas-confetti": "^1.9.3",
 		"class-variance-authority": "^0.7.1",
 		"clsx": "^2.1.1",
