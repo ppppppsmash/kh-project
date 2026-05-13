@@ -188,7 +188,7 @@ const MeetingPreview = ({
 					return (
 						<div
 							key={item.id}
-							className="rounded-lg border-2 border-primary/30 bg-primary/5 p-3"
+							className="rounded-lg border-2 border-primary/30 p-3"
 						>
 							<p className="mb-2 text-base font-bold">{item.title}</p>
 							<div className="space-y-2 pl-3 border-l-2 border-primary/30">

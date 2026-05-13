@@ -116,7 +116,7 @@ const AgendaBlockBody = ({
 			)}
 		/>
 
-		<div className="grid grid-cols-2 gap-3">
+		<div className="grid grid-cols-4 gap-3">
 			<FormField
 				control={form.control}
 				name={`items.${index}.presenterId`}
@@ -130,7 +130,7 @@ const AgendaBlockBody = ({
 							value={field.value ?? NONE_VALUE}
 						>
 							<FormControl>
-								<SelectTrigger>
+								<SelectTrigger className="w-full">
 									<SelectValue placeholder="未設定" />
 								</SelectTrigger>
 							</FormControl>
@@ -156,7 +156,7 @@ const AgendaBlockBody = ({
 						<FormLabel>ステータス</FormLabel>
 						<Select onValueChange={field.onChange} value={field.value}>
 							<FormControl>
-								<SelectTrigger>
+								<SelectTrigger className="w-full">
 									<SelectValue />
 								</SelectTrigger>
 							</FormControl>
@@ -170,9 +170,7 @@ const AgendaBlockBody = ({
 					</FormItem>
 				)}
 			/>
-		</div>
 
-		<div className="grid grid-cols-2 gap-3">
 			<FormField
 				control={form.control}
 				name={`items.${index}.linkedTaskId`}
@@ -186,7 +184,7 @@ const AgendaBlockBody = ({
 							value={field.value ?? NONE_VALUE}
 						>
 							<FormControl>
-								<SelectTrigger>
+								<SelectTrigger className="w-full">
 									<SelectValue placeholder="なし" />
 								</SelectTrigger>
 							</FormControl>
@@ -217,7 +215,7 @@ const AgendaBlockBody = ({
 							value={field.value ?? NONE_VALUE}
 						>
 							<FormControl>
-								<SelectTrigger>
+								<SelectTrigger className="w-full">
 									<SelectValue placeholder="なし" />
 								</SelectTrigger>
 							</FormControl>
@@ -424,7 +422,7 @@ const TopLevelBlock = ({
 			dragControls={controls}
 			className={
 				type === "section"
-					? "rounded-lg border-2 border-primary/30 bg-primary/5 p-3 space-y-3"
+					? "rounded-lg border-2 border-primary/30 p-3 space-y-3"
 					: type === "memo"
 						? "rounded-md border-2 border-dashed border-primary/40 bg-card p-3 space-y-3"
 						: "rounded-md border bg-card p-3 space-y-3"
@@ -805,7 +803,7 @@ export function MeetingModalForm({
 						<FormItem>
 							<FormLabel>本文</FormLabel>
 							<FormDescription className="text-xs">
-								会議カードに表示される概要文（一覧で 3 行までプレビュー表示）
+								概要文
 							</FormDescription>
 							<FormControl>
 								<Textarea
@@ -897,13 +895,8 @@ export function MeetingModalForm({
 					control={form.control}
 					name="isPublic"
 					render={({ field }) => (
-						<FormItem className="flex items-center justify-between rounded-md border p-3">
-							<div>
-								<FormLabel className="text-base">一時公開する</FormLabel>
-								<FormDescription className="text-xs">
-									ON にすると共有 URL を知っている人なら誰でも閲覧できます
-								</FormDescription>
-							</div>
+						<FormItem className="flex items-center justify-end gap-3">
+							<FormLabel className="text-base">一時公開</FormLabel>
 							<FormControl>
 								<Switch
 									checked={field.value}
