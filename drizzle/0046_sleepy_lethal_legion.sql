@@ -1,0 +1,1 @@
+ALTER TABLE "agenda_items" ADD COLUMN "type" varchar(20) DEFAULT 'agenda' NOT NULL;

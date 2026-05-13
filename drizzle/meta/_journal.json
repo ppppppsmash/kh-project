@@ -316,6 +316,27 @@
       "when": 1775535397190,
       "tag": "0044_broken_the_liberteens",
       "breakpoints": true
+    },
+    {
+      "idx": 45,
+      "version": "7",
+      "when": 1778591484464,
+      "tag": "0045_marvelous_prodigy",
+      "breakpoints": true
+    },
+    {
+      "idx": 46,
+      "version": "7",
+      "when": 1778597547150,
+      "tag": "0046_sleepy_lethal_legion",
+      "breakpoints": true
+    },
+    {
+      "idx": 47,
+      "version": "7",
+      "when": 1778680925783,
+      "tag": "0047_huge_zodiak",
+      "breakpoints": true
     }
   ]
 }
