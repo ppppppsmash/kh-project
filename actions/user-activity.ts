@@ -113,3 +113,15 @@ export const logAuthActivity = async (
 	userId: string, userName: string,
 	action: "login" | "logout"
 ) => logActivity(userId, userName, action, action);
+
+export const logMeetingActivity = async (
+	userId: string, userName: string,
+	action: "meeting_create" | "meeting_update" | "meeting_delete",
+	meetingId?: string, meetingTitle?: string, details?: Record<string, unknown>
+) => logActivity(userId, userName, action, "meeting", meetingId, meetingTitle, details);
+
+export const logAgendaActivity = async (
+	userId: string, userName: string,
+	action: "agenda_create" | "agenda_update" | "agenda_delete",
+	agendaId?: string, agendaTitle?: string, details?: Record<string, unknown>
+) => logActivity(userId, userName, action, "agenda", agendaId, agendaTitle, details);

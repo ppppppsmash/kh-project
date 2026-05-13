@@ -104,22 +104,28 @@ export const userActivityFormSchema = z.object({
 	userId: z.string().optional(),
 	userName: z.string().optional(),
 	action: z.enum([
-		"login", 
-		"logout", 
-		"task_create", 
-		"task_update", 
+		"login",
+		"logout",
+		"task_create",
+		"task_update",
 		"task_delete",
 		"qa_create",
-		"qa_update", 
+		"qa_update",
 		"qa_delete",
 		"member_create",
 		"member_update",
 		"member_delete",
 		"club_create",
 		"club_update",
-		"club_delete"
+		"club_delete",
+		"meeting_create",
+		"meeting_update",
+		"meeting_delete",
+		"agenda_create",
+		"agenda_update",
+		"agenda_delete"
 	]),
-	resourceType: z.enum(["task", "qa", "member", "club", "login", "logout"]).optional(),
+	resourceType: z.enum(["task", "qa", "member", "club", "login", "logout", "meeting", "agenda"]).optional(),
 	resourceId: z.string().optional(),
 	resourceName: z.string().optional(),
 	resourceDetails: z.string().optional(),
@@ -147,6 +153,45 @@ export const surveyItemSchema = z.object({
 	updatedAt: z.date().optional(),
 });
 export type SurveyItemFormValues = z.infer<typeof surveyItemSchema>;
+
+export const agendaItemFormSchema = z.object({
+	id: z.string().optional(),
+	meetingId: z.string().optional(),
+	order: z.number().int().default(0).optional(),
+	type: z.enum(["agenda", "memo", "section"]).default("agenda").optional(),
+	parentId: z.string().optional().nullable(),
+	title: z.string().min(1, "タイトルは必須です"),
+	description: z.string().optional().nullable(),
+	status: z
+		.enum(["not_started", "in_progress", "done"])
+		.default("not_started")
+		.optional(),
+	presenterId: z.string().optional().nullable(),
+	memo: z.string().optional().nullable(),
+	linkedTaskId: z.string().optional().nullable(),
+	linkedQaId: z.string().optional().nullable(),
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
+});
+export type AgendaItemFormValues = z.infer<typeof agendaItemFormSchema>;
+
+export const meetingFormSchema = z.object({
+	id: z.string().optional(),
+	title: z.string().min(1, "会議名は必須です"),
+	description: z.string().optional().nullable(),
+	scheduledAt: z.date().optional().nullable(),
+	status: z
+		.enum(["scheduled", "in_progress", "done"])
+		.default("scheduled")
+		.optional(),
+	isPublic: z.boolean().default(false).optional(),
+	shareToken: z.string().optional(),
+	createdBy: z.string().optional().nullable(),
+	items: z.array(agendaItemFormSchema),
+	createdAt: z.date().optional(),
+	updatedAt: z.date().optional(),
+});
+export type MeetingFormValues = z.infer<typeof meetingFormSchema>;
 
 export const surveyFormSchema = z.object({
 	id: z.string().optional(),
