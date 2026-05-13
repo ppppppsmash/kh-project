@@ -5,6 +5,7 @@ applications:
         preBuild:
           commands:
             - npm install -g pnpm@9
+            - env | grep -E "^(NEXTAUTH_|AUTH_|GOOGLE_|DATABASE_|SLACK_|S3_|NEXT_PUBLIC_)" >> .env.production
             - pnpm install --no-frozen-lockfile
         build:
           commands:
