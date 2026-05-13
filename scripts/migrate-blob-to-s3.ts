@@ -4,10 +4,10 @@
  * 実行方法:
  *   pnpm tsx scripts/migrate-blob-to-s3.ts
  *
- * 必要な環境変数 (.env.local):
+ * 必要な環境変数 (.env):
  *   DATABASE_URL
- *   AWS_REGION / AWS_ACCESS_KEY_ID / AWS_SECRET_ACCESS_KEY
- *   AWS_S3_BUCKET / AWS_S3_PUBLIC_URL
+ *   S3_REGION / S3_ACCESS_KEY_ID / S3_SECRET_ACCESS_KEY
+ *   S3_BUCKET / S3_PUBLIC_URL
  */
 
 import "dotenv/config";
@@ -18,14 +18,14 @@ import { db } from "../db";
 import { users } from "../db/schema/users";
 
 const s3 = new S3Client({
-	region: process.env.AWS_REGION,
+	region: process.env.S3_REGION,
 	credentials: {
-		accessKeyId: process.env.AWS_ACCESS_KEY_ID as string,
-		secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY as string,
+		accessKeyId: process.env.S3_ACCESS_KEY_ID as string,
+		secretAccessKey: process.env.S3_SECRET_ACCESS_KEY as string,
 	},
 });
-const BUCKET = process.env.AWS_S3_BUCKET as string;
-const PUBLIC_URL = process.env.AWS_S3_PUBLIC_URL as string;
+const BUCKET = process.env.S3_BUCKET as string;
+const PUBLIC_URL = process.env.S3_PUBLIC_URL as string;
 
 const isVercelBlobUrl = (url: string) =>
 	url.includes(".public.blob.vercel-storage.com") ||
