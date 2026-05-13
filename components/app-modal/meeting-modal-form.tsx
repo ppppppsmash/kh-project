@@ -896,7 +896,7 @@ export function MeetingModalForm({
 					control={form.control}
 					name="isPublic"
 					render={({ field }) => (
-						<FormItem className="flex items-center justify-end gap-3">
+						<FormItem className="sticky bottom-0 -mx-6 -mb-6 flex items-center justify-end gap-3 border-t bg-background px-6 py-3">
 							<FormLabel className="text-base">一時公開</FormLabel>
 							<FormControl>
 								<Switch

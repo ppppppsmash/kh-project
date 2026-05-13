@@ -59,6 +59,11 @@ export const navConfig = {
 		// 	],
 		// },
 		{
+			title: "アジェンダ管理",
+			url: "/superadmin/meeting",
+			icon: IconCalendarEvent,
+		},
+		{
 			title: "タスク管理",
 			url: "/superadmin/task",
 			icon: IconListCheck,
@@ -72,11 +77,6 @@ export const navConfig = {
 			title: "アンケート管理",
 			url: "/superadmin/survey",
 			icon: IconFilePencil,
-		},
-		{
-			title: "アジェンダ管理",
-			url: "/superadmin/meeting",
-			icon: IconCalendarEvent,
 		},
 		// {
 		//   title: "チーム",

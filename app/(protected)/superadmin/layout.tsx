@@ -13,6 +13,7 @@ export default function ProtectedLayout({
 	return (
 		<>
 			<SidebarProvider
+				className="h-svh overflow-hidden"
 				style={
 					{
 						"--sidebar-width": "calc(var(--spacing) * 72)",
@@ -21,10 +22,10 @@ export default function ProtectedLayout({
 				}
 			>
 				<AppSidebar variant="inset" />
-				<SidebarInset>
+				<SidebarInset className="min-h-0">
 					<AppHeader />
-					<div className="flex flex-1 flex-col">
-						<div className="flex-1 px-4 lg:px-6 py-4">
+					<div className="flex flex-1 flex-col min-h-0">
+						<div className="flex-1 overflow-y-auto px-4 lg:px-6 py-4">
 							{children}
 						</div>
 					</div>
