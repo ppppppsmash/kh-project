@@ -15,6 +15,7 @@ import {
 	IconSettings,
 	IconUser,
 	IconFilePencil,
+	IconCalendarEvent,
 } from "@tabler/icons-react";
 
 // ナビゲーションの設定
@@ -71,6 +72,11 @@ export const navConfig = {
 			title: "アンケート管理",
 			url: "/superadmin/survey",
 			icon: IconFilePencil,
+		},
+		{
+			title: "アジェンダ管理",
+			url: "/superadmin/meeting",
+			icon: IconCalendarEvent,
 		},
 		// {
 		//   title: "チーム",

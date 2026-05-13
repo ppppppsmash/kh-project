@@ -6,9 +6,12 @@ import { getCategories } from "@/actions/categories";
 import { getUserInfo, getUserList } from "@/actions/user";
 import { getUserActivity } from "@/actions/user-activity";
 import { getSurveys } from "@/actions/survey";
+import { getAgendaItems, getMeetings } from "@/actions/meeting";
 import type {
+	AgendaItemFormValues,
 	ClubFormValues,
 	CategoryValues,
+	MeetingFormValues,
 	MemberFormValues,
 	QaFormValues,
 	TabValues,
@@ -65,6 +68,18 @@ export const useGetSurveys = createQueryHook<SurveyFormValues[]>(
 	"surveys",
 	getSurveys,
 );
+
+export const useGetMeetings = createQueryHook<MeetingFormValues[]>(
+	"meetings",
+	getMeetings,
+);
+
+export const useGetAgendaItems = (meetingId: string) =>
+	useQuery<AgendaItemFormValues[]>({
+		queryKey: ["agenda-items", meetingId],
+		queryFn: () => getAgendaItems(meetingId),
+		enabled: !!meetingId,
+	});
 
 // ダッシュボードtask関連
 export const useGetTaskStats = () => {
