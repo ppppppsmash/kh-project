@@ -525,18 +525,20 @@ const TopLevelBlock = ({
 								type="button"
 								size="sm"
 								variant="outline"
+								className="gap-1"
 								onClick={() => onAddChildAgenda(sectionId)}
 							>
-								<Plus className="mr-1 h-4 w-4" />
+								<Plus className="h-4 w-4" />
 								議題
 							</Button>
 							<Button
 								type="button"
 								size="sm"
 								variant="outline"
+								className="gap-1"
 								onClick={() => onAddChildMemo(sectionId)}
 							>
-								<Plus className="mr-1 h-4 w-4" />
+								<Plus className="h-4 w-4" />
 								メモ
 							</Button>
 						</div>
@@ -825,27 +827,30 @@ export function MeetingModalForm({
 								type="button"
 								size="sm"
 								variant="outline"
+								className="gap-1"
 								onClick={() => appendBlock("section", null)}
 							>
-								<Plus className="mr-1 h-4 w-4" />
+								<Plus className="h-4 w-4" />
 								セクション
 							</Button>
 							<Button
 								type="button"
 								size="sm"
 								variant="outline"
+								className="gap-1"
 								onClick={() => appendBlock("agenda", null)}
 							>
-								<Plus className="mr-1 h-4 w-4" />
+								<Plus className="h-4 w-4" />
 								議題
 							</Button>
 							<Button
 								type="button"
 								size="sm"
 								variant="outline"
+								className="gap-1"
 								onClick={() => appendBlock("memo", null)}
 							>
-								<Plus className="mr-1 h-4 w-4" />
+								<Plus className="h-4 w-4" />
 								メモ
 							</Button>
 						</div>
