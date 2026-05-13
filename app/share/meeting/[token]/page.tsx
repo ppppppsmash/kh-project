@@ -2,25 +2,67 @@ import { getPublicMeetingByToken } from "@/actions/meeting";
 import { getQA } from "@/actions/qa";
 import { getTasks } from "@/actions/task";
 import { getUserList } from "@/actions/user";
-import { Badge } from "@/components/ui/badge";
 import { formatDate } from "@/lib/utils";
 import type { AgendaItemFormValues } from "@/lib/validations";
+import { CircleCheck, CircleDashed, Circle } from "lucide-react";
 import { notFound } from "next/navigation";
 
-const statusBadge: Record<string, { label: string; className: string }> = {
-	not_started: { label: "未", className: "bg-gray-100 text-gray-800" },
-	in_progress: { label: "進行中", className: "bg-blue-100 text-blue-800" },
-	done: { label: "完了", className: "bg-green-100 text-green-800" },
+const agendaStatus: Record<
+	string,
+	{ label: string; Icon: React.ElementType; colorClass: string }
+> = {
+	not_started: {
+		label: "未着手",
+		Icon: Circle,
+		colorClass: "text-muted-foreground",
+	},
+	in_progress: {
+		label: "進行中",
+		Icon: CircleDashed,
+		colorClass: "text-blue-500",
+	},
+	done: {
+		label: "完了",
+		Icon: CircleCheck,
+		colorClass: "text-emerald-500",
+	},
 };
 
-const meetingStatusBadge: Record<
+const meetingStatus: Record<
 	string,
-	{ label: string; className: string }
+	{ label: string; Icon: React.ElementType; colorClass: string }
 > = {
-	scheduled: { label: "予定", className: "bg-gray-100 text-gray-800" },
-	in_progress: { label: "進行中", className: "bg-blue-100 text-blue-800" },
-	done: { label: "終了", className: "bg-green-100 text-green-800" },
+	scheduled: {
+		label: "予定",
+		Icon: Circle,
+		colorClass: "text-muted-foreground",
+	},
+	in_progress: {
+		label: "進行中",
+		Icon: CircleDashed,
+		colorClass: "text-blue-500",
+	},
+	done: {
+		label: "終了",
+		Icon: CircleCheck,
+		colorClass: "text-emerald-500",
+	},
 };
+
+const StatusLabel = ({
+	Icon,
+	colorClass,
+	label,
+}: {
+	Icon: React.ElementType;
+	colorClass: string;
+	label: string;
+}) => (
+	<span className="inline-flex items-center gap-1.5 text-sm text-muted-foreground">
+		<Icon className={`h-4 w-4 ${colorClass}`} strokeWidth={2} />
+		{label}
+	</span>
+);
 
 type LookupMaps = {
 	userMap: Map<string | undefined, { name?: string }>;
@@ -36,7 +78,7 @@ const AgendaBlock = ({
 	maps: LookupMaps;
 }) => {
 	const status =
-		statusBadge[item.status ?? "not_started"] ?? statusBadge.not_started;
+		agendaStatus[item.status ?? "not_started"] ?? agendaStatus.not_started;
 	const presenter = item.presenterId ? maps.userMap.get(item.presenterId) : null;
 	const linkedTask = item.linkedTaskId
 		? maps.taskMap.get(item.linkedTaskId)
@@ -44,9 +86,13 @@ const AgendaBlock = ({
 	const linkedQa = item.linkedQaId ? maps.qaMap.get(item.linkedQaId) : null;
 	return (
 		<section className="py-4">
-			<div className="flex items-baseline gap-3 flex-wrap">
+			<div className="flex items-center gap-3 flex-wrap">
 				<h3 className="text-xl font-semibold">{item.title}</h3>
-				<Badge className={status.className}>{status.label}</Badge>
+				<StatusLabel
+					Icon={status.Icon}
+					colorClass={status.colorClass}
+					label={status.label}
+				/>
 				{presenter?.name && (
 					<span className="text-sm text-muted-foreground">
 						担当: {presenter.name}
@@ -61,12 +107,22 @@ const AgendaBlock = ({
 			)}
 
 			{(linkedTask || linkedQa) && (
-				<div className="mt-3 flex flex-wrap gap-2 text-xs">
+				<div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
 					{linkedTask && (
-						<Badge variant="secondary">Task: {linkedTask.title}</Badge>
+						<span>
+							<span className="mr-1 text-xs uppercase tracking-wide">
+								task
+							</span>
+							{linkedTask.title}
+						</span>
 					)}
 					{linkedQa && (
-						<Badge variant="secondary">QA: {linkedQa.question}</Badge>
+						<span>
+							<span className="mr-1 text-xs uppercase tracking-wide">
+								qa
+							</span>
+							{linkedQa.question}
+						</span>
 					)}
 				</div>
 			)}
@@ -132,9 +188,8 @@ export default async function PublicMeetingPage({
 		}
 	});
 
-	const meetingStatus =
-		meetingStatusBadge[meeting.status ?? "scheduled"] ??
-		meetingStatusBadge.scheduled;
+	const mtgStatus =
+		meetingStatus[meeting.status ?? "scheduled"] ?? meetingStatus.scheduled;
 
 	const renderItem = (item: AgendaItemFormValues) => {
 		if (item.type === "memo") {
@@ -146,10 +201,12 @@ export default async function PublicMeetingPage({
 	return (
 		<article className="mx-auto max-w-3xl px-6 py-10">
 			<header className="mb-8 border-b pb-6">
-				<div className="mb-3 flex items-center gap-3">
-					<Badge className={meetingStatus.className}>
-						{meetingStatus.label}
-					</Badge>
+				<div className="mb-3 flex items-center gap-4">
+					<StatusLabel
+						Icon={mtgStatus.Icon}
+						colorClass={mtgStatus.colorClass}
+						label={mtgStatus.label}
+					/>
 					{meeting.scheduledAt && (
 						<time className="text-sm text-muted-foreground">
 							{formatDate(
