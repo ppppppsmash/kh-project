@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { createSurvey, deleteSurvey, updateSurvey } from "@/actions/survey";
 import { AddButton } from "@/components/add-button";
-import { Plus } from "lucide-react";
 import { SurveyModalForm } from "@/components/app-modal/survey-modal-form";
 import { useGetSurveys } from "@/components/app-table/hooks/use-table-data";
 import { AppTable, type TableColumn } from "@/components/app-table";
@@ -180,10 +179,7 @@ export default function SurveyPage() {
 			<div className="mb-8 flex items-center justify-between">
 				<PageTitle>{navConfig.navMain.find((item) => item.url === "/superadmin/survey")
 								?.title || "アンケート管理"}</PageTitle>
-				<Button onClick={handleAdd} className="flex items-center gap-2">
-					<Plus className="h-4 w-4" />
-					新規アンケート作成
-				</Button>
+				<AddButton text="新規アンケート作成" onClick={handleAdd} />
 			</div>
 
 			<SurveyModalForm
