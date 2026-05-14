@@ -12,6 +12,14 @@ const nextConfig: NextConfig = {
 				protocol: "https",
 				hostname: "avatars.slack-edge.com",
 			},
+			{
+				protocol: "https",
+				hostname: "adixi-mgr-uploads.s3.ap-northeast-1.amazonaws.com",
+			},
+			{
+				protocol: "https",
+				hostname: "lh3.googleusercontent.com",
+			},
 		],
 	},
 };
