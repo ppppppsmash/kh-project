@@ -1,3 +1,4 @@
+import { approveUser, rejectUser } from "@/actions/user";
 import {
 	Dialog,
 	DialogContent,
@@ -5,9 +6,20 @@ import {
 	DialogTitle,
 } from "@/components/ui/dialog";
 import Image from "next/image";
+import { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+	Select,
+	SelectContent,
+	SelectItem,
+	SelectTrigger,
+	SelectValue,
+} from "@/components/ui/select";
+import { CustomToast } from "@/components/ui/toast";
 import type { MemberFormValues } from "@/lib/validations";
+import { useQueryClient } from "@tanstack/react-query";
 
 interface UserDetailModalProps {
 	user: MemberFormValues | null;
@@ -15,12 +27,56 @@ interface UserDetailModalProps {
 	onClose: () => void;
 }
 
+type ApprovableRole = "admin" | "superadmin";
+
 export const UserDetailModal = ({
 	user,
 	isOpen,
 	onClose,
 }: UserDetailModalProps) => {
+	const queryClient = useQueryClient();
+	const [selectedRole, setSelectedRole] = useState<ApprovableRole>("admin");
+	const [isBusy, setIsBusy] = useState(false);
+
 	if (!user) return null;
+
+	const invalidate = () => {
+		queryClient.invalidateQueries({ queryKey: ["users"] });
+		queryClient.invalidateQueries({ queryKey: ["pending-users"] });
+	};
+
+	const handleApprove = async () => {
+		if (!user.id) return;
+		setIsBusy(true);
+		try {
+			await approveUser(user.id, selectedRole);
+			CustomToast.success(`${user.name ?? "ユーザ"}を承認しました`);
+			invalidate();
+			onClose();
+		} catch (error) {
+			console.error(error);
+			CustomToast.error("承認に失敗しました");
+		} finally {
+			setIsBusy(false);
+		}
+	};
+
+	const handleReject = async () => {
+		if (!user.id) return;
+		if (!confirm(`${user.name ?? "このユーザ"}を却下しますか？`)) return;
+		setIsBusy(true);
+		try {
+			await rejectUser(user.id);
+			CustomToast.success(`${user.name ?? "ユーザ"}を却下しました`);
+			invalidate();
+			onClose();
+		} catch (error) {
+			console.error(error);
+			CustomToast.error("却下に失敗しました");
+		} finally {
+			setIsBusy(false);
+		}
+	};
 
 	return (
 		<Dialog open={isOpen} onOpenChange={onClose}>
@@ -56,9 +112,45 @@ export const UserDetailModal = ({
 						<div className="grid grid-cols-2 gap-2">
 							<p className="text-sm font-medium">ステータス</p>
 							<p className="text-sm">
-								{user.isActive ? "アクティブ" : "非アクティブ"}
+								{user.isActive ? "アクティブ" : "承認待ち"}
 							</p>
 						</div>
+						{user.isActive === false && (
+							<div className="grid grid-cols-2 gap-2 items-center rounded-md border border-dashed p-3">
+								<p className="text-sm font-medium">承認 / 却下</p>
+								<div className="flex items-center gap-2 flex-wrap">
+									<Select
+										value={selectedRole}
+										onValueChange={(v) =>
+											setSelectedRole(v as ApprovableRole)
+										}
+									>
+										<SelectTrigger className="w-32">
+											<SelectValue />
+										</SelectTrigger>
+										<SelectContent>
+											<SelectItem value="admin">admin</SelectItem>
+											<SelectItem value="superadmin">superadmin</SelectItem>
+										</SelectContent>
+									</Select>
+									<Button
+										size="sm"
+										onClick={handleApprove}
+										disabled={isBusy}
+									>
+										{isBusy ? "..." : "承認"}
+									</Button>
+									<Button
+										size="sm"
+										variant="destructive"
+										onClick={handleReject}
+										disabled={isBusy}
+									>
+										却下
+									</Button>
+								</div>
+							</div>
+						)}
 						<div className="grid grid-cols-2 gap-2">
 							<p className="text-sm font-medium">部署</p>
 							<p className="text-sm">{user?.department}</p>
