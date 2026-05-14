@@ -45,31 +45,33 @@ export const { auth, handlers } = NextAuth({
 	callbacks: {
 		signIn: async ({ account, profile, user }) => {
 			const email = profile?.email;
-			const role = await getUserRole(email as string);
-
 			const isGoogle = account?.provider === "google";
-			const isSuperAdmin = role === "superadmin";
-			const isAdmin = role === "admin";
 
-			if (isGoogle && email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
-				const user = await createUser({
-					name: profile?.name as string,
-					email: profile?.email as string,
-					image: profile?.picture as string,
-				});
-
-				await createUserActivity({
-					userId: user?.id || "",
-					userName: profile?.name || "",
-					action: "login",
-				});
-
-				return true;
+			if (!isGoogle || !email?.endsWith(GOOGLE_ADMIN_EMAIL_DOMAIN)) {
+				return false;
 			}
 
-			return false;
+			const dbUser = await createUser({
+				name: profile?.name as string,
+				email: profile?.email as string,
+				image: profile?.picture as string,
+			});
+
+			if (!dbUser) return false;
+
+			// jwt callback の user 引数に DB の id / role を引き継ぐ
+			user.id = dbUser.id;
+			(user as Profile).role = dbUser.role as string;
+
+			await createUserActivity({
+				userId: dbUser.id,
+				userName: profile?.name || "",
+				action: "login",
+			});
+
+			return true;
 		},
-		jwt: async ({ token, user, account, profile }) => {
+		jwt: async ({ token, user, account }) => {
 			if (user) {
 				token.id = user.id as string;
 				token.role = (user as Profile).role as string;
@@ -77,19 +79,6 @@ export const { auth, handlers } = NextAuth({
 
 			if (account) {
 				token.accessToken = account.access_token;
-
-				if (account?.provider === "google" && profile?.email) {
-					const role = await getUserRole(profile.email as string);
-					const user = await createUser({
-						name: profile.name as string,
-						email: profile.email as string,
-						image: profile.picture as string,
-						role: role,
-					});
-
-					token.id = user?.id as string;
-					token.role = role as string;
-				}
 			}
 
 			return token;
