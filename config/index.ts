@@ -43,23 +43,23 @@ export const navConfig = {
 		// 	url: "/superadmin/organization",
 		// 	icon: IconUsersGroup,
 		// },
-		// {
-		// 	title: "メンバー",
-		// 	url: "/superadmin/member",
-		// 	icon: IconUser,
-		// 	items: [
-		// 		{
-		// 			title: "自己紹介",
-		// 			url: "/superadmin/member/intro",
-		// 		},
-		// 		{
-		// 			title: "メンバー管理",
-		// 			url: "/superadmin/member/member-list",
-		// 		},
-		// 	],
-		// },
 		{
-			title: "アジェンダ管理",
+			title: "メンバー",
+			url: "/superadmin/member",
+			icon: IconUser,
+			items: [
+				{
+					title: "利用ユーザ一覧",
+					url: "/superadmin/member/active",
+				},
+				{
+					title: "承認待ち",
+					url: "/superadmin/member/pending",
+				},
+			],
+		},
+		{
+			title: "アジェンダ",
 			url: "/superadmin/meeting",
 			icon: IconCalendarEvent,
 		},
@@ -73,11 +73,11 @@ export const navConfig = {
 			url: "/superadmin/qa",
 			icon: IconHelp,
 		},
-		{
-			title: "アンケート管理",
-			url: "/superadmin/survey",
-			icon: IconFilePencil,
-		},
+		// {
+		// 	title: "アンケート管理",
+		// 	url: "/superadmin/survey",
+		// 	icon: IconFilePencil,
+		// },
 		// {
 		//   title: "チーム",
 		//   url: "/team",
