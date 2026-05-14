@@ -30,7 +30,7 @@ export const users = pgTable("users", {
 	skills_message: varchar("skills_message", { length: 255 }).default(""),
 	freeText: varchar("free_text", { length: 255 }),
 	photoUrl: varchar("photo_url", { length: 255 }),
-	isActive: boolean("is_active").default(true),
+	isActive: boolean("is_active").default(false),
 	lastSeenAt: timestamp("last_seen_at", { withTimezone: true, mode: "date" }),
 	createdAt: timestamp("created_at", { withTimezone: true, mode: "date" })
 		.notNull()
