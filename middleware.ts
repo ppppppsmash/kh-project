@@ -12,6 +12,7 @@ export default async function middleware(request: NextRequest) {
 	const mySession = await auth();
 	const isRoot = request.nextUrl.pathname === "/";
 	const isSigninPage = request.nextUrl.pathname === "/signin";
+	const isPendingPage = request.nextUrl.pathname === "/pending";
 	const isSuperAdminPage = request.nextUrl.pathname.startsWith("/superadmin");
 	const isAdixiPublicPage =
 		request.nextUrl.pathname.startsWith("/adixi-public");
@@ -32,6 +33,29 @@ export default async function middleware(request: NextRequest) {
 	if (!session) {
 		if (isSigninPage) {
 			return NextResponse.next();
+		}
+		return NextResponse.redirect(new URL("/signin", request.url));
+	}
+
+	// 承認待ちユーザは /pending のみアクセス可能
+	// 既存トークン互換: isActive が undefined のときは active 扱い
+	if (mySession?.user && mySession.user.isActive === false) {
+		if (isPendingPage) {
+			return NextResponse.next();
+		}
+		return NextResponse.redirect(new URL("/pending", request.url));
+	}
+
+	// 承認済みユーザが /pending に来たらロール別ホームへ
+	if (isPendingPage) {
+		const role = mySession?.user?.role;
+		if (role === "superadmin") {
+			return NextResponse.redirect(
+				new URL("/superadmin/dashboard", request.url),
+			);
+		}
+		if (role === "admin") {
+			return NextResponse.redirect(new URL("/adixi-public/qa", request.url));
 		}
 		return NextResponse.redirect(new URL("/signin", request.url));
 	}

@@ -3,7 +3,12 @@ import { getQA } from "@/actions/qa";
 import { getTabs } from "@/actions/tabs";
 import { getTasks } from "@/actions/task";
 import { getCategories } from "@/actions/categories";
-import { getUserInfo, getUserList } from "@/actions/user";
+import {
+	getActiveUsers,
+	getPendingUsers,
+	getUserInfo,
+	getUserList,
+} from "@/actions/user";
 import { getUserActivity } from "@/actions/user-activity";
 import { getSurveys } from "@/actions/survey";
 import { getAgendaItems, getMeetings } from "@/actions/meeting";
@@ -43,6 +48,16 @@ export const useGetUserInfo = createQueryHook<MemberFormValues | undefined>(
 export const useGetUserList = createQueryHook<MemberFormValues[]>(
 	"users",
 	getUserList,
+);
+
+export const useGetPendingUsers = createQueryHook<MemberFormValues[]>(
+	"pending-users",
+	getPendingUsers,
+);
+
+export const useGetActiveUsers = createQueryHook<MemberFormValues[]>(
+	"active-users",
+	getActiveUsers,
 );
 
 export const useGetClubActivities = createQueryHook<ClubFormValues[]>(

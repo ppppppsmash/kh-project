@@ -1,4 +1,4 @@
-import { createUser, getUserRole } from "@/actions/user";
+import { createUser, getUserRole, getUserStatus } from "@/actions/user";
 import { createUserActivity } from "@/actions/user-activity";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
@@ -14,6 +14,7 @@ type Profile = {
 	email: string;
 	picture: string;
 	role: string;
+	isActive: boolean;
 };
 
 const GOOGLE_ADMIN_EMAIL_DOMAIN = process.env
@@ -59,9 +60,10 @@ export const { auth, handlers } = NextAuth({
 
 			if (!dbUser) return false;
 
-			// jwt callback の user 引数に DB の id / role を引き継ぐ
+			// jwt callback の user 引数に DB の id / role / isActive を引き継ぐ
 			user.id = dbUser.id;
 			(user as Profile).role = dbUser.role as string;
+			(user as Profile).isActive = dbUser.isActive ?? false;
 
 			await createUserActivity({
 				userId: dbUser.id,
@@ -71,14 +73,28 @@ export const { auth, handlers } = NextAuth({
 
 			return true;
 		},
-		jwt: async ({ token, user, account }) => {
+		jwt: async ({ token, user, account, trigger }) => {
 			if (user) {
 				token.id = user.id as string;
 				token.role = (user as Profile).role as string;
+				token.isActive = (user as Profile).isActive ?? false;
 			}
 
 			if (account) {
 				token.accessToken = account.access_token;
+			}
+
+			// クライアントから update() が呼ばれたら DB から承認状態を再取得
+			if (trigger === "update" && token.id) {
+				try {
+					const status = await getUserStatus(token.id as string);
+					if (status) {
+						token.isActive = status.isActive;
+						token.role = status.role as string;
+					}
+				} catch (e) {
+					console.error("Failed to refresh user status:", e);
+				}
 			}
 
 			return token;
@@ -87,6 +103,7 @@ export const { auth, handlers } = NextAuth({
 			if (token) {
 				session.user.id = token.id as string;
 				session.user.role = token.role as string;
+				session.user.isActive = token.isActive as boolean;
 			}
 
 			return {
@@ -95,6 +112,7 @@ export const { auth, handlers } = NextAuth({
 					...session.user,
 					id: token.id as string,
 					role: token.role,
+					isActive: token.isActive,
 				},
 			};
 		},

@@ -13,6 +13,7 @@ type Account = {
 	image: string;
 	email: string;
 	role?: MemberFormValues["role"];
+	isActive?: boolean | null;
 	createdAt?: Date;
 	updatedAt?: Date;
 };
@@ -149,6 +150,133 @@ export const getUserList = async (): Promise<MemberFormValues[]> => {
 		createdAt: user.createdAt as Date,
 		updatedAt: user.updatedAt as Date,
 	}));
+};
+
+export const getUserStatus = async (id: string) => {
+	const [row] = await db
+		.select({ isActive: users.isActive, role: users.role })
+		.from(users)
+		.where(eq(users.id, id))
+		.limit(1);
+	if (!row) return null;
+	return {
+		isActive: row.isActive ?? false,
+		role: row.role as MemberFormValues["role"],
+	};
+};
+
+// 自分自身の承認ステータス確認用（/pending ページからポーリング）
+export const checkMyApproval = async () => {
+	const session = await auth();
+	if (!session?.user?.id) return null;
+	return await getUserStatus(session.user.id);
+};
+
+export const getActiveUsers = async (): Promise<MemberFormValues[]> => {
+	const usersData = await db
+		.select()
+		.from(users)
+		.where(eq(users.isActive, true));
+	return usersData.map((user) => ({
+		...user,
+		role: user.role as MemberFormValues["role"],
+		department: user.department as string,
+		position: user.position as string,
+		hobby: user.hobby as string,
+		skills: user.skills as string[],
+		skills_message: user.skills_message as string,
+		freeText: user.freeText as string,
+		photoUrl: user.photoUrl as string,
+		isActive: user.isActive as boolean,
+		createdAt: user.createdAt as Date,
+		updatedAt: user.updatedAt as Date,
+	}));
+};
+
+export const getPendingUsers = async (): Promise<MemberFormValues[]> => {
+	const usersData = await db
+		.select()
+		.from(users)
+		.where(eq(users.isActive, false));
+	return usersData.map((user) => ({
+		...user,
+		role: user.role as MemberFormValues["role"],
+		department: user.department as string,
+		position: user.position as string,
+		hobby: user.hobby as string,
+		skills: user.skills as string[],
+		skills_message: user.skills_message as string,
+		freeText: user.freeText as string,
+		photoUrl: user.photoUrl as string,
+		isActive: user.isActive as boolean,
+		createdAt: user.createdAt as Date,
+		updatedAt: user.updatedAt as Date,
+	}));
+};
+
+export const rejectUser = async (id: string) => {
+	const session = await auth();
+	const approver = session?.user;
+	const { userActivity } = await import("@/db/schema");
+
+	// FK 制約のため、活動ログを先に削除
+	await db.delete(userActivity).where(eq(userActivity.userId, id));
+
+	const [deleted] = await db
+		.delete(users)
+		.where(eq(users.id, id))
+		.returning();
+
+	if (deleted && approver?.id) {
+		const { createUserActivity } = await import("./user-activity");
+		await createUserActivity({
+			userId: approver.id,
+			userName: approver.name ?? "",
+			action: "member_delete",
+			resourceType: "member",
+			resourceId: deleted.id,
+			resourceName: deleted.name,
+			resourceDetails: JSON.stringify({ rejected: true }),
+		});
+	}
+
+	return deleted;
+};
+
+export const approveUser = async (
+	id: string,
+	role: MemberFormValues["role"],
+) => {
+	const session = await auth();
+	const approver = session?.user;
+
+	const [updated] = await db
+		.update(users)
+		.set({
+			isActive: true,
+			role,
+			updatedAt: new Date(),
+		})
+		.where(eq(users.id, id))
+		.returning();
+
+	if (updated && approver?.id) {
+		const { createUserActivity } = await import("./user-activity");
+		await createUserActivity({
+			userId: approver.id,
+			userName: approver.name ?? "",
+			action: "member_update",
+			resourceType: "member",
+			resourceId: updated.id,
+			resourceName: updated.name,
+			resourceDetails: JSON.stringify({
+				approved: true,
+				role,
+			}),
+		});
+	}
+
+	return updated;
 };
 
 export const updateUserInfo = async (
