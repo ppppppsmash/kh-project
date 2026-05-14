@@ -20,7 +20,9 @@ const AgendaBlock = ({
 	item: AgendaItemFormValues;
 	maps: LookupMaps;
 }) => {
-	const presenter = item.presenterId ? maps.userMap.get(item.presenterId) : null;
+	const presenter = item.presenterId
+		? maps.userMap.get(item.presenterId)
+		: null;
 	const linkedTask = item.linkedTaskId
 		? maps.taskMap.get(item.linkedTaskId)
 		: null;
@@ -47,17 +49,13 @@ const AgendaBlock = ({
 				<div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted-foreground">
 					{linkedTask && (
 						<span>
-							<span className="mr-1 text-xs uppercase tracking-wide">
-								task
-							</span>
+							<span className="mr-1 text-xs uppercase tracking-wide">task</span>
 							{linkedTask.title}
 						</span>
 					)}
 					{linkedQa && (
 						<span>
-							<span className="mr-1 text-xs uppercase tracking-wide">
-								qa
-							</span>
+							<span className="mr-1 text-xs uppercase tracking-wide">qa</span>
 							{linkedQa.question}
 						</span>
 					)}
@@ -133,8 +131,8 @@ export default async function PublicMeetingPage({
 	};
 
 	return (
-		<article className="mx-auto max-w-3xl px-6 py-10">
-			<header className="mb-8 border-b pb-6">
+		<div className="flex h-full flex-col">
+			<header className="mx-auto w-full max-w-3xl border-b px-6 pt-10 pb-6">
 				<div className="mb-3 flex items-center gap-4">
 					<StatusLabel type="meeting" value={meeting.status} />
 					{meeting.scheduledAt && (
@@ -148,37 +146,40 @@ export default async function PublicMeetingPage({
 				</div>
 				<h1 className="text-4xl font-bold tracking-tight">{meeting.title}</h1>
 			</header>
-
-			{topLevel.length === 0 ? (
-				<p className="text-sm text-muted-foreground">
-					ブロックが登録されていません。
-				</p>
-			) : (
-				<div>
-					{topLevel.map((item) => {
-						if (item.type === "section") {
-							const children = item.id
-								? childrenBySection.get(item.id) ?? []
-								: [];
-							return (
-								<section key={item.id} className="mt-10 first:mt-0">
-									<h2 className="text-3xl font-bold tracking-tight border-b pb-2">
-										{item.title}
-									</h2>
-									<div className="divide-y">
-										{children.map((c) => renderItem(c))}
+			<div className="flex-1 overflow-y-auto">
+				<article className="mx-auto max-w-3xl px-6 pt-8 pb-10">
+					{topLevel.length === 0 ? (
+						<p className="text-sm text-muted-foreground">
+							ブロックが登録されていません。
+						</p>
+					) : (
+						<div>
+							{topLevel.map((item) => {
+								if (item.type === "section") {
+									const children = item.id
+										? (childrenBySection.get(item.id) ?? [])
+										: [];
+									return (
+										<section key={item.id} className="mt-10 first:mt-0">
+											<h2 className="text-3xl font-bold tracking-tight border-b pb-2">
+												{item.title}
+											</h2>
+											<div className="divide-y">
+												{children.map((c) => renderItem(c))}
+											</div>
+										</section>
+									);
+								}
+								return (
+									<div key={item.id} className="divide-y">
+										{renderItem(item)}
 									</div>
-								</section>
-							);
-						}
-						return (
-							<div key={item.id} className="divide-y">
-								{renderItem(item)}
-							</div>
-						);
-					})}
-				</div>
-			)}
-		</article>
+								);
+							})}
+						</div>
+					)}
+				</article>
+			</div>
+		</div>
 	);
 }
