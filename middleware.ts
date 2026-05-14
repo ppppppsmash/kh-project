@@ -19,8 +19,43 @@ export default async function middleware(request: NextRequest) {
 	const isExternalPage = request.nextUrl.pathname.startsWith("/external");
 	const isSharePage = request.nextUrl.pathname.startsWith("/share");
 
-	// /share/* は完全公開（誰でもアクセス可能）
+	// /share/* はBasic認証で保護（社外向けアジェンダ共有ページ）
 	if (isSharePage) {
+		const expectedUser = process.env.SHARE_BASIC_AUTH_USER;
+		const expectedPassword = process.env.SHARE_BASIC_AUTH_PASSWORD;
+
+		if (expectedUser && expectedPassword) {
+			const authHeader = request.headers.get("authorization");
+			const unauthorized = new NextResponse("Authentication required", {
+				status: 401,
+				headers: {
+					"WWW-Authenticate": 'Basic realm="Share", charset="UTF-8"',
+				},
+			});
+
+			if (!authHeader?.startsWith("Basic ")) {
+				return unauthorized;
+			}
+
+			let decoded: string;
+			try {
+				decoded = atob(authHeader.slice("Basic ".length));
+			} catch {
+				return unauthorized;
+			}
+
+			const separatorIndex = decoded.indexOf(":");
+			if (separatorIndex === -1) {
+				return unauthorized;
+			}
+			const inputUser = decoded.slice(0, separatorIndex);
+			const inputPassword = decoded.slice(separatorIndex + 1);
+
+			if (inputUser !== expectedUser || inputPassword !== expectedPassword) {
+				return unauthorized;
+			}
+		}
+
 		return NextResponse.next();
 	}
 
