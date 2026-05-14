@@ -16,7 +16,7 @@ import {
 	SidebarMenuItem,
 	useSidebar,
 } from "@/components/ui/sidebar";
-import { IconDotsVertical, IconLogout, IconUsers } from "@tabler/icons-react";
+import { IconDotsVertical, IconLogout } from "@tabler/icons-react";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -96,10 +96,6 @@ export const NavUser = () => {
 							</div>
 						</DropdownMenuLabel>
 						<DropdownMenuSeparator />
-						<DropdownMenuItem onClick={() => router.push("/adixi-public/qa")}>
-							<IconUsers />
-							リーダー向けページ
-						</DropdownMenuItem>
 						<DropdownMenuItem onClick={() => signOutWithActivityHandler()}>
 							<IconLogout />
 							ログアウト
